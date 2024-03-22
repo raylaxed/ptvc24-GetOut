@@ -116,7 +116,7 @@ int main(int argc, char** argv)
 	lastY = (float)window_height;
 	int refresh_rate = reader.GetInteger("window", "refresh_rate", 60);
 	bool fullscreen = reader.GetBoolean("window", "fullscreen", false);
-	std::string window_title = reader.Get("window", "title", "The Hellish Dodgeball");
+	std::string window_title = reader.Get("window", "title", "Get Out!");
 	float fov = float(reader.GetReal("camera", "fov", 60.0f));
 	float nearZ = float(reader.GetReal("camera", "near", 0.1f));
 	float farZ = float(reader.GetReal("camera", "far", 100.0f));
