@@ -1,0 +1,51 @@
+﻿  autofit.c
+  ftbase.c
+  ftbbox.c
+  ftbdf.c
+  ftbitmap.c
+  ftcid.c
+  ftfstype.c
+  ftgasp.c
+  ftglyph.c
+  ftgxval.c
+  ftinit.c
+  ftmm.c
+C:\Users\maria\source\repos\freetype-2.13.0\src\base\ftcalc.c(1106,35): warning C4244: 'return': conversion from 'FT_Int64' to 'FT_Int32', possible loss of data (compiling source file ..\..\..\src\base\ftbase.c)
+  ftotval.c
+  ftpatent.c
+  ftpfr.c
+  ftstroke.c
+  ftsynth.c
+  fttype1.c
+  ftwinfnt.c
+  bdf.c
+  ftcache.c
+  cff.c
+  type1cid.c
+  dlgwrap.c
+  ftgzip.c
+  ftlzw.c
+  pcf.c
+  pfr.c
+  psaux.c
+  pshinter.c
+  psmodule.c
+  raster.c
+  sfnt.c
+  smooth.c
+  sdf.c
+  svg.c
+  truetype.c
+  type1.c
+  type42.c
+  winfnt.c
+  ftdebug.c
+  ftsystem.c
+C:\Users\maria\source\repos\freetype-2.13.0\src\sfnt\ttcolr.c(702,54): warning C4244: '+=': conversion from 'FT_ItemVarDelta' to 'FT_F2Dot14', possible loss of data (compiling source file ..\..\..\src\sfnt\sfnt.c)
+C:\Users\maria\source\repos\freetype-2.13.0\src\sfnt\ttcolr.c(1649,50): warning C4244: '+=': conversion from 'FT_Int' to 'FT_F2Dot14', possible loss of data (compiling source file ..\..\..\src\sfnt\sfnt.c)
+C:\Users\maria\source\repos\freetype-2.13.0\src\sdf\ftsdf.c(2856): warning C4701: potentially uninitialized local variable 'nearest_point' used
+C:\Users\maria\source\repos\freetype-2.13.0\src\sfnt\ttcolr.c(729): warning C4706: assignment within conditional expression
+C:\Users\maria\source\repos\freetype-2.13.0\src\sfnt\ttcolr.c(777): warning C4706: assignment within conditional expression
+C:\Users\maria\source\repos\freetype-2.13.0\src\sfnt\ttcolr.c(839): warning C4706: assignment within conditional expression
+     Creating library ..\..\..\objs\Win32\Debug\freetype.lib and object ..\..\..\objs\Win32\Debug\freetype.exp
+  freetype.vcxproj -> C:\Users\maria\source\repos\freetype-2.13.0\objs\Win32\Debug\freetype.dll
