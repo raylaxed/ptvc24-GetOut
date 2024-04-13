@@ -316,8 +316,12 @@ int main(int argc, char** argv)
 		Geometry decke3 = Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 25.5f, 20.0f)), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 
 
-		Geometry wall01 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20), wallMat);
+		Geometry wall01 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20), wallMat);
 		pWorld->addCubeToPWorld(wall01, glm::vec3(1.f, 5.f, 20) * 0.5f);
+		Geometry wall02 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20), wallMat);
+		pWorld->addCubeToPWorld(wall02, glm::vec3(1.f, 5.f, 20) * 0.5f);
+		Geometry wall03 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(wall03, glm::vec3(20.f, 5.f, 1) * 0.5f);
 
 
 		pWorld->addCubeToPWorld(ground, glm::vec3(width, 1.f, length) * 0.5f);
