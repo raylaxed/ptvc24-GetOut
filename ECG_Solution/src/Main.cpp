@@ -229,7 +229,7 @@ int main(int argc, char** argv)
 		hudShader->initFreeType(_charactersForCooldown, "assets/arial.ttf");
 		hudShader->initFreeType(_characters, "assets/green_fuz.otf");
 
-		// Create textures
+		// Create textures 
 	
 		std::shared_ptr<Texture> groundTexture = std::make_shared<Texture>("Jute_cocomat_pxr128.dds");
 		std::shared_ptr<Texture> wallTexture = std::make_shared<Texture>("wall.dds");
@@ -261,7 +261,7 @@ int main(int argc, char** argv)
 
 		//load models
 		Model torch("assets/objects/torch/textures/untitled.obj",glm::mat4(1.f),*textureShader.get());
-		Model armModel("assets/objects/skeletgltf/scene.gltf",  glm::mat4(1.f), *textureShader.get());
+		Model armModel("assets/objects/flashlight/scene.gltf",  glm::mat4(1.f), *textureShader.get());
 		player.setHand(armModel);
 
 		
@@ -315,7 +315,11 @@ int main(int argc, char** argv)
 		Geometry decke2 = Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 30.5f, -20.0f)), glm::radians(18.0f), glm::vec3(0.0f, -1.0f, -1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 		Geometry decke3 = Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 25.5f, 20.0f)), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 
-		
+
+		Geometry wall01 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20), wallMat);
+		pWorld->addCubeToPWorld(wall01, glm::vec3(1.f, 5.f, 20) * 0.5f);
+
+
 		pWorld->addCubeToPWorld(ground, glm::vec3(width, 1.f, length) * 0.5f);
 		pWorld->addCubeToPWorld(wallRight, glm::vec3(1.f, 50.5f, length) * 0.5f);
 		pWorld->addCubeToPWorld(wallLeft, glm::vec3(1.f, 50.5f, length) * 0.5f);

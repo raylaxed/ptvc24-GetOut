@@ -1,0 +1,252 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v3.3.32",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                3,
+                6,
+                11
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "name" : "flashlight",
+            "translation" : [
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "children" : [
+                0
+            ],
+            "name" : "RootNode"
+        },
+        {
+            "children" : [
+                1
+            ],
+            "name" : "0888e53071d64ef5a60bd70d70133d73.fbx",
+            "rotation" : [
+                0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ]
+        },
+        {
+            "children" : [
+                2
+            ],
+            "name" : "Sketchfab_model",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ]
+        },
+        {
+            "name" : "g"
+        },
+        {
+            "children" : [
+                4
+            ],
+            "name" : "Collada visual scene group",
+            "rotation" : [
+                0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ]
+        },
+        {
+            "children" : [
+                5
+            ],
+            "name" : "Sketchfab_model.001",
+            "rotation" : [
+                -0.5975047945976257,
+                -0.3781374990940094,
+                0.3781374990940094,
+                0.5975048542022705
+            ]
+        },
+        {
+            "mesh" : 0,
+            "name" : "flashlight__0"
+        },
+        {
+            "children" : [
+                7
+            ],
+            "name" : "flashlight.001",
+            "translation" : [
+                0,
+                1.9999998807907104,
+                0
+            ]
+        },
+        {
+            "children" : [
+                8
+            ],
+            "name" : "RootNode.001"
+        },
+        {
+            "children" : [
+                9
+            ],
+            "name" : "0888e53071d64ef5a60bd70d70133d73.fbx.001",
+            "rotation" : [
+                0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ]
+        },
+        {
+            "children" : [
+                10
+            ],
+            "name" : "Sketchfab_model.002",
+            "rotation" : [
+                1,
+                0,
+                0,
+                0
+            ],
+            "scale" : [
+                0.05000000074505806,
+                0.05000000074505806,
+                0.05000000074505806
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "emissiveFactor" : [
+                0.7488567233085632,
+                0.7488567233085632,
+                0.7488567233085632
+            ],
+            "name" : "Scene_-_Root.001",
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 0
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "flashlight__0.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "sampler" : 0,
+            "source" : 0
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "Scene_-_Root_baseColor",
+            "uri" : "Scene_-_Root_baseColor.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 2216,
+            "max" : [
+                0.560032069683075,
+                -0.1605207324028015,
+                -0.4264488220214844
+            ],
+            "min" : [
+                -1.2521544694900513,
+                -0.5199611783027649,
+                -0.7026292681694031
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 2216,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 2216,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 6252,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 26592,
+            "byteOffset" : 0,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 26592,
+            "byteOffset" : 26592,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 17728,
+            "byteOffset" : 53184,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 12504,
+            "byteOffset" : 70912,
+            "target" : 34963
+        }
+    ],
+    "samplers" : [
+        {
+            "magFilter" : 9729,
+            "minFilter" : 9987
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 83416,
+            "uri" : "scene.bin"
+        }
+    ]
+}
