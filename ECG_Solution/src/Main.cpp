@@ -315,7 +315,7 @@ int main(int argc, char** argv)
 		Geometry decke2 = Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 30.5f, -20.0f)), glm::radians(18.0f), glm::vec3(0.0f, -1.0f, -1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 		Geometry decke3 = Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 25.5f, 20.0f)), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 
-		// Labyrinth walls... :(
+		// LABYRINTH WALLS... :(
 		// =======================================================================================================================
 		// Vertical walls, ordered from left to right > top to bottom
 		// column 1 (40, x)
@@ -365,12 +365,59 @@ int main(int argc, char** argv)
 		pWorld->addCubeToPWorld(vertWall18, glm::vec3(1.f, 5.f, 10.f) * 0.5f);
 		Geometry vertWall19 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-40.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
 		pWorld->addCubeToPWorld(vertWall19, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-
 		
-		
-		Geometry wall03 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(wall03, glm::vec3(20.f, 5.f, 1) * 0.5f);
-
+		// horizontal walls ordered from top to bottom > left to right
+		// row 1 (x, 40)
+		Geometry horizontalWall_01 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(25.0f, 3.25f, 40.0f)), Geometry::createCubeGeometry(30.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_01, glm::vec3(30.f, 5.f, 1) * 0.5f);
+		Geometry horizontalWall_02 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-25.0f, 3.25f, 40.0f)), Geometry::createCubeGeometry(30.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_02, glm::vec3(30.f, 5.f, 1) * 0.5f);
+		// row 2 (x,30)
+		Geometry horizontalWall_03 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, 3.25f, 30.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1.f), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_03, glm::vec3(20.f, 5.f, 1.f) * 0.5f);
+		Geometry horizontalWall_04 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-25.0f, 3.25f, 30.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_04, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
+		// row 3 (x,20)
+		Geometry horizontalWall_05 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_05, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
+		Geometry horizontalWall_06 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-15.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_06, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
+		Geometry horizontalWall_07 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-45.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_07, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
+		// row 4 (x,10)
+		Geometry horizontalWall_08 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1.f), wallMat);
+		pWorld->addCubeToPWorld(horizontalWall_08, glm::vec3(20.f, 5.f, 1.f) * 0.5f);
+		Geometry hotizontalWall_09 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_09, glm::vec3(20.f, 5.f, 1) * 0.5f);
+		Geometry hotizontalWall_10 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-35.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_10, glm::vec3(10.f, 5.f, 1) * 0.5f);
+		// row 5 (x,0)
+		Geometry hotizontalWall_11 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_11, glm::vec3(20.f, 5.f, 1) * 0.5f);
+		Geometry hotizontalWall_12 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_12, glm::vec3(20.f, 5.f, 1) * 0.5f);
+		// row 6 (x,-10)
+		Geometry hotizontalWall_13 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, -10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_13, glm::vec3(20.f, 5.f, 1) * 0.5f);
+		Geometry hotizontalWall_14 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 3.25f, -10.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_14, glm::vec3(10.f, 5.f, 1) * 0.5f);
+		Geometry hotizontalWall_15 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-35.0f, 3.25f, -10.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_15, glm::vec3(10.f, 5.f, 1) * 0.5f);
+		// row 7 (x,-20)
+		Geometry hotizontalWall_16 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(45.0f, 3.25f, -20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_16, glm::vec3(10.f, 5.f, 1) * 0.5f);
+		Geometry hotizontalWall_17 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 3.25f, -20.0f)), Geometry::createCubeGeometry(50.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_17, glm::vec3(50.f, 5.f, 1) * 0.5f);
+		// row 8 (x,-30)
+		Geometry hotizontalWall_18 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_18, glm::vec3(20.f, 5.f, 1) * 0.5f);
+		Geometry hotizontalWall_19 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-20.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_19, glm::vec3(20.f, 5.f, 1) * 0.5f);
+		// row 9 (x,-40)
+		Geometry hotizontalWall_20 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, 3.25f, -40.0f)), Geometry::createCubeGeometry(40.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_20, glm::vec3(40.f, 5.f, 1) * 0.5f);
+		Geometry hotizontalWall_21 = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 3.25f, -40.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
+		pWorld->addCubeToPWorld(hotizontalWall_21, glm::vec3(20.f, 5.f, 1) * 0.5f);
 
 
 		pWorld->addCubeToPWorld(ground, glm::vec3(width, 1.f, length) * 0.5f);
@@ -381,6 +428,7 @@ int main(int argc, char** argv)
 		pWorld->addCubeToPWorld(decke, glm::vec3(width, 1.f, length) * 0.5f);
 		pWorld->addCubeToPWorld(decke2, glm::vec3(width, 1.f, length) * 0.5f);
 		pWorld->addCubeToPWorld(decke3, glm::vec3(width, 1.f, length) * 0.5f);
+		// ====================================================================================================================
 
 
 
