@@ -2,8 +2,8 @@ build/
 .vs/
 bin/debug/assets
 bin/release/assets
-bin/debug/ECG_Solution.exe
-bin/debug/ECG_Solution.pdb
-bin/release/ECG_Solution.exe
-bin/release/ECG_Solution.pdb
+bin/debug/GetOut.exe
+bin/debug/GetOut.pdb
+bin/release/GetOut.exe
+bin/release/GetOut.pdb
 .vscode/
