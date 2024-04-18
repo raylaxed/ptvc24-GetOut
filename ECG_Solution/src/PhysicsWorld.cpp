@@ -48,7 +48,6 @@ void PhysicsWorld::initPhysics() {
 PxScene* PhysicsWorld::getScene() {
 
 	return gScene;
-
 }
 
 int PhysicsWorld::getHitCounter() {
@@ -65,13 +64,11 @@ int PhysicsWorld::getScoreCounter() {
 void PhysicsWorld::setScoreCounter(unsigned int newScore) {
 
 	_scoreCounter = newScore;
-
 }
 
 void PhysicsWorld::setHitCounter(unsigned int newHits) {
 
 	_hitCounter = newHits;
-	
 }
 
 bool PhysicsWorld::playerHasDashed() {
@@ -84,7 +81,6 @@ bool PhysicsWorld::playerHasDashed() {
 * createShape takes the volume
 * PxTransform the position
 * hitboxes are from now on either spheres or cubes
-* TODO implement cylinders eventually
 */
 void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool isStatic, bool isTorchHitbox) {
 
@@ -107,9 +103,6 @@ void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool i
 	// this sets the player, it is going to be the only dynamic cube in our world
 	// disabling x and z axis for not falling over
 	else {
-
-
-
 		PxMaterial* playerMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 		PxShape* playerShape = gPhysics->createShape(PxBoxGeometry(measurements.x, measurements.y, measurements.z), *playerMaterial);
 		PxRigidDynamic* playerHitbox = PxCreateDynamic(*gPhysics, PxTransform(position), *playerShape, 1);
@@ -121,10 +114,7 @@ void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool i
 		gScene->addActor(*playerHitbox);
 		pDynamicObjects.push_back(playerHitbox);
 		pPlayer = playerHitbox;
-
 	}
-
-
 }
 
 void PhysicsWorld::addPlayerToPWorld(Player& player, glm::vec3 measurements) {
@@ -167,9 +157,6 @@ void PhysicsWorld::addSphereToPWorld(Geometry& obj, float radius, bool isStatic)
 		gScene->addActor(*THEHELLISHDODGEBALL);
 		pDynamicObjects.push_back(THEHELLISHDODGEBALL);
 	}
-
-
-
 }
 
 void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
@@ -357,15 +344,13 @@ void PhysicsWorld::draw() {
 
 void PhysicsWorld::resetGame() {
 
-	controllerPlayer->setPosition(PxExtendedVec3(5.0f, 7.0f, 35.0f));
+	controllerPlayer->setPosition(PxExtendedVec3(0.0f, 7.0f, 0.0f));
 	pBall->setAngularVelocity(PxVec3(0, 0, 0));
 	pBall->setLinearVelocity(PxVec3(0, 0, 0));
 	pBall->setGlobalPose(PxTransform(PxVec3(0.0f, 6.5f, -10.0f)));
 	_hasDashed = false;
 	setScoreCounter(0);
 	setHitCounter(0);
-
-
 }
 
 

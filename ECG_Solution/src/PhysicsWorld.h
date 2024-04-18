@@ -20,6 +20,11 @@ enum Movement {
 	PDASH
 };
 
+// Enemy paths defined by control Points
+struct Path {
+	std::vector<physx::PxVec3> controlPoints;
+};
+
 class PhysicsWorld
 {
 
@@ -58,16 +63,16 @@ private:
 
 public:
 
-	
-
 	PhysicsWorld();
 	
 	//initializes PhysX context
 	void initPhysics();
 
-
 	//returns the simulation scene
 	PxScene* getScene();
+
+	// gives all the enemies Hitboxes
+	void initEnemies();
 
 	//returns the HitCounter increasing ball speed
 	int getHitCounter();
