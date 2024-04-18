@@ -17,7 +17,9 @@
 		_skeleton_arm = &hand;
 	}
 
-
+	Model* Player::getHand() {
+		return _skeleton_arm;
+	}
 
 	Camera* Player::getCamera() {
 		return &_camera;

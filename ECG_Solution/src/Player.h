@@ -25,6 +25,8 @@ public:
 
 	void setHand(Model& hand);
 
+	Model* getHand();
+
 	Camera* getCamera();
 
 
