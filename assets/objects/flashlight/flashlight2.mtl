@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl Scene_-_Root.001
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.748857 0.748857 0.748857
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd Scene_-_Root_baseColor.png

@@ -233,14 +233,14 @@ int main(int argc, char** argv)
 
 		// Create textures 
 	
-		std::shared_ptr<Texture> groundTexture = std::make_shared<Texture>("Jute_cocomat_pxr128.dds");
+		std::shared_ptr<Texture> groundTexture = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.jpg");
 		std::shared_ptr<Texture> wallTexture = std::make_shared<Texture>("wall.dds");
 		
 		/*std::shared_ptr<Texture> lavaTexture = std::make_shared<Texture>("lava.dds");
 		std::shared_ptr<Texture> particle = std::make_shared<Texture>("particles.dds");
 		std::shared_ptr<Texture> particleTexture = std::make_shared<Texture>("smoke.dds");*/
 
-		std::shared_ptr<Texture> groundBase = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.png");
+		std::shared_ptr<Texture> groundBase = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.jpg");
 		std::shared_ptr<Texture> groundAO = std::make_shared<Texture>("ground/ground_ambientocclusion.dds");
 		std::shared_ptr<Texture> groundMetallic = std::make_shared<Texture>("ground/ground_metallic.dds");
 		std::shared_ptr<Texture> groundRoughness = std::make_shared<Texture>("ground/ground_roughness.dds");
@@ -263,8 +263,8 @@ int main(int argc, char** argv)
 
 		
 		//load models
-		Model* torch = new Model("assets/objects/torch/textures/untitled.obj", glm::mat4(1.f), *textureShader.get());
-		Model* armModel = new Model("assets/objects/flashlight/scene.gltf", glm::mat4(1.f), *textureShader.get());
+		//Model* torch = new Model("assets/objects/torch/textures/untitled.obj", glm::mat4(1.f), *textureShader.get());
+		Model* armModel = new Model("assets/objects/flashlight/flashlight3.obj", glm::mat4(1.f), *textureShader.get());
 		player.setHand(*armModel);
 		
 		
@@ -288,10 +288,11 @@ int main(int argc, char** argv)
 
 		//std::vector<Geometry*> traps;
 		//std::vector<Geometry*> lava;
-		
 
-		Geometry* cube = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f)), Geometry::createCubeGeometry(5.0f,1.0f, 1.0f), groundMat);
-		pWorld->addCubeToPWorld(*cube, glm::vec3(5.0f, 1.0f, 1.0f) * 0.5f);
+
+		Model* wall = new Model("assets/objects/damaged_wall/damagedWall.obj", glm::mat4(1.f), *textureShader.get());
+		//Geometry* cube = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f)), Geometry::createCubeGeometry(10.0f,5.0f, 1.0f), groundMat);
+		pWorld->addCubeToPWorld(*wall, glm::vec3(10.0f, 5.0f, 1.0f) * 0.5f);
 	
 		
 		
@@ -317,7 +318,7 @@ int main(int argc, char** argv)
 		Geometry* decke = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 35.5f, 0.0f)), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 		Geometry* decke2 = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 30.5f, -20.0f)), glm::radians(18.0f), glm::vec3(0.0f, -1.0f, -1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 		Geometry* decke3 = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 25.5f, 20.0f)), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
-
+		/*
 		// LABYRINTH WALLS... :(
 		// =======================================================================================================================
 		// Vertical walls, ordered from left to right > top to bottom
@@ -421,7 +422,7 @@ int main(int argc, char** argv)
 		pWorld->addCubeToPWorld(*horizontalWall_20, glm::vec3(40.f, 5.f, 1) * 0.5f);
 		Geometry* horizontalWall_21 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 3.25f, -40.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
 		pWorld->addCubeToPWorld(*horizontalWall_21, glm::vec3(20.f, 5.f, 1) * 0.5f);
-
+		*/
 
 		pWorld->addCubeToPWorld(*ground, glm::vec3(width, 1.f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*wallRight, glm::vec3(1.f, 50.5f, length) * 0.5f);
@@ -604,6 +605,10 @@ int main(int argc, char** argv)
 			//drawModelVector(torch,torches);
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
+
+			wall->Draw(wall->getModel());
+
+			
 			//.Draw
 			//armModel.Draw(armModel.getModel());
 			

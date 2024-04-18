@@ -113,11 +113,49 @@ void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool i
 	else {
 
 
-
 		PxMaterial* playerMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 		PxShape* playerShape = gPhysics->createShape(PxBoxGeometry(measurements.x, measurements.y, measurements.z), *playerMaterial);
 		PxRigidDynamic* playerHitbox = PxCreateDynamic(*gPhysics, PxTransform(position), *playerShape, 1);
 		playerHitbox->userData = (void*)&obj;	
+		playerHitbox->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+		playerHitbox->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+		playerHitbox->setMaxLinearVelocity(10.0f);
+
+		gScene->addActor(*playerHitbox);
+		pDynamicObjects.push_back(playerHitbox);
+		pPlayer = playerHitbox;
+
+	}
+
+
+}
+void PhysicsWorld::addCubeToPWorld(Model& obj, glm::vec3 measurements, bool isStatic, bool isTorchHitbox) {
+
+	PxVec3 position = OwnUtils::glmModelMatrixToPxVec3(obj.getModel());
+
+	PxShape* tmpShape = gPhysics->createShape(PxBoxGeometry(measurements.x, measurements.y, measurements.z), *gMaterial);
+
+	//add the object to the physx object
+	if (isStatic) {
+		if (!isTorchHitbox)
+		{
+			gModels.push_back(&obj);
+		}
+		PxTransform x = PxTransform(position, PxQuat(OwnUtils::getOriMat(obj.getModel())));
+		PxRigidStatic* cube = PxCreateStatic(*gPhysics, x, *tmpShape);
+		cube->userData = (void*)&obj;
+		gScene->addActor(*cube);
+		pStaticObjects.push_back(cube);
+	}
+	//this sets the player, it is going to be the only dynamic cube in our world
+	// disabling x and z axis for not falling over
+	else {
+
+
+		PxMaterial* playerMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
+		PxShape* playerShape = gPhysics->createShape(PxBoxGeometry(measurements.x, measurements.y, measurements.z), *playerMaterial);
+		PxRigidDynamic* playerHitbox = PxCreateDynamic(*gPhysics, PxTransform(position), *playerShape, 1);
+		playerHitbox->userData = (void*)&obj;
 		playerHitbox->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 		playerHitbox->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 		playerHitbox->setMaxLinearVelocity(10.0f);

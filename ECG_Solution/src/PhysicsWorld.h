@@ -42,6 +42,7 @@ private:
 	PxController* controllerPlayer = nullptr;
 
 	std::vector<Geometry*> gObjects;
+	std::vector<Model*> gModels;
 	std::vector<PxRigidStatic*> pStaticObjects;
 	std::vector<PxRigidDynamic*> pDynamicObjects;
 
@@ -84,6 +85,9 @@ public:
 	//add a Cube Geometry object into the simulation as a rigidbody
 	void addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool isStatic = true,bool isTorchHitbox = false);
 	
+	void addCubeToPWorld(Model& obj, glm::vec3 measurements, bool isStatic = true, bool isTorchHitbox = false);
+
+
 	void addPlayerToPWorld(Player& player, glm::vec3 measurements);
 
 	//add a Sphere Geometry object into the simulation as a rigidbody
