@@ -3,9 +3,6 @@
 #include <ctime>
 #include <glm/gtx/string_cast.hpp>
 
-//TODO
-//improve ball homing ability
-//improve jumping
 
 PhysicsWorld::PhysicsWorld() {}
 
@@ -45,7 +42,6 @@ void PhysicsWorld::initPhysics() {
 	//gScene->addActor(*groundPlane);
 
 	gManager = PxCreateControllerManager(*gScene);
-
 }
 
 
@@ -108,7 +104,7 @@ void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool i
 		gScene->addActor(*cube);
 		pStaticObjects.push_back(cube);
 	}
-	//this sets the player, it is going to be the only dynamic cube in our world
+	// this sets the player, it is going to be the only dynamic cube in our world
 	// disabling x and z axis for not falling over
 	else {
 
@@ -138,14 +134,10 @@ void PhysicsWorld::addPlayerToPWorld(Player& player, glm::vec3 measurements) {
 	desc.halfHeight = measurements.y;
 	desc.halfForwardExtent = measurements.z;
 	desc.stepOffset = 0.2f;
-	desc.position = PxExtendedVec3(5.0f, 7.0f, 35.0f);
+	desc.position = PxExtendedVec3(0.0f, 7.0f, 0.0f);
 	desc.material = gMaterial;
 	desc.userData = (void*)&player;
 	controllerPlayer = gManager->createController(desc);
-	
-	
-
-
 }
 
 
@@ -182,7 +174,6 @@ void PhysicsWorld::addSphereToPWorld(Geometry& obj, float radius, bool isStatic)
 
 void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
-	
 	static bool airborne = false;
 	static bool gravityEnabled = true;
 	static float dashFactor = 1.f;
@@ -227,7 +218,6 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 	
 	if (movement == PFORWARD) {
 		controllerPlayer->move(dashFactor * forward,0.02f,deltaTime,NULL);
-		
 	}
 	if (movement == PBACKWARD) {
 		controllerPlayer->move(dashFactor * backward, 0.02f, deltaTime, NULL);
@@ -273,8 +263,6 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
 	glm::vec3 newPos = glm::vec3(position.x, position.y, position.z);
 	playerObject->UpdatePosition(newPos);
-	
-	
 }
 
 
