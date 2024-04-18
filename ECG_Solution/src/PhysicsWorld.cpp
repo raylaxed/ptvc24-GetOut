@@ -176,7 +176,7 @@ void PhysicsWorld::addPlayerToPWorld(Player& player, glm::vec3 measurements) {
 	desc.halfHeight = measurements.y;
 	desc.halfForwardExtent = measurements.z;
 	desc.stepOffset = 0.2f;
-	desc.position = PxExtendedVec3(5.0f, 7.0f, 35.0f);
+	desc.position = PxExtendedVec3(0.0f, 7.0f, 0.0f);
 	desc.material = gMaterial;
 	desc.userData = (void*)&player;
 	controllerPlayer = gManager->createController(desc);
