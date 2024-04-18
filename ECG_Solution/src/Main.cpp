@@ -52,7 +52,7 @@ void createQuad();
 void createTrapHitbox(glm::vec3 position, float size, shared_ptr<Material>);
 std::vector<glm::mat4*> createTorches(Model torch, std::shared_ptr<Material> mat);
 std::vector<PointLight*> createLights(glm::vec3 flamecolor);
-
+std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
 
 /* --------------------------------------------- */
 // Global variables
@@ -291,392 +291,6 @@ int main(int argc, char** argv)
 		//std::vector<Geometry*> lava;
 
 		
-		Model* wall = new Model("assets/objects/damaged_wall/damagedWall.obj", glm::mat4(1.f), *textureShader.get());
-		//pWorld->addCubeToPWorld(*wall, glm::vec3(10.0f, 5.0f, 1.0f) * 0.5f);
-
-		std::vector<Model*> walls;
-
-
-		//horizontal towards pos 
-		Model* wall2 = new Model(*wall);
-		wall2->setModel(glm::translate(wall2->getModel(), glm::vec3(5.0f, 0.0f, 10.0f)));
-		pWorld->addCubeToPWorld(*wall2, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall2);
-
-		Model* wall3 = new Model(*wall);
-		wall3->setModel(glm::translate(wall3->getModel(), glm::vec3(-5.0f,0.0f, 10.0f)));
-		pWorld->addCubeToPWorld(*wall3, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall3);
-
-		Model* wall4 = new Model(*wall);
-		wall4->setModel(glm::translate(wall4->getModel(), glm::vec3(35.0f, 0.0f, 10.0f)));
-		pWorld->addCubeToPWorld(*wall4, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall4);
-
-		Model* wall5 = new Model(*wall);
-		wall5->setModel(glm::translate(wall5->getModel(), glm::vec3(45.0f, 0.0f, 10.0f)));
-		pWorld->addCubeToPWorld(*wall5, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall5);
-
-		Model* wall6 = new Model(*wall);
-		wall6->setModel(glm::translate(wall6->getModel(), glm::vec3(-35.0f, 0.0f, 10.0f)));
-		pWorld->addCubeToPWorld(*wall6, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall6);
-
-		Model* wall7 = new Model(*wall);
-		wall7->setModel(glm::translate(wall7->getModel(), glm::vec3(-45.0f, 0.0f, 20.0f)));
-		pWorld->addCubeToPWorld(*wall7, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall7);
-
-		Model* wall8 = new Model(*wall);
-		wall8->setModel(glm::translate(wall8->getModel(), glm::vec3(-15.0f, 0.0f, 20.0f)));
-		pWorld->addCubeToPWorld(*wall8, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall8);
-
-		Model* wall9 = new Model(*wall);
-		wall9->setModel(glm::translate(wall9->getModel(), glm::vec3(15.0f, 0.0f, 20.0f)));
-		pWorld->addCubeToPWorld(*wall9, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall9);
-
-		Model* wall10 = new Model(*wall);
-		wall10->setModel(glm::translate(wall10->getModel(), glm::vec3(-25.0f, 0.0f, 30.0f)));
-		pWorld->addCubeToPWorld(*wall10, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall10);
-
-		Model* wall11 = new Model(*wall);
-		wall11->setModel(glm::translate(wall11->getModel(), glm::vec3(15.0f, 0.0f, 30.0f)));
-		pWorld->addCubeToPWorld(*wall11, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall11);
-
-		Model* wall12 = new Model(*wall);
-		wall12->setModel(glm::translate(wall12->getModel(), glm::vec3(25.0f, 0.0f, 30.0f)));
-		pWorld->addCubeToPWorld(*wall12, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall12);
-
-		Model* wall13 = new Model(*wall);
-		wall13->setModel(glm::translate(wall13->getModel(), glm::vec3(-35.0f, 0.0f, 40.0f)));
-		pWorld->addCubeToPWorld(*wall13, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall13);
-
-		Model* wall14 = new Model(*wall);
-		wall14->setModel(glm::translate(wall14->getModel(), glm::vec3(-25.0f, 0.0f, 40.0f)));
-		pWorld->addCubeToPWorld(*wall14, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall14);
-
-		Model* wall15 = new Model(*wall);
-		wall15->setModel(glm::translate(wall15->getModel(), glm::vec3(-15.0f, 0.0f, 40.0f)));
-		pWorld->addCubeToPWorld(*wall15, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall15);
-
-		Model* wall16 = new Model(*wall);
-		wall16->setModel(glm::translate(wall16->getModel(), glm::vec3(15.0f, 0.0f, 40.0f)));
-		pWorld->addCubeToPWorld(*wall16, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall16);
-
-		Model* wall17 = new Model(*wall);
-		wall17->setModel(glm::translate(wall17->getModel(), glm::vec3(25.0f, 0.0f, 40.0f)));
-		pWorld->addCubeToPWorld(*wall17, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall17);
-
-		Model* wall18 = new Model(*wall);
-		wall18->setModel(glm::translate(wall18->getModel(), glm::vec3(35.0f, 0.0f, 40.0f)));
-		pWorld->addCubeToPWorld(*wall18, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall18);
-
-		//horizontal towards neg 
-
-		Model* wall19 = new Model(*wall);
-		wall19->setModel(glm::translate(wall19->getModel(), glm::vec3(5.0f, 0.0f, -10.0f)));
-		pWorld->addCubeToPWorld(*wall19, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall19);
-
-		Model* wall20 = new Model(*wall);
-		wall20->setModel(glm::translate(wall20->getModel(), glm::vec3(-35.0f, 0.0f, -10.0f)));
-		pWorld->addCubeToPWorld(*wall20, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall20);
-
-		Model* wall21 = new Model(*wall);
-		wall21->setModel(glm::translate(wall21->getModel(), glm::vec3(35.0f, 0.0f, -10.0f)));
-		pWorld->addCubeToPWorld(*wall21, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall21);
-
-		Model* wall22 = new Model(*wall);
-		wall22->setModel(glm::translate(wall22->getModel(), glm::vec3(45.0f, 0.0f, -10.0f)));
-		pWorld->addCubeToPWorld(*wall22, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall22);
-
-		Model* wall23 = new Model(*wall);
-		wall23->setModel(glm::translate(wall23->getModel(), glm::vec3(-15.0f, 0.0f, -20.0f)));
-		pWorld->addCubeToPWorld(*wall23, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall23);
-
-		Model* wall24 = new Model(*wall);
-		wall24->setModel(glm::translate(wall24->getModel(), glm::vec3(-5.0f, 0.0f, -20.0f)));
-		pWorld->addCubeToPWorld(*wall24, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall24);
-
-		Model* wall25 = new Model(*wall);
-		wall25->setModel(glm::translate(wall25->getModel(), glm::vec3(5.0f, 0.0f, -20.0f)));
-		pWorld->addCubeToPWorld(*wall25, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall25);
-
-		Model* wall26 = new Model(*wall);
-		wall26->setModel(glm::translate(wall26->getModel(), glm::vec3(15.0f, 0.0f, -20.0f)));
-		pWorld->addCubeToPWorld(*wall26, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall26);
-
-		Model* wall27 = new Model(*wall);
-		wall27->setModel(glm::translate(wall27->getModel(), glm::vec3(25.0f, 0.0f, -20.0f)));
-		pWorld->addCubeToPWorld(*wall27, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall27);
-
-		Model* wall28 = new Model(*wall);
-		wall28->setModel(glm::translate(wall28->getModel(), glm::vec3(45.0f, 0.0f, -20.0f)));
-		pWorld->addCubeToPWorld(*wall28, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall28);
-
-		Model* wall29 = new Model(*wall);
-		wall29->setModel(glm::translate(wall29->getModel(), glm::vec3(-35.0f, 0.0f, -30.0f)));
-		pWorld->addCubeToPWorld(*wall29, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall29);
-
-		Model* wall30 = new Model(*wall);
-		wall30->setModel(glm::translate(wall30->getModel(), glm::vec3(-25.0f, 0.0f, -30.0f)));
-		pWorld->addCubeToPWorld(*wall30, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall30);
-
-		Model* wall31 = new Model(*wall);
-		wall31->setModel(glm::translate(wall31->getModel(), glm::vec3(-15.0f, 0.0f, -30.0f)));
-		pWorld->addCubeToPWorld(*wall31, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall31);
-
-		Model* wall32 = new Model(*wall);
-		wall32->setModel(glm::translate(wall32->getModel(), glm::vec3(15.0f, 0.0f, -30.0f)));
-		pWorld->addCubeToPWorld(*wall32, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall32);
-
-		Model* wall33 = new Model(*wall);
-		wall33->setModel(glm::translate(wall33->getModel(), glm::vec3(25.0f, 0.0f, -30.0f)));
-		pWorld->addCubeToPWorld(*wall33, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall33);
-
-		Model* wall34 = new Model(*wall);
-		wall34->setModel(glm::translate(wall34->getModel(), glm::vec3(-35.0f, 0.0f, -40.0f)));
-		pWorld->addCubeToPWorld(*wall34, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall34);
-
-		Model* wall35 = new Model(*wall);
-		wall35->setModel(glm::translate(wall35->getModel(), glm::vec3(-25.0f, 0.0f, -40.0f)));
-		pWorld->addCubeToPWorld(*wall35, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall35);
-
-		Model* wall36 = new Model(*wall);
-		wall36->setModel(glm::translate(wall36->getModel(), glm::vec3(5.0f, 0.0f, -40.0f)));
-		pWorld->addCubeToPWorld(*wall36, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall36);
-
-		Model* wall37 = new Model(*wall);
-		wall37->setModel(glm::translate(wall37->getModel(), glm::vec3(15.0f, 0.0f, -40.0f)));
-		pWorld->addCubeToPWorld(*wall37, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall37);
-
-
-		Model* wall38 = new Model(*wall);
-		wall38->setModel(glm::translate(wall38->getModel(), glm::vec3(25.0f, 0.0f, -40.0f)));
-		pWorld->addCubeToPWorld(*wall38, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall38);
-
-		Model* wall39 = new Model(*wall);
-		wall39->setModel(glm::translate(wall39->getModel(), glm::vec3(35.0f, 0.0f, -40.0f)));
-		pWorld->addCubeToPWorld(*wall39, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-		walls.push_back(wall39);
-
-		//vertical
-
-		Model* wallVert = new Model("assets/objects/damaged_wall/damagedWallVertical.obj", glm::mat4(1.f), *textureShader.get());
-		//pWorld->addCubeToPWorld(*wallVert, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
-
-		Model* wall40 = new Model(*wallVert);
-		wall40->setModel(glm::translate(wall40->getModel(), glm::vec3(0.0f, 0.0f, 25.0f)));
-		pWorld->addCubeToPWorld(*wall40, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall40);
-
-		Model* wall41 = new Model(*wallVert);
-		wall41->setModel(glm::translate(wall41->getModel(), glm::vec3(0.0f, 0.0f, 35.0f)));
-		pWorld->addCubeToPWorld(*wall41, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall41);
-
-		Model* wall42 = new Model(*wallVert);
-		wall42->setModel(glm::translate(wall42->getModel(), glm::vec3(0.0f, 0.0f, 45.0f)));
-		pWorld->addCubeToPWorld(*wall42, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall42);
-
-
-		Model* wall43 = new Model(*wallVert);
-		wall43->setModel(glm::translate(wall43->getModel(), glm::vec3(0.0f, 0.0f, -25.0f)));
-		pWorld->addCubeToPWorld(*wall43, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall43);
-
-		Model* wall44 = new Model(*wallVert);
-		wall44->setModel(glm::translate(wall44->getModel(), glm::vec3(0.0f, 0.0f, -35.0f)));
-		pWorld->addCubeToPWorld(*wall44, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall44);
-
-		Model* wall45 = new Model(*wallVert);
-		wall45->setModel(glm::translate(wall45->getModel(), glm::vec3(10.0f, 0.0f, 25.0f)));
-		pWorld->addCubeToPWorld(*wall45, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall45);
-
-		Model* wall46 = new Model(*wallVert);
-		wall46->setModel(glm::translate(wall46->getModel(), glm::vec3(20.0f, 0.0f, 15.0f)));
-		pWorld->addCubeToPWorld(*wall46, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall46);
-
-		Model* wall47 = new Model(*wallVert);
-		wall47->setModel(glm::translate(wall47->getModel(), glm::vec3(20.0f, 0.0f, 5.0f)));
-		pWorld->addCubeToPWorld(*wall47, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall47);
-
-		Model* wall48 = new Model(*wallVert);
-		wall48->setModel(glm::translate(wall48->getModel(), glm::vec3(20.0f, 0.0f, -5.0f)));
-		pWorld->addCubeToPWorld(*wall48, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall48);
-
-		Model* wall49 = new Model(*wallVert);
-		wall49->setModel(glm::translate(wall49->getModel(), glm::vec3(30.0f, 0.0f, 25.0f)));
-		pWorld->addCubeToPWorld(*wall49, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall49);
-
-		Model* wall50 = new Model(*wallVert);
-		wall50->setModel(glm::translate(wall50->getModel(), glm::vec3(30.0f, 0.0f, 15.0f)));
-		pWorld->addCubeToPWorld(*wall50, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall50);
-
-		Model* wall51 = new Model(*wallVert);
-		wall51->setModel(glm::translate(wall51->getModel(), glm::vec3(40.0f, 0.0f, 35.0f)));
-		pWorld->addCubeToPWorld(*wall51, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall51);
-
-		Model* wall52 = new Model(*wallVert);
-		wall52->setModel(glm::translate(wall52->getModel(), glm::vec3(40.0f, 0.0f, 25.0f)));
-		pWorld->addCubeToPWorld(*wall52, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall52);
-
-		Model* wall53 = new Model(*wallVert);
-		wall53->setModel(glm::translate(wall53->getModel(), glm::vec3(40.0f, 0.0f, 15.0f)));
-		pWorld->addCubeToPWorld(*wall53, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall53);
-
-		Model* wall54 = new Model(*wallVert);
-		wall54->setModel(glm::translate(wall54->getModel(), glm::vec3(40.0f, 0.0f, -25.0f)));
-		pWorld->addCubeToPWorld(*wall54, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall54);
-
-		Model* wall55 = new Model(*wallVert);
-		wall55->setModel(glm::translate(wall55->getModel(), glm::vec3(40.0f, 0.0f, -35.0f)));
-		pWorld->addCubeToPWorld(*wall55, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall55);
-
-		//vert towards neg
-		Model* wall56 = new Model(*wallVert);
-		wall56->setModel(glm::translate(wall56->getModel(), glm::vec3(-10.0f, 0.0f, 35.0f)));
-		pWorld->addCubeToPWorld(*wall56, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall56);
-
-		Model* wall57 = new Model(*wallVert);
-		wall57->setModel(glm::translate(wall57->getModel(), glm::vec3(-10.0f, 0.0f, 25.0f)));
-		pWorld->addCubeToPWorld(*wall57, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall57);
-
-		Model* wall58 = new Model(*wallVert);
-		wall58->setModel(glm::translate(wall58->getModel(), glm::vec3(-10.0f, 0.0f, -45.0f)));
-		pWorld->addCubeToPWorld(*wall58, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall58);
-
-		Model* wall59 = new Model(*wallVert);
-		wall59->setModel(glm::translate(wall59->getModel(), glm::vec3(-10.0f, 0.0f, -35.0f)));
-		pWorld->addCubeToPWorld(*wall59, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall59);
-
-		Model* wall60 = new Model(*wallVert);
-		wall60->setModel(glm::translate(wall60->getModel(), glm::vec3(-20.0f, 0.0f, -45.0f)));
-		pWorld->addCubeToPWorld(*wall60, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall60);
-
-		Model* wall61 = new Model(*wallVert);
-		wall61->setModel(glm::translate(wall61->getModel(), glm::vec3(-20.0f, 0.0f, -15.0f)));
-		pWorld->addCubeToPWorld(*wall61, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall61);
-
-		Model* wall62 = new Model(*wallVert);
-		wall62->setModel(glm::translate(wall62->getModel(), glm::vec3(-20.0f, 0.0f, -5.0f)));
-		pWorld->addCubeToPWorld(*wall62, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall62);
-
-		Model* wall63 = new Model(*wallVert);
-		wall63->setModel(glm::translate(wall63->getModel(), glm::vec3(-20.0f, 0.0f, 15.0f)));
-		pWorld->addCubeToPWorld(*wall63, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall63);
-
-		Model* wall64 = new Model(*wallVert);
-		wall64->setModel(glm::translate(wall64->getModel(), glm::vec3(-30.0f, 0.0f, 25.0f)));
-		pWorld->addCubeToPWorld(*wall64, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall64);
-
-		Model* wall65 = new Model(*wallVert);
-		wall65->setModel(glm::translate(wall65->getModel(), glm::vec3(-30.0f, 0.0f, 15.0f)));
-		pWorld->addCubeToPWorld(*wall65, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall65);
-
-		Model* wall66 = new Model(*wallVert);
-		wall66->setModel(glm::translate(wall66->getModel(), glm::vec3(-30.0f, 0.0f, -15.0f)));
-		pWorld->addCubeToPWorld(*wall66, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall66);
-
-		Model* wall67 = new Model(*wallVert);
-		wall67->setModel(glm::translate(wall67->getModel(), glm::vec3(-30.0f, 0.0f, -25.0f)));
-		pWorld->addCubeToPWorld(*wall67, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall67);
-
-		Model* wall68 = new Model(*wallVert);
-		wall68->setModel(glm::translate(wall68->getModel(), glm::vec3(-40.0f, 0.0f, 35.0f)));
-		pWorld->addCubeToPWorld(*wall68, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall68);
-
-		Model* wall69 = new Model(*wallVert);
-		wall69->setModel(glm::translate(wall69->getModel(), glm::vec3(-40.0f, 0.0f, 25.0f)));
-		pWorld->addCubeToPWorld(*wall69, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall69);
-
-		Model* wall70 = new Model(*wallVert);
-		wall70->setModel(glm::translate(wall70->getModel(), glm::vec3(-40.0f, 0.0f, -25.0f)));
-		pWorld->addCubeToPWorld(*wall70, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall70);
-
-		Model* wall71 = new Model(*wallVert);
-		wall71->setModel(glm::translate(wall71->getModel(), glm::vec3(-40.0f, 0.0f, -35.0f)));
-		pWorld->addCubeToPWorld(*wall71, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall71);
-
-		Model* wall72 = new Model(*wallVert);
-		wall72->setModel(glm::translate(wall72->getModel(), glm::vec3(-10.0f, 0.0f, -5.0f)));
-		pWorld->addCubeToPWorld(*wall72, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall72);
-
-		Model* wall73 = new Model(*wallVert);
-		wall73->setModel(glm::translate(wall73->getModel(), glm::vec3(-10.0f, 0.0f, 5.0f)));
-		pWorld->addCubeToPWorld(*wall73, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall73);
-
-		Model* wall74 = new Model(*wallVert);
-		wall74->setModel(glm::translate(wall74->getModel(), glm::vec3(10.0f, 0.0f, 5.0f)));
-		pWorld->addCubeToPWorld(*wall74, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall74);
-
-		Model* wall75 = new Model(*wallVert);
-		wall75->setModel(glm::translate(wall75->getModel(), glm::vec3(10.0f, 0.0f, -5.0f)));
-		pWorld->addCubeToPWorld(*wall75, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
-		walls.push_back(wall75);
 		//Geometry* cube = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f)), Geometry::createCubeGeometry(10.0f,5.0f, 1.0f), groundMat);
 		
 		
@@ -817,6 +431,8 @@ int main(int argc, char** argv)
 		pWorld->addCubeToPWorld(*decke, glm::vec3(width, 1.f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*decke2, glm::vec3(width, 1.f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*decke3, glm::vec3(width, 1.f, length) * 0.5f);
+
+		std::vector<Model*> walls = createWalls(textureShader);
 
 		// ====================================================================================================================
 
@@ -1322,6 +938,400 @@ std::vector<glm::mat4*> createTorches(Model torch, std::shared_ptr<Material> mat
 	}
 
 	return torches;
+}
+
+std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader) {
+
+	Model* wall = new Model("assets/objects/damaged_wall/damagedWall.obj", glm::mat4(1.f), *shader.get());
+	//pWorld->addCubeToPWorld(*wall, glm::vec3(10.0f, 5.0f, 1.0f) * 0.5f);
+
+	std::vector<Model*> walls;
+
+
+	//horizontal towards pos 
+	Model* wall2 = new Model(*wall);
+	wall2->setModel(glm::translate(wall2->getModel(), glm::vec3(5.0f, 0.0f, 10.0f)));
+	pWorld->addCubeToPWorld(*wall2, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall2);
+
+	Model* wall3 = new Model(*wall);
+	wall3->setModel(glm::translate(wall3->getModel(), glm::vec3(-5.0f, 0.0f, 10.0f)));
+	pWorld->addCubeToPWorld(*wall3, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall3);
+
+	Model* wall4 = new Model(*wall);
+	wall4->setModel(glm::translate(wall4->getModel(), glm::vec3(35.0f, 0.0f, 10.0f)));
+	pWorld->addCubeToPWorld(*wall4, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall4);
+
+	Model* wall5 = new Model(*wall);
+	wall5->setModel(glm::translate(wall5->getModel(), glm::vec3(45.0f, 0.0f, 10.0f)));
+	pWorld->addCubeToPWorld(*wall5, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall5);
+
+	Model* wall6 = new Model(*wall);
+	wall6->setModel(glm::translate(wall6->getModel(), glm::vec3(-35.0f, 0.0f, 10.0f)));
+	pWorld->addCubeToPWorld(*wall6, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall6);
+
+	Model* wall7 = new Model(*wall);
+	wall7->setModel(glm::translate(wall7->getModel(), glm::vec3(-45.0f, 0.0f, 20.0f)));
+	pWorld->addCubeToPWorld(*wall7, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall7);
+
+	Model* wall8 = new Model(*wall);
+	wall8->setModel(glm::translate(wall8->getModel(), glm::vec3(-15.0f, 0.0f, 20.0f)));
+	pWorld->addCubeToPWorld(*wall8, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall8);
+
+	Model* wall9 = new Model(*wall);
+	wall9->setModel(glm::translate(wall9->getModel(), glm::vec3(15.0f, 0.0f, 20.0f)));
+	pWorld->addCubeToPWorld(*wall9, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall9);
+
+	Model* wall10 = new Model(*wall);
+	wall10->setModel(glm::translate(wall10->getModel(), glm::vec3(-25.0f, 0.0f, 30.0f)));
+	pWorld->addCubeToPWorld(*wall10, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall10);
+
+	Model* wall11 = new Model(*wall);
+	wall11->setModel(glm::translate(wall11->getModel(), glm::vec3(15.0f, 0.0f, 30.0f)));
+	pWorld->addCubeToPWorld(*wall11, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall11);
+
+	Model* wall12 = new Model(*wall);
+	wall12->setModel(glm::translate(wall12->getModel(), glm::vec3(25.0f, 0.0f, 30.0f)));
+	pWorld->addCubeToPWorld(*wall12, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall12);
+
+	Model* wall13 = new Model(*wall);
+	wall13->setModel(glm::translate(wall13->getModel(), glm::vec3(-35.0f, 0.0f, 40.0f)));
+	pWorld->addCubeToPWorld(*wall13, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall13);
+
+	Model* wall14 = new Model(*wall);
+	wall14->setModel(glm::translate(wall14->getModel(), glm::vec3(-25.0f, 0.0f, 40.0f)));
+	pWorld->addCubeToPWorld(*wall14, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall14);
+
+	Model* wall15 = new Model(*wall);
+	wall15->setModel(glm::translate(wall15->getModel(), glm::vec3(-15.0f, 0.0f, 40.0f)));
+	pWorld->addCubeToPWorld(*wall15, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall15);
+
+	Model* wall16 = new Model(*wall);
+	wall16->setModel(glm::translate(wall16->getModel(), glm::vec3(15.0f, 0.0f, 40.0f)));
+	pWorld->addCubeToPWorld(*wall16, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall16);
+
+	Model* wall17 = new Model(*wall);
+	wall17->setModel(glm::translate(wall17->getModel(), glm::vec3(25.0f, 0.0f, 40.0f)));
+	pWorld->addCubeToPWorld(*wall17, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall17);
+
+	Model* wall18 = new Model(*wall);
+	wall18->setModel(glm::translate(wall18->getModel(), glm::vec3(35.0f, 0.0f, 40.0f)));
+	pWorld->addCubeToPWorld(*wall18, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall18);
+
+	//horizontal towards neg 
+
+	Model* wall19 = new Model(*wall);
+	wall19->setModel(glm::translate(wall19->getModel(), glm::vec3(5.0f, 0.0f, -10.0f)));
+	pWorld->addCubeToPWorld(*wall19, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall19);
+
+	Model* wall20 = new Model(*wall);
+	wall20->setModel(glm::translate(wall20->getModel(), glm::vec3(-35.0f, 0.0f, -10.0f)));
+	pWorld->addCubeToPWorld(*wall20, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall20);
+
+	Model* wall21 = new Model(*wall);
+	wall21->setModel(glm::translate(wall21->getModel(), glm::vec3(35.0f, 0.0f, -10.0f)));
+	pWorld->addCubeToPWorld(*wall21, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall21);
+
+	Model* wall22 = new Model(*wall);
+	wall22->setModel(glm::translate(wall22->getModel(), glm::vec3(45.0f, 0.0f, -10.0f)));
+	pWorld->addCubeToPWorld(*wall22, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall22);
+
+	Model* wall23 = new Model(*wall);
+	wall23->setModel(glm::translate(wall23->getModel(), glm::vec3(-15.0f, 0.0f, -20.0f)));
+	pWorld->addCubeToPWorld(*wall23, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall23);
+
+	Model* wall24 = new Model(*wall);
+	wall24->setModel(glm::translate(wall24->getModel(), glm::vec3(-5.0f, 0.0f, -20.0f)));
+	pWorld->addCubeToPWorld(*wall24, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall24);
+
+	Model* wall25 = new Model(*wall);
+	wall25->setModel(glm::translate(wall25->getModel(), glm::vec3(5.0f, 0.0f, -20.0f)));
+	pWorld->addCubeToPWorld(*wall25, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall25);
+
+	Model* wall26 = new Model(*wall);
+	wall26->setModel(glm::translate(wall26->getModel(), glm::vec3(15.0f, 0.0f, -20.0f)));
+	pWorld->addCubeToPWorld(*wall26, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall26);
+
+	Model* wall27 = new Model(*wall);
+	wall27->setModel(glm::translate(wall27->getModel(), glm::vec3(25.0f, 0.0f, -20.0f)));
+	pWorld->addCubeToPWorld(*wall27, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall27);
+
+	Model* wall28 = new Model(*wall);
+	wall28->setModel(glm::translate(wall28->getModel(), glm::vec3(45.0f, 0.0f, -20.0f)));
+	pWorld->addCubeToPWorld(*wall28, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall28);
+
+	Model* wall29 = new Model(*wall);
+	wall29->setModel(glm::translate(wall29->getModel(), glm::vec3(-35.0f, 0.0f, -30.0f)));
+	pWorld->addCubeToPWorld(*wall29, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall29);
+
+	Model* wall30 = new Model(*wall);
+	wall30->setModel(glm::translate(wall30->getModel(), glm::vec3(-25.0f, 0.0f, -30.0f)));
+	pWorld->addCubeToPWorld(*wall30, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall30);
+
+	Model* wall31 = new Model(*wall);
+	wall31->setModel(glm::translate(wall31->getModel(), glm::vec3(-15.0f, 0.0f, -30.0f)));
+	pWorld->addCubeToPWorld(*wall31, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall31);
+
+	Model* wall32 = new Model(*wall);
+	wall32->setModel(glm::translate(wall32->getModel(), glm::vec3(15.0f, 0.0f, -30.0f)));
+	pWorld->addCubeToPWorld(*wall32, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall32);
+
+	Model* wall33 = new Model(*wall);
+	wall33->setModel(glm::translate(wall33->getModel(), glm::vec3(25.0f, 0.0f, -30.0f)));
+	pWorld->addCubeToPWorld(*wall33, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall33);
+
+	Model* wall34 = new Model(*wall);
+	wall34->setModel(glm::translate(wall34->getModel(), glm::vec3(-35.0f, 0.0f, -40.0f)));
+	pWorld->addCubeToPWorld(*wall34, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall34);
+
+	Model* wall35 = new Model(*wall);
+	wall35->setModel(glm::translate(wall35->getModel(), glm::vec3(-25.0f, 0.0f, -40.0f)));
+	pWorld->addCubeToPWorld(*wall35, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall35);
+
+	Model* wall36 = new Model(*wall);
+	wall36->setModel(glm::translate(wall36->getModel(), glm::vec3(5.0f, 0.0f, -40.0f)));
+	pWorld->addCubeToPWorld(*wall36, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall36);
+
+	Model* wall37 = new Model(*wall);
+	wall37->setModel(glm::translate(wall37->getModel(), glm::vec3(15.0f, 0.0f, -40.0f)));
+	pWorld->addCubeToPWorld(*wall37, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall37);
+
+
+	Model* wall38 = new Model(*wall);
+	wall38->setModel(glm::translate(wall38->getModel(), glm::vec3(25.0f, 0.0f, -40.0f)));
+	pWorld->addCubeToPWorld(*wall38, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall38);
+
+	Model* wall39 = new Model(*wall);
+	wall39->setModel(glm::translate(wall39->getModel(), glm::vec3(35.0f, 0.0f, -40.0f)));
+	pWorld->addCubeToPWorld(*wall39, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+	walls.push_back(wall39);
+
+	//vertical
+
+	Model* wallVert = new Model("assets/objects/damaged_wall/damagedWallVertical.obj", glm::mat4(1.f), *shader.get());
+	//pWorld->addCubeToPWorld(*wallVert, glm::vec3(10.0f, 10.0f, 1.0f) * 0.5f);
+
+	Model* wall40 = new Model(*wallVert);
+	wall40->setModel(glm::translate(wall40->getModel(), glm::vec3(0.0f, 0.0f, 25.0f)));
+	pWorld->addCubeToPWorld(*wall40, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall40);
+
+	Model* wall41 = new Model(*wallVert);
+	wall41->setModel(glm::translate(wall41->getModel(), glm::vec3(0.0f, 0.0f, 35.0f)));
+	pWorld->addCubeToPWorld(*wall41, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall41);
+
+	Model* wall42 = new Model(*wallVert);
+	wall42->setModel(glm::translate(wall42->getModel(), glm::vec3(0.0f, 0.0f, 45.0f)));
+	pWorld->addCubeToPWorld(*wall42, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall42);
+
+
+	Model* wall43 = new Model(*wallVert);
+	wall43->setModel(glm::translate(wall43->getModel(), glm::vec3(0.0f, 0.0f, -25.0f)));
+	pWorld->addCubeToPWorld(*wall43, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall43);
+
+	Model* wall44 = new Model(*wallVert);
+	wall44->setModel(glm::translate(wall44->getModel(), glm::vec3(0.0f, 0.0f, -35.0f)));
+	pWorld->addCubeToPWorld(*wall44, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall44);
+
+	Model* wall45 = new Model(*wallVert);
+	wall45->setModel(glm::translate(wall45->getModel(), glm::vec3(10.0f, 0.0f, 25.0f)));
+	pWorld->addCubeToPWorld(*wall45, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall45);
+
+	Model* wall46 = new Model(*wallVert);
+	wall46->setModel(glm::translate(wall46->getModel(), glm::vec3(20.0f, 0.0f, 15.0f)));
+	pWorld->addCubeToPWorld(*wall46, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall46);
+
+	Model* wall47 = new Model(*wallVert);
+	wall47->setModel(glm::translate(wall47->getModel(), glm::vec3(20.0f, 0.0f, 5.0f)));
+	pWorld->addCubeToPWorld(*wall47, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall47);
+
+	Model* wall48 = new Model(*wallVert);
+	wall48->setModel(glm::translate(wall48->getModel(), glm::vec3(20.0f, 0.0f, -5.0f)));
+	pWorld->addCubeToPWorld(*wall48, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall48);
+
+	Model* wall49 = new Model(*wallVert);
+	wall49->setModel(glm::translate(wall49->getModel(), glm::vec3(30.0f, 0.0f, 25.0f)));
+	pWorld->addCubeToPWorld(*wall49, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall49);
+
+	Model* wall50 = new Model(*wallVert);
+	wall50->setModel(glm::translate(wall50->getModel(), glm::vec3(30.0f, 0.0f, 15.0f)));
+	pWorld->addCubeToPWorld(*wall50, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall50);
+
+	Model* wall51 = new Model(*wallVert);
+	wall51->setModel(glm::translate(wall51->getModel(), glm::vec3(40.0f, 0.0f, 35.0f)));
+	pWorld->addCubeToPWorld(*wall51, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall51);
+
+	Model* wall52 = new Model(*wallVert);
+	wall52->setModel(glm::translate(wall52->getModel(), glm::vec3(40.0f, 0.0f, 25.0f)));
+	pWorld->addCubeToPWorld(*wall52, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall52);
+
+	Model* wall53 = new Model(*wallVert);
+	wall53->setModel(glm::translate(wall53->getModel(), glm::vec3(40.0f, 0.0f, 15.0f)));
+	pWorld->addCubeToPWorld(*wall53, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall53);
+
+	Model* wall54 = new Model(*wallVert);
+	wall54->setModel(glm::translate(wall54->getModel(), glm::vec3(40.0f, 0.0f, -25.0f)));
+	pWorld->addCubeToPWorld(*wall54, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall54);
+
+	Model* wall55 = new Model(*wallVert);
+	wall55->setModel(glm::translate(wall55->getModel(), glm::vec3(40.0f, 0.0f, -35.0f)));
+	pWorld->addCubeToPWorld(*wall55, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall55);
+
+	//vert towards neg
+	Model* wall56 = new Model(*wallVert);
+	wall56->setModel(glm::translate(wall56->getModel(), glm::vec3(-10.0f, 0.0f, 35.0f)));
+	pWorld->addCubeToPWorld(*wall56, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall56);
+
+	Model* wall57 = new Model(*wallVert);
+	wall57->setModel(glm::translate(wall57->getModel(), glm::vec3(-10.0f, 0.0f, 25.0f)));
+	pWorld->addCubeToPWorld(*wall57, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall57);
+
+	Model* wall58 = new Model(*wallVert);
+	wall58->setModel(glm::translate(wall58->getModel(), glm::vec3(-10.0f, 0.0f, -45.0f)));
+	pWorld->addCubeToPWorld(*wall58, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall58);
+
+	Model* wall59 = new Model(*wallVert);
+	wall59->setModel(glm::translate(wall59->getModel(), glm::vec3(-10.0f, 0.0f, -35.0f)));
+	pWorld->addCubeToPWorld(*wall59, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall59);
+
+	Model* wall60 = new Model(*wallVert);
+	wall60->setModel(glm::translate(wall60->getModel(), glm::vec3(-20.0f, 0.0f, -45.0f)));
+	pWorld->addCubeToPWorld(*wall60, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall60);
+
+	Model* wall61 = new Model(*wallVert);
+	wall61->setModel(glm::translate(wall61->getModel(), glm::vec3(-20.0f, 0.0f, -15.0f)));
+	pWorld->addCubeToPWorld(*wall61, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall61);
+
+	Model* wall62 = new Model(*wallVert);
+	wall62->setModel(glm::translate(wall62->getModel(), glm::vec3(-20.0f, 0.0f, -5.0f)));
+	pWorld->addCubeToPWorld(*wall62, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall62);
+
+	Model* wall63 = new Model(*wallVert);
+	wall63->setModel(glm::translate(wall63->getModel(), glm::vec3(-20.0f, 0.0f, 15.0f)));
+	pWorld->addCubeToPWorld(*wall63, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall63);
+
+	Model* wall64 = new Model(*wallVert);
+	wall64->setModel(glm::translate(wall64->getModel(), glm::vec3(-30.0f, 0.0f, 25.0f)));
+	pWorld->addCubeToPWorld(*wall64, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall64);
+
+	Model* wall65 = new Model(*wallVert);
+	wall65->setModel(glm::translate(wall65->getModel(), glm::vec3(-30.0f, 0.0f, 15.0f)));
+	pWorld->addCubeToPWorld(*wall65, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall65);
+
+	Model* wall66 = new Model(*wallVert);
+	wall66->setModel(glm::translate(wall66->getModel(), glm::vec3(-30.0f, 0.0f, -15.0f)));
+	pWorld->addCubeToPWorld(*wall66, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall66);
+
+	Model* wall67 = new Model(*wallVert);
+	wall67->setModel(glm::translate(wall67->getModel(), glm::vec3(-30.0f, 0.0f, -25.0f)));
+	pWorld->addCubeToPWorld(*wall67, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall67);
+
+	Model* wall68 = new Model(*wallVert);
+	wall68->setModel(glm::translate(wall68->getModel(), glm::vec3(-40.0f, 0.0f, 35.0f)));
+	pWorld->addCubeToPWorld(*wall68, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall68);
+
+	Model* wall69 = new Model(*wallVert);
+	wall69->setModel(glm::translate(wall69->getModel(), glm::vec3(-40.0f, 0.0f, 25.0f)));
+	pWorld->addCubeToPWorld(*wall69, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall69);
+
+	Model* wall70 = new Model(*wallVert);
+	wall70->setModel(glm::translate(wall70->getModel(), glm::vec3(-40.0f, 0.0f, -25.0f)));
+	pWorld->addCubeToPWorld(*wall70, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall70);
+
+	Model* wall71 = new Model(*wallVert);
+	wall71->setModel(glm::translate(wall71->getModel(), glm::vec3(-40.0f, 0.0f, -35.0f)));
+	pWorld->addCubeToPWorld(*wall71, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall71);
+
+	Model* wall72 = new Model(*wallVert);
+	wall72->setModel(glm::translate(wall72->getModel(), glm::vec3(-10.0f, 0.0f, -5.0f)));
+	pWorld->addCubeToPWorld(*wall72, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall72);
+
+	Model* wall73 = new Model(*wallVert);
+	wall73->setModel(glm::translate(wall73->getModel(), glm::vec3(-10.0f, 0.0f, 5.0f)));
+	pWorld->addCubeToPWorld(*wall73, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall73);
+
+	Model* wall74 = new Model(*wallVert);
+	wall74->setModel(glm::translate(wall74->getModel(), glm::vec3(10.0f, 0.0f, 5.0f)));
+	pWorld->addCubeToPWorld(*wall74, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall74);
+
+	Model* wall75 = new Model(*wallVert);
+	wall75->setModel(glm::translate(wall75->getModel(), glm::vec3(10.0f, 0.0f, -5.0f)));
+	pWorld->addCubeToPWorld(*wall75, glm::vec3(1.0f, 10.0f, 10.0f) * 0.5f);
+	walls.push_back(wall75);
+
+	return walls;
+
+
 }
 //create all the lights for the torches
 std::vector<PointLight*> createLights(glm::vec3 flamecolor)
