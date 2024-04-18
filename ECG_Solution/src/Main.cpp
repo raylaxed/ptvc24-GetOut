@@ -215,10 +215,10 @@ int main(int argc, char** argv)
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 		std::shared_ptr<Shader> particleShader = std::make_shared<Shader>("particle.vert", "particle.frag");
 		std::shared_ptr<Shader> cookTexturedShader = std::make_shared<Shader>("textureCook.vert", "cook_torrance_textured.frag");
-		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torrance.frag");
+		//std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torrance.frag");
 		std::shared_ptr<Shader> hudShader = std::make_shared<Shader>("hud.vert", "hud.frag");
 		
-		std::shared_ptr<Shader> lightMakerShader = std::make_shared<Shader>("textureCook.vert", "visible_light_maker.frag");
+		//std::shared_ptr<Shader> lightMakerShader = std::make_shared<Shader>("textureCook.vert", "visible_light_maker.frag");
 		std::shared_ptr<Shader> blurShader = std::make_shared<Shader>("blur.vert", "blur.frag");
 		std::shared_ptr<Shader> bloomShader = std::make_shared<Shader>("bloom.vert", "bloom.frag");
 		
@@ -232,39 +232,25 @@ int main(int argc, char** argv)
 		
 
 		// Create textures 
-		
-	
 		std::shared_ptr<Texture> groundTexture = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.jpg");
 		std::shared_ptr<Texture> wallTexture = std::make_shared<Texture>("wall.dds");
 		
-		/*std::shared_ptr<Texture> lavaTexture = std::make_shared<Texture>("lava.dds");
-		std::shared_ptr<Texture> particle = std::make_shared<Texture>("particles.dds");
-		std::shared_ptr<Texture> particleTexture = std::make_shared<Texture>("smoke.dds");*/
-
+		
 		std::shared_ptr<Texture> groundBase = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.jpg");
 		std::shared_ptr<Texture> groundAO = std::make_shared<Texture>("ground/ground_ambientocclusion.dds");
 		std::shared_ptr<Texture> groundMetallic = std::make_shared<Texture>("ground/ground_metallic.dds");
 		std::shared_ptr<Texture> groundRoughness = std::make_shared<Texture>("ground/ground_roughness.dds");
 		std::shared_ptr<Texture> groundNormal = std::make_shared<Texture>("ground/ground_normal.dds");
-		/*
-		std::shared_ptr<Texture> ballBasecolor = std::make_shared<Texture>("lava/lava_basecolor.dds");
-		std::shared_ptr<Texture> ballAO = std::make_shared<Texture>("lava/lava_ambientocclusion.dds");
-		std::shared_ptr<Texture> ballMetallic = std::make_shared<Texture>("lava/lava_metallic.dds");
-		std::shared_ptr<Texture> ballRoughness = std::make_shared<Texture>("lava/lava_roughness.dds");
-		std::shared_ptr<Texture> ballNormal = std::make_shared<Texture>("lava/lava_normal.dds");*/
-
+		
 
 
 		// Create materials,																					x = ambient, y = diffuse, z = specular		
 		std::shared_ptr<Material> playerMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, groundBase);
 		std::shared_ptr<Material> groundMat = std::make_shared<TextureMaterial>(cookTexturedShader,groundTexture,groundAO,groundMetallic,groundNormal,groundRoughness);
 		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(cookTexturedShader, wallTexture, groundAO, groundMetallic, groundNormal, groundRoughness);
-		//std::shared_ptr<Material> ballMat = std::make_shared<TextureMaterial>(cookTexturedShader,ballBasecolor,ballAO,ballMetallic,ballRoughness,ballNormal);		
-		//std::shared_ptr<Material> lavaMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, lavaTexture);
-
 		
 		//load models
-		//Model* torch = new Model("assets/objects/torch/textures/untitled.obj", glm::mat4(1.f), *textureShader.get());
+		
 		Model* armModel = new Model("assets/objects/flashlight/flashlight3.obj", glm::mat4(1.f), *textureShader.get());
 		player.setHand(*armModel);
 		
@@ -272,28 +258,14 @@ int main(int argc, char** argv)
 
 		glm::vec3 flamecolor = glm::vec3(0.902f, 0.376f, 0.118f);
 		
-		//create torches
-		
-		//std::vector<glm::mat4*> bulbs = createBulbs();
+	
+		//std::vector<PointLight*> pointLights;
 		std::vector<PointLight*> pointLights = createLights(flamecolor);
-		//std::vector<glm::mat4*> torches = createTorches(*torch, playerMat);
-		
-		
-		
-
+	
 		// Room
 		//initialize floor
 		float length = 99.f;
 		float width = 99.f;
-		
-
-		//std::vector<Geometry*> traps;
-		//std::vector<Geometry*> lava;
-
-		
-		//Geometry* cube = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f)), Geometry::createCubeGeometry(10.0f,5.0f, 1.0f), groundMat);
-		
-		
 		
 		//lights
 		PointLight* lavaLight = new PointLight(flamecolor, glm::vec3(20, 3.5f, 20), glm::vec3(0.01f));
@@ -308,150 +280,35 @@ int main(int argc, char** argv)
 		pointLights.push_back(lavaLight5);
 
 		Geometry* bulb = new Geometry(glm::scale(glm::mat4(1.0f), glm::vec3(1)), Geometry::createSphereGeometry(64, 32, 0.425f), playerMat);
-		
+
+		std::vector<Model*> walls = createWalls(textureShader);
+
 		Geometry* ground = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), Geometry::createCubeGeometry(width + 2, 1.f, length + 2), groundMat);
 		Geometry* wallRight = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.f, length), wallMat);
 		Geometry* wallLeft = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.5f, length), wallMat);
 		Geometry* wallFront = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, 51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
 		Geometry* wallBack = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, -51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
-		/*Geometry* decke = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 35.5f, 0.0f)), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
-		Geometry* decke2 = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 30.5f, -20.0f)), glm::radians(18.0f), glm::vec3(0.0f, -1.0f, -1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
-		Geometry* decke3 = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 25.5f, 20.0f)), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
-		*/
 		
-		
-		
-		/*
-		// LABYRINTH WALLS... :(
-		// =======================================================================================================================
-		// Vertical walls, ordered from left to right > top to bottom
-		// column 1 (40, x)
-		Geometry* vertWall01 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, 30.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall01, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		Geometry* vertWall02 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall02, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		// column 2 (30,x)
-		Geometry* vertWall03 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(30.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall03, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		// column 3 (20,x)
-		Geometry* vertWall04 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, 3.25f, 5.0f)), Geometry::createCubeGeometry(1.f, 5.f, 30.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall04, glm::vec3(1.f, 5.f, 30.f) * 0.5f);
-		// column 4 (10,x)
-		Geometry* vertWall05 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 3.25f, 25.0f)), Geometry::createCubeGeometry(1.f, 5.f, 10), wallMat);
-		pWorld->addCubeToPWorld(*vertWall05, glm::vec3(1.f, 5.f, 10) * 0.5f);
-		Geometry* vertWall06 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20), wallMat);
-		pWorld->addCubeToPWorld(*vertWall06, glm::vec3(1.f, 5.f, 20) * 0.5f);
-		// column 5 (0,x)
-		Geometry* vertWall07 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.25f, 35.0f)), Geometry::createCubeGeometry(1.f, 5.f, 30.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall07, glm::vec3(1.f, 5.f, 30.f) * 0.5f);
-		Geometry* vertWall08 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall08, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		// column 6 (-10,x)
-		Geometry* vertWall09 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 3.25f, 30.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall09, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		Geometry* vertWall10 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall10, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		Geometry* vertWall11 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 3.25f, -40.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall11, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		// column 7 (-20,x)
-		Geometry* vertWall12 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-20.0f, 3.25f, 15.0f)), Geometry::createCubeGeometry(1.f, 5.f, 10.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall12, glm::vec3(1.f, 5.f, 10.f) * 0.5f);
-		Geometry* vertWall13 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-20.0f, 3.25f, -10.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall13, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		Geometry* vertWall14 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-20.0f, 3.25f, -45.0f)), Geometry::createCubeGeometry(1.f, 5.f, 10.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall14, glm::vec3(1.f, 5.f, 10.f) * 0.5f);
-		// column 8 (-30,x)
-		Geometry* vertWall15 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall15, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		Geometry* vertWall16 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 3.25f, -20.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall16, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		// column 9 ( -40,x)
-		Geometry* vertWall17 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-40.0f, 3.25f, 30.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall17, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-		Geometry* vertWall18 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-40.0f, 3.25f, 5.0f)), Geometry::createCubeGeometry(1.f, 5.f, 10.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall18, glm::vec3(1.f, 5.f, 10.f) * 0.5f);
-		Geometry* vertWall19 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-40.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(1.f, 5.f, 20.f), wallMat);
-		pWorld->addCubeToPWorld(*vertWall19, glm::vec3(1.f, 5.f, 20.f) * 0.5f);
-
-		// horizontal walls ordered from top to bottom > left to right
-		// row 1 (x, 40)
-		Geometry* horizontalWall_01 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(25.0f, 3.25f, 40.0f)), Geometry::createCubeGeometry(30.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_01, glm::vec3(30.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_02 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-25.0f, 3.25f, 40.0f)), Geometry::createCubeGeometry(30.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_02, glm::vec3(30.f, 5.f, 1) * 0.5f);
-		// row 2 (x,30)
-		Geometry* horizontalWall_03 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, 3.25f, 30.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1.f), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_03, glm::vec3(20.f, 5.f, 1.f) * 0.5f);
-		Geometry* horizontalWall_04 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-25.0f, 3.25f, 30.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_04, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
-		// row 3 (x,20)
-		Geometry* horizontalWall_05 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_05, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
-		Geometry* horizontalWall_06 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-15.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_06, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
-		Geometry* horizontalWall_07 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-45.0f, 3.25f, 20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1.f), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_07, glm::vec3(10.f, 5.f, 1.f) * 0.5f);
-		// row 4 (x,10)
-		Geometry* horizontalWall_08 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1.f), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_08, glm::vec3(20.f, 5.f, 1.f) * 0.5f);
-		Geometry* horizontalWall_09 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_09, glm::vec3(20.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_10 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-35.0f, 3.25f, 10.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_10, glm::vec3(10.f, 5.f, 1) * 0.5f);
-		// row 5 (x,0)
-		Geometry* horizontalWall_11 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_11, glm::vec3(20.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_12 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 3.25f, 0.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_12, glm::vec3(20.f, 5.f, 1) * 0.5f);
-		// row 6 (x,-10)
-		Geometry* horizontalWall_13 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 3.25f, -10.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_13, glm::vec3(20.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_14 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 3.25f, -10.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_14, glm::vec3(10.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_15 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-35.0f, 3.25f, -10.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_15, glm::vec3(10.f, 5.f, 1) * 0.5f);
-		// row 7 (x,-20)
-		Geometry* horizontalWall_16 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(45.0f, 3.25f, -20.0f)), Geometry::createCubeGeometry(10.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_16, glm::vec3(10.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_17 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 3.25f, -20.0f)), Geometry::createCubeGeometry(50.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_17, glm::vec3(50.f, 5.f, 1) * 0.5f);
-		// row 8 (x,-30)
-		Geometry* horizontalWall_18 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_18, glm::vec3(20.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_19 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-20.0f, 3.25f, -30.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_19, glm::vec3(20.f, 5.f, 1) * 0.5f);
-		// row 9 (x,-40)
-		Geometry* horizontalWall_20 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, 3.25f, -40.0f)), Geometry::createCubeGeometry(40.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_20, glm::vec3(40.f, 5.f, 1) * 0.5f);
-		Geometry* horizontalWall_21 = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 3.25f, -40.0f)), Geometry::createCubeGeometry(20.f, 5.f, 1), wallMat);
-		pWorld->addCubeToPWorld(*horizontalWall_21, glm::vec3(20.f, 5.f, 1) * 0.5f);
-		*/
-
 		pWorld->addCubeToPWorld(*ground, glm::vec3(width +2, 1.f, length +2) * 0.5f);
 		pWorld->addCubeToPWorld(*wallRight, glm::vec3(3.f, 50.5f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*wallLeft, glm::vec3(3.f, 50.5f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*wallBack, glm::vec3(width, 50.5f, 3.f) * 0.5f);
 		pWorld->addCubeToPWorld(*wallFront, glm::vec3(width, 50.5f, 3.f) * 0.5f);
-		/*pWorld->addCubeToPWorld(*decke, glm::vec3(width, 1.f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*decke2, glm::vec3(width, 1.f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*decke3, glm::vec3(width, 1.f, length) * 0.5f);*/
-
-		std::vector<Model*> walls = createWalls(textureShader);
+		
 
 		// ====================================================================================================================
 
-
-
-
-		//set players body and hand
-		//Geometry body = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 3.0f)), Geometry::createCylinderGeometry(32, 3.5f, 1.0f), woodTextureMaterial);
-		//Geometry hitboxPlayer = Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 6.0f, 35.0f)), Geometry::createCubeGeometry(1.0f, 3.50f, 1.0f), playerMat );
+		//Setup Player with hitbox size
 		pWorld->addPlayerToPWorld(player, glm::vec3(1.0f, 3.5f, 1.0f) * 0.5f);
 
-		//THE HELLISH DODGEBALL IS COMING FOR YOU
-		Geometry* THEHELLISHDODGEBALL = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 6.5f, -10.0f)), Geometry::createSphereGeometry(64, 32, 0.5f), groundMat);
-		pWorld->addSphereToPWorld(*THEHELLISHDODGEBALL, 0.5f, false);
-		
+		//Setup Enemy
+		Model* brain = new Model("assets/objects/brain/brain.obj", glm::mat4(1.f), *textureShader);
+		//brain->setModel(glm::translate())
+		brain->setModel(glm::translate(brain->getModel(), glm::vec3(5.0f, 4.0f, 0.0f)));
+
+		pWorld->addSphereToPWorld(*brain, 1.5f, false);
+
+	
 		//TEXT
 		Text score = Text("Score: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*hudShader.get());
 		Text endOfGame = Text("THE HELLISH DODGEBALL GOT YOU", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
@@ -462,14 +319,6 @@ int main(int argc, char** argv)
 		Text enterToRestart = Text("Press \"enter\" to restart", glm::vec2(window_width - 500.f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
 		
 		int scoreCounter;
-
-		// Initialize lights
-		
-		PointLight PointMid(glm::vec3(1.f), glm::vec3(0.0f, 8.f, 0.0f), glm::vec3(0.05f));
-
-		PointLight ball = PointLight(glm::vec3(1, 0.2f, 0), pWorld->getBallPosition(), glm::vec3(.45f, 0.55f, 0.0f));
-		//bulbs.push_back(&THEHELLISHDODGEBALL.getModelMatrix());
-		pointLights.push_back(&ball);
 
 		double mouse_x, mouse_y;
 		
@@ -576,20 +425,14 @@ int main(int argc, char** argv)
 
 
 			Camera* cam = player.getCamera();
-			glm::vec3 ballPosition = pWorld->getBallPosition();
-			pointLights[pointLights.size() - 1] = &PointLight(glm::vec3(1, 0.2f, 0), ballPosition, glm::vec3(.45f, 0.55f, 0.0f));
+			//glm::vec3 ballPosition = pWorld->getBallPosition();
+			//pointLights[pointLights.size() - 1] = &PointLight(glm::vec3(1, 0.2f, 0), ballPosition, glm::vec3(.45f, 0.55f, 0.0f));
 			//bulbs[bulbs.size() - 1] = &THEHELLISHDODGEBALL.getModelMatrix();
 			
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
-			//pWorld->updateBall();
-
+			//TODO: updateBrain
 			
-			//set the uniforms for the animation shader
-			for (int i = 0; i < pointLights.size(); i++) {
-				setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
-			}
-
 			//set the uniforms for the texture shader
 			for (int i = 0; i < pointLights.size(); i++) {
 				setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
@@ -603,7 +446,7 @@ int main(int argc, char** argv)
 			
 
 			// ---------------------------------------
-			// DRAW STUFF
+			// DRAW
 			// ---------------------------------------
 
 			//models
@@ -611,46 +454,21 @@ int main(int argc, char** argv)
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
 
-			room->Draw(room->getModel());
-
 			//wall->Draw(wall->getModel());
 			//wall2->Draw(wall2->getModel());
 			for (size_t i = 0; i < walls.size(); ++i) {
 				walls[i]->Draw(walls[i]->getModel()); // Assuming Draw is a member function of the Model class
 			}
 
-			//wallVert->Draw(wallVert->getModel());
-			//.Draw
-			//armModel.Draw(armModel.getModel());
+
+			room->Draw(room->getModel());
+
+			brain->Draw(brain->getModel());
 			
-		
+			
 			//everything registered in the physicsworld
 			pWorld->draw();
 			
-			//Traps + lava
-			//drawTrapsOrLava(traps);
-			//drawTrapsOrLava(lava,false);
-
-			// "lightbulbs" for the torches
-			//for (int i = 0; i < bulbs.size(); i++) {
-			//	setPerFrameUniforms(lightMakerShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
-			//	
-			//	if (i == bulbs.size() - 1)
-			//	{
-			//		bulb.setModelMatrix(glm::scale( *bulbs[i], glm::vec3(1.f, 1.2f, 1.f)));
-			//		//bulb.draw(lightMakerShader.get());
-			//		break;
-			//	}
-			//	bulb.setModelMatrix(*bulbs[i]);
-			//	bulb.draw(lightMakerShader.get());
-			//}
-
-
-		
-			
-			
-			
-
 			//Text
 			scoreCounter = pWorld->getScoreCounter();
 
@@ -695,7 +513,7 @@ int main(int argc, char** argv)
 
 
 
-						postProcessing(blurShader, bloomShader, bloom, exposure);
+						//postProcessing(blurShader, bloomShader, bloom, exposure);
 						glfwSwapBuffers(window);
 					}
 			}

@@ -93,11 +93,12 @@ public:
 	//add a Sphere Geometry object into the simulation as a rigidbody
 	void addSphereToPWorld(Geometry& obj, float radius, bool isStatic = true);
 
+	void addSphereToPWorld(Model& obj, float radius, bool isStatic);
 	//updates the Player in the rendered World
 	void updatePlayer(Movement movement, float deltaTime);
 
-	//updates the Ball in the rendered World
-	void updateBall(boolean ballGotHit = false);
+	//TODO update enemy
+	void updateEnemy();
 
 	//boolean wether the player is dead or alive 
 	boolean isPlayerDead();
