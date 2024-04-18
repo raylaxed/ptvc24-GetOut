@@ -268,7 +268,7 @@ int main(int argc, char** argv)
 		Model* armModel = new Model("assets/objects/flashlight/flashlight3.obj", glm::mat4(1.f), *textureShader.get());
 		player.setHand(*armModel);
 		
-		
+		Model* room = new Model("assets/objects/room/room2.obj", glm::mat4(1.f), *textureShader.get());
 
 		glm::vec3 flamecolor = glm::vec3(0.902f, 0.376f, 0.118f);
 		
@@ -309,14 +309,18 @@ int main(int argc, char** argv)
 
 		Geometry* bulb = new Geometry(glm::scale(glm::mat4(1.0f), glm::vec3(1)), Geometry::createSphereGeometry(64, 32, 0.425f), playerMat);
 		
-		Geometry* ground = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), Geometry::createCubeGeometry(width, 1.f, length), groundMat);
-		Geometry* wallRight = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(50.0f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.f, length), wallMat);
-		Geometry* wallLeft = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-50.0f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.5f, length), wallMat);
-		Geometry* wallFront = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, 50.0f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
-		Geometry* wallBack = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, -50.0f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
-		Geometry* decke = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 35.5f, 0.0f)), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
+		Geometry* ground = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), Geometry::createCubeGeometry(width + 2, 1.f, length + 2), groundMat);
+		Geometry* wallRight = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.f, length), wallMat);
+		Geometry* wallLeft = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.5f, length), wallMat);
+		Geometry* wallFront = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, 51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
+		Geometry* wallBack = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, -51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
+		/*Geometry* decke = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 35.5f, 0.0f)), glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 		Geometry* decke2 = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 30.5f, -20.0f)), glm::radians(18.0f), glm::vec3(0.0f, -1.0f, -1.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
 		Geometry* decke3 = new Geometry(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 25.5f, 20.0f)), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f)), Geometry::createCubeGeometry(width, 1.f, length), wallMat);
+		*/
+		
+		
+		
 		/*
 		// LABYRINTH WALLS... :(
 		// =======================================================================================================================
@@ -423,14 +427,14 @@ int main(int argc, char** argv)
 		pWorld->addCubeToPWorld(*horizontalWall_21, glm::vec3(20.f, 5.f, 1) * 0.5f);
 		*/
 
-		pWorld->addCubeToPWorld(*ground, glm::vec3(width, 1.f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*wallRight, glm::vec3(1.f, 50.5f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*wallLeft, glm::vec3(1.f, 50.5f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*wallBack, glm::vec3(width, 50.5f, 1.f) * 0.5f);
-		pWorld->addCubeToPWorld(*wallFront, glm::vec3(width, 50.5f, 1.f) * 0.5f);
-		pWorld->addCubeToPWorld(*decke, glm::vec3(width, 1.f, length) * 0.5f);
+		pWorld->addCubeToPWorld(*ground, glm::vec3(width +2, 1.f, length +2) * 0.5f);
+		pWorld->addCubeToPWorld(*wallRight, glm::vec3(3.f, 50.5f, length) * 0.5f);
+		pWorld->addCubeToPWorld(*wallLeft, glm::vec3(3.f, 50.5f, length) * 0.5f);
+		pWorld->addCubeToPWorld(*wallBack, glm::vec3(width, 50.5f, 3.f) * 0.5f);
+		pWorld->addCubeToPWorld(*wallFront, glm::vec3(width, 50.5f, 3.f) * 0.5f);
+		/*pWorld->addCubeToPWorld(*decke, glm::vec3(width, 1.f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*decke2, glm::vec3(width, 1.f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*decke3, glm::vec3(width, 1.f, length) * 0.5f);
+		pWorld->addCubeToPWorld(*decke3, glm::vec3(width, 1.f, length) * 0.5f);*/
 
 		std::vector<Model*> walls = createWalls(textureShader);
 
@@ -606,6 +610,8 @@ int main(int argc, char** argv)
 			//drawModelVector(torch,torches);
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
+
+			room->Draw(room->getModel());
 
 			//wall->Draw(wall->getModel());
 			//wall2->Draw(wall2->getModel());
