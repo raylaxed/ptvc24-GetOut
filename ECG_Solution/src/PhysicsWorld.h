@@ -4,7 +4,7 @@
 #include "Geometry.h"
 #include "OwnUtils.h"
 #include "Player.h"
-
+#include "Enemy.h"
 using namespace physx;
 
 //Abstraction of player movement 
