@@ -226,7 +226,7 @@ int main(int argc, char** argv)
 		hudShader->use();
 		hudShader->setUniform("projection", projection);
 		hudShader->initFreeType(_charactersForCooldown, "assets/arial.ttf");
-		hudShader->initFreeType(_characters, "assets/green_fuz.otf");
+		hudShader->initFreeType(_characters, "assets/Alice_in_Wonderland_3.ttf");
 
 		
 
@@ -260,6 +260,8 @@ int main(int argc, char** argv)
 	
 		//std::vector<PointLight*> pointLights;
 		std::vector<PointLight*> pointLights = createLights(flamecolor);
+		//std::vector<PointLight*> pointLights;
+		//std::vector<PointLight*> lights;
 	
 		// Room
 		//initialize floor
@@ -267,16 +269,16 @@ int main(int argc, char** argv)
 		float width = 99.f;
 		
 		//lights
-		PointLight* lavaLight = new PointLight(flamecolor, glm::vec3(20, 3.5f, 20), glm::vec3(0.01f));
+		/*PointLight* lavaLight = new PointLight(flamecolor, glm::vec3(20, 10.0f, 20), glm::vec3(0.01f));
 		pointLights.push_back(lavaLight);
-		PointLight* lavaLight2 = new PointLight(flamecolor, glm::vec3(-20, 3.5f, 20), glm::vec3(0.01f));
+		PointLight* lavaLight2 = new PointLight(flamecolor, glm::vec3(-20, 10.0f, 20), glm::vec3(0.01f));
 		pointLights.push_back(lavaLight2);
-		PointLight* lavaLight3 = new PointLight(flamecolor, glm::vec3(-20, 3.5f, -20), glm::vec3(0.01f));
+		PointLight* lavaLight3 = new PointLight(flamecolor, glm::vec3(-20, 10.0f, -20), glm::vec3(0.01f));
 		pointLights.push_back(lavaLight3);
-		PointLight* lavaLight4 = new PointLight(flamecolor, glm::vec3(20, 3.5f, -20), glm::vec3(0.01f));
+		PointLight* lavaLight4 = new PointLight(flamecolor, glm::vec3(20, 10.0f, -20), glm::vec3(0.01f));
 		pointLights.push_back(lavaLight4);
-		PointLight* lavaLight5 = new PointLight(flamecolor, glm::vec3(0, 3.5f, 0), glm::vec3(0.01f));
-		pointLights.push_back(lavaLight5);
+		PointLight* lavaLight5 = new PointLight(flamecolor, glm::vec3(0, 10.0f, 0), glm::vec3(0.01f));
+		pointLights.push_back(lavaLight5);*/
 
 		Geometry* bulb = new Geometry(glm::scale(glm::mat4(1.0f), glm::vec3(1)), Geometry::createSphereGeometry(64, 32, 0.425f), playerMat);
 
@@ -304,19 +306,19 @@ int main(int argc, char** argv)
 		//Setup Enemy
 		Model* brain = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *cookTexturedShader.get());
 		//brain->setModel(glm::translate())
-		brain->setModel(glm::translate(brain->getModel(), glm::vec3(5.0f, 4.0f, 0.0f)));
+		brain->setModel(glm::translate(brain->getModel(), glm::vec3(5.0f, 3.2f, 0.0f)));
 
 		pWorld->addSphereToPWorld(*brain, 1.5f, false);
 
 	
 		//TEXT
-		Text score = Text("Score: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*hudShader.get());
-		Text endOfGame = Text("You died! Game Over!", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
-		Text endOfGameTrap = Text("You died! Game Over!", glm::vec2(window_width/2.0f - 530, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
-		Text endScore = Text("Your Score: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
-		Text highScore = Text("Highscore: ", glm::vec2(850.0f, 1000.0f), 1.f, glm::vec3(1, 0.2f, 0.5f), _characters, *hudShader.get());
-		Text deathHighScore = Text("Hig-.hscore: ", glm::vec2(50.0f, 200.0f), 1.f, glm::vec3(1, 0.2f, 0.5f), _characters, *hudShader.get());
-		Text enterToRestart = Text("Press \"enter\" to restart", glm::vec2(window_width - 500.f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
+		Text* score = new Text("Score: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*hudShader.get());
+		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
+		Text* endOfGameTrap = new Text("You died! Game Over!", glm::vec2(window_width/2.0f - 530, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
+		Text* endScore = new Text("Your Score: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
+		Text* highScore = new Text("HUD TEST ", glm::vec2(850.0f, 1000.0f), 1.f, glm::vec3(1, 0.2f, 0.5f), _characters, *hudShader.get());
+		Text* deathHighScore = new Text("Hig-.hscore: ", glm::vec2(50.0f, 200.0f), 1.f, glm::vec3(1, 0.2f, 0.5f), _characters, *hudShader.get());
+		Text* enterToRestart = new Text("Press \"enter\" to restart", glm::vec2(window_width - 500.f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
 		
 		int scoreCounter;
 
@@ -484,15 +486,16 @@ int main(int argc, char** argv)
 
 						
 						if (pWorld->isPlayerHit()) {
-							endOfGame.setText("*You died! Game Over!*");
-							endOfGame.drawText();
+							endOfGame->setText("*You died! Game Over!*");
+							endOfGame->drawText();
 						}
 						if (pWorld->isPlayerDead()) {
-							endOfGameTrap.setText("*You died! Game Over!*");
-							endOfGameTrap.drawText();
+							endOfGameTrap->setText("*You died! Game Over!*");
+							endOfGameTrap->drawText();
 						}
 
 					
+						enterToRestart->drawText();
 						dashCooldownDraw(*hudShader.get());
 
 						//postProcessing(blurShader, bloomShader, bloom, exposure);
@@ -501,9 +504,9 @@ int main(int argc, char** argv)
 			}
 
 			//HUD
-			score.setText("Score: " + std::to_string(scoreCounter * 10));
-			score.drawText();
-			highScore.drawText();
+			score->setText("Score: " + std::to_string(scoreCounter * 10));
+			score->drawText();
+			highScore->drawText();
 			dashCooldownDraw(*hudShader.get());
 			//dashCooldown.drawText(true);
 			
@@ -1106,19 +1109,19 @@ std::vector<PointLight*> createLights(glm::vec3 flamecolor)
 	for (int i = -1; i <= 0; i++) {
 		
 		//lights at the front of the room 
-		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(i*20.f, 9.f, -46.5f), glm::vec3(0.f,0.f, 0.005f));
+		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(i*20.f, 9.f, -46.5f), glm::vec3(0.01f));
 		lights.push_back(tmpPoint);
 
 		//lights at the back of the room 
-		PointLight* tmpPoint1 = new PointLight(flamecolor, glm::vec3(-i*20.f, 9.f, 46.5f), glm::vec3(0.0f, 0.f, 0.006f));
+		PointLight* tmpPoint1 = new PointLight(flamecolor, glm::vec3(-i*20.f, 9.f, 46.5f), glm::vec3(0.01f));
 		lights.push_back(tmpPoint1);
 
 		//lights at the right of the room 
-		PointLight* tmpPoint2 = new PointLight(flamecolor, glm::vec3(46.5f, 9.f, i*20.f), glm::vec3(0.f, 0.f, 0.007f));
+		PointLight* tmpPoint2 = new PointLight(flamecolor, glm::vec3(46.5f, 9.f, i*20.f), glm::vec3(0.01f));
 		lights.push_back(tmpPoint2);
 
 		//lights at the left of the room 
-		PointLight* tmpPoint3 = new PointLight(flamecolor, glm::vec3(-46.5f, 9.f, -i*20.f), glm::vec3(0.f,0.f,0.008f));
+		PointLight* tmpPoint3 = new PointLight(flamecolor, glm::vec3(-46.5f, 9.f, -i*20.f), glm::vec3(0.01f));
 		lights.push_back(tmpPoint3);
 	}
 

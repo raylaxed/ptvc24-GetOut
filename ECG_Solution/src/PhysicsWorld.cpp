@@ -181,9 +181,6 @@ void PhysicsWorld::addPlayerToPWorld(Player& player, glm::vec3 measurements) {
 	desc.userData = (void*)&player;
 	controllerPlayer = gManager->createController(desc);
 	
-	
-
-
 }
 
 
@@ -213,10 +210,9 @@ void PhysicsWorld::addSphereToPWorld(Geometry& obj, float radius, bool isStatic)
 		gScene->addActor(*THEHELLISHDODGEBALL);
 		pDynamicObjects.push_back(THEHELLISHDODGEBALL);
 	}
-
-
-
 }
+
+
 void PhysicsWorld::addSphereToPWorld(Model& obj, float radius, bool isStatic) {
 
 	gModels.push_back(&obj);
@@ -383,10 +379,10 @@ void PhysicsWorld::updateEnemy() {
 
 	PxVec3 directionToPlayer = calcDirectionBallPlayer();
 
-	pBall->addForce(directionToPlayer / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
+	pBall->addForce(directionToPlayer *10  / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
 	PxVec3 position = pBall->getGlobalPose().p;
 	
-	glm::vec3 newPos = glm::vec3(position.x, position.y, position.z);
+	glm::vec3 newPos = glm::vec3(position.x, 3.2f , position.z);
 
 	Model* enemy = (Model*)pBall->userData;
 	enemy->resetModelMatrix();
