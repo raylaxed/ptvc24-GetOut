@@ -22,7 +22,6 @@ enum Movement {
 
 class PhysicsWorld
 {
-
 private:
 
 	//necessary init variables for PhysX Foundation
@@ -46,7 +45,7 @@ private:
 	std::vector<PxRigidStatic*> pStaticObjects;
 	std::vector<PxRigidDynamic*> pDynamicObjects;
 
-	//the two rigidbody dynamics 
+	//the rigidbody dynamics 
 	PxRigidDynamic* pPlayer;
 	PxRigidDynamic* pBall;
 
@@ -56,6 +55,7 @@ private:
 	int _hitCounter = 0;
 	int _scoreCounter = 0;
 	bool _hasDashed = false;
+	
 
 public:
 
@@ -87,17 +87,20 @@ public:
 	
 	void addCubeToPWorld(Model& obj, glm::vec3 measurements, bool isStatic = true, bool isTorchHitbox = false);
 
-
 	void addPlayerToPWorld(Player& player, glm::vec3 measurements);
 
 	//add a Sphere Geometry object into the simulation as a rigidbody
 	void addSphereToPWorld(Geometry& obj, float radius, bool isStatic = true);
 
 	void addSphereToPWorld(Model& obj, float radius, bool isStatic);
+
 	//updates the Player in the rendered World
 	void updatePlayer(Movement movement, float deltaTime);
 
-	//TODO update enemy
+	// updates the patroling enemies
+	void updateEnemies(float deltaTime);
+
+	// updates the single brain enemy
 	void updateEnemy();
 
 	//boolean wether the player is dead or alive 
