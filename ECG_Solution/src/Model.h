@@ -44,6 +44,8 @@ public:
 
     void setModel(glm::mat4 model);
 
+    void resetModelMatrix();
+
     glm::mat4 getModel();
 
 private:

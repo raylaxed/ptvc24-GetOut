@@ -383,15 +383,14 @@ void PhysicsWorld::updateEnemy() {
 
 	PxVec3 directionToPlayer = calcDirectionBallPlayer();
 
-	//pBall->addForce(directionToPlayer / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
+	pBall->addForce(directionToPlayer / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
 	PxVec3 position = pBall->getGlobalPose().p;
-	//pBall->setGlobalPose(PxTransform())
-	//glm::vec3 newPos = glm::vec3(position.x, position.y, position.z);
+	
+	glm::vec3 newPos = glm::vec3(position.x, position.y, position.z);
 
 	Model* enemy = (Model*)pBall->userData;
-	//enemy->setModel(gml::rotate(enemy->getModel(),glm::radians(0.f), glm::vec3(0.0f, 1.0f, 0.0f))))
-	//enemy->resetModelMatrix();
-	//enemy->setModelMatrix(glm::translate(glm::mat4(1.0f), newPos));
+	enemy->resetModelMatrix();
+	enemy->setModel(glm::translate(glm::mat4(1.0f), newPos));
 
 
 }

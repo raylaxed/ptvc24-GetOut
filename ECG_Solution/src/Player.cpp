@@ -52,16 +52,16 @@
 		
 		glm::vec3 front = _camera.getFront();
 		
-		float yaw = _camera.getYaw() + 30.0f;
-		float pitch = _camera.getPitch() - 15.0f;
+		float yaw = _camera.getYaw();
+		float pitch = _camera.getPitch();
 
 		glm::vec3 position = _camera.getPosition();
 		glm::vec3 frontWithOffset = OwnUtils::calcFront(yaw,pitch);
 		position += frontWithOffset*0.5f;
 		
 		
-		glm::mat4 mat = glm::rotate(glm::translate(glm::mat4(1.0f), position ),glm::radians(-yaw + 50.0f),glm::vec3(0.0f,1.0f,0.0f));
-		mat = glm::rotate(mat, glm::radians(pitch + 15.0f - degree),glm::vec3(0.0f,0.0f,1.0f));
+		glm::mat4 mat = glm::rotate(glm::translate(glm::mat4(1.0f), position ),glm::radians(-yaw ),glm::vec3(0.0f,1.0f,0.0f));
+		mat = glm::rotate(mat, glm::radians(pitch- degree),glm::vec3(0.0f,0.0f,1.0f)); 
 		mat = glm::rotate(mat, glm::radians(180.f),glm::vec3(0.0f,1.0f,0.0f));
 	
 		glm::vec3 size = glm::vec3(0.3f, 0.3f, 0.3f);

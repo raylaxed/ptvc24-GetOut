@@ -50,7 +50,6 @@ void dashCooldownDraw(Shader& shader);
 void postProcessing(shared_ptr<Shader> blurShader, shared_ptr<Shader> bloomShader, bool bloom, float exposure);
 void createQuad();
 void createTrapHitbox(glm::vec3 position, float size, shared_ptr<Material>);
-std::vector<glm::mat4*> createTorches(Model torch, std::shared_ptr<Material> mat);
 std::vector<PointLight*> createLights(glm::vec3 flamecolor);
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
 
@@ -281,6 +280,7 @@ int main(int argc, char** argv)
 
 		Geometry* bulb = new Geometry(glm::scale(glm::mat4(1.0f), glm::vec3(1)), Geometry::createSphereGeometry(64, 32, 0.425f), playerMat);
 
+		//WALLS
 		std::vector<Model*> walls = createWalls(textureShader);
 
 		Geometry* ground = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), Geometry::createCubeGeometry(width + 2, 1.f, length + 2), groundMat);
@@ -302,7 +302,7 @@ int main(int argc, char** argv)
 		pWorld->addPlayerToPWorld(player, glm::vec3(1.0f, 3.5f, 1.0f) * 0.5f);
 
 		//Setup Enemy
-		Model* brain = new Model("assets/objects/brain/brain.obj", glm::mat4(1.f), *textureShader);
+		Model* brain = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *cookTexturedShader.get());
 		//brain->setModel(glm::translate())
 		brain->setModel(glm::translate(brain->getModel(), glm::vec3(5.0f, 4.0f, 0.0f)));
 
@@ -311,8 +311,8 @@ int main(int argc, char** argv)
 	
 		//TEXT
 		Text score = Text("Score: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*hudShader.get());
-		Text endOfGame = Text("THE HELLISH DODGEBALL GOT YOU", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
-		Text endOfGameTrap = Text("YOU HAVE FALLEN INTO A TRAP!", glm::vec2(window_width/2.0f - 530, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
+		Text endOfGame = Text("You died! Game Over!", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
+		Text endOfGameTrap = Text("You died! Game Over!", glm::vec2(window_width/2.0f - 530, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
 		Text endScore = Text("Your Score: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
 		Text highScore = Text("Highscore: ", glm::vec2(850.0f, 1000.0f), 1.f, glm::vec3(1, 0.2f, 0.5f), _characters, *hudShader.get());
 		Text deathHighScore = Text("Hig-.hscore: ", glm::vec2(50.0f, 200.0f), 1.f, glm::vec3(1, 0.2f, 0.5f), _characters, *hudShader.get());
@@ -425,12 +425,10 @@ int main(int argc, char** argv)
 
 
 			Camera* cam = player.getCamera();
-			//glm::vec3 ballPosition = pWorld->getBallPosition();
-			//pointLights[pointLights.size() - 1] = &PointLight(glm::vec3(1, 0.2f, 0), ballPosition, glm::vec3(.45f, 0.55f, 0.0f));
-			//bulbs[bulbs.size() - 1] = &THEHELLISHDODGEBALL.getModelMatrix();
 			
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
+			pWorld->updateEnemy();
 			//TODO: updateBrain
 			
 			//set the uniforms for the texture shader
@@ -479,7 +477,6 @@ int main(int argc, char** argv)
 					isDead = true;
 					resetGame = false;
 					
-
 					while (!glfwWindowShouldClose(window) && !resetGame) {
 
 						glfwPollEvents();
@@ -487,31 +484,16 @@ int main(int argc, char** argv)
 
 						
 						if (pWorld->isPlayerHit()) {
-							endOfGame.setText("*THE HELLISH DODGEBALL GOT YOU!*");
+							endOfGame.setText("*You died! Game Over!*");
 							endOfGame.drawText();
 						}
 						if (pWorld->isPlayerDead()) {
-							endOfGameTrap.setText("*YOU HAVE FALLEN INTO A TRAP!*");
+							endOfGameTrap.setText("*You died! Game Over!*");
 							endOfGameTrap.drawText();
 						}
 
-						
-						endScore.setText("Your Score: " + std::to_string(scoreCounter * 10));
-
-						if (highscore <= scoreCounter) {
-							deathHighScore.setText("Your New Highscore: " + std::to_string(scoreCounter * 10));
-							highscore = scoreCounter;
-						}
-						else {
-							deathHighScore.setText("Highscore: " + std::to_string(highscore * 10));
-						}
-
-						deathHighScore.drawText();
-						endScore.drawText();
-						enterToRestart.drawText();
+					
 						dashCooldownDraw(*hudShader.get());
-
-
 
 						//postProcessing(blurShader, bloomShader, bloom, exposure);
 						glfwSwapBuffers(window);
@@ -721,47 +703,6 @@ void createTrapHitbox(glm::vec3 position, float size, std::shared_ptr<Material> 
 	pWorld->addCubeToPWorld(rightWall, glm::vec3(size, 4.f, 0.1f) * 0.5f, true, true);
 	pWorld->addCubeToPWorld(leftWall, glm::vec3(size, 4.f, 0.1f) * 0.5f, true, true);
 
-}
-
-//creates the torches on the wall
-std::vector<glm::mat4*> createTorches(Model torch, std::shared_ptr<Material> mat)
-{
-	
-	std::vector<glm::mat4*> torches;
-	Geometry torchHitBox = Geometry(glm::scale(glm::mat4(1.0f), glm::vec3(10)), Geometry::createCubeGeometry(64.f, 32.f, 8.5f) , mat);
-	for (int i = -1; i <= 0; i++) {
-		
-		//torches at front of the room
-		glm::mat4* tmpTorch = new glm::mat4(glm::scale(glm::rotate(glm::translate(torch.getModel(), glm::vec3(i * 20.f, 7.f, -49.5f)), glm::radians(0.f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.05f, 0.05f, 0.05f)));
-		torches.push_back(tmpTorch);
-
-		torchHitBox = Geometry(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(i * 20.f, 7.5f, -48.0f)), glm::vec3(1)), Geometry::createCubeGeometry(64.f, 32.f, 8.5f), mat);
-		pWorld->addCubeToPWorld(torchHitBox, glm::vec3(1.f, 4.f, 1.f) * 0.5f, true, true);
-		
-		//torches at back of the room
-		glm::mat4* tmpTorch1 = new glm::mat4(glm::scale(glm::rotate(glm::translate(torch.getModel(), glm::vec3(-i * 20.f, 7.f, 49.5f)), glm::radians(180.f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.05f, 0.05f, 0.05f)));
-		torches.push_back(tmpTorch1);
-		
-		torchHitBox = Geometry(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-i * 20.f, 7.5f, 48.0f)), glm::vec3(1)), Geometry::createCubeGeometry(64.f, 32.f, 8.5f), mat);
-		pWorld->addCubeToPWorld(torchHitBox, glm::vec3(1.f, 4.f, 1.f) * 0.5f,true,true);	
-
-		//torches at right of the room
-		glm::mat4* tmpTorch2 = new glm::mat4(glm::scale(glm::rotate(glm::translate(torch.getModel(), glm::vec3(49.5f, 7.f, i * 20.0f)), glm::radians(-90.f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.05f, 0.05f, 0.05f)));
-		torches.push_back(tmpTorch2);
-
-		torchHitBox = Geometry(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(48.0f, 7.5f, i * 20.0f)), glm::vec3(1)), Geometry::createCubeGeometry(64.f, 32.f, 8.5f), mat);
-		pWorld->addCubeToPWorld(torchHitBox, glm::vec3(1.f, 4.f, 1.f) * 0.5f, true, true);
-		
-		//torches at left of the room
-		glm::mat4* tmpTorch3 = new glm::mat4(glm::scale(glm::rotate(glm::translate(torch.getModel(), glm::vec3(-49.5f, 7.f, -i * 20.0f)), glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.05f, 0.05f, 0.05f)));
-		torches.push_back(tmpTorch3);
-
-		torchHitBox = Geometry(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-48.0f, 7.5f, -i * 20.0f)), glm::vec3(1)), Geometry::createCubeGeometry(64.f, 32.f, 8.5f), mat);
-		pWorld->addCubeToPWorld(torchHitBox, glm::vec3(1.f, 4.f, 1.f) * 0.5f, true, true);
-		
-	}
-
-	return torches;
 }
 
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader) {

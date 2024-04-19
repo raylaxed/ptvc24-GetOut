@@ -1,12 +1,11 @@
-# Blender MTL File: 'None'
-# Material Count: 1
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v3.1.161429758)
 
 newmtl lambert2SG
-Ns 250.000000
-Ka 1.000000 1.000000 1.000000
-Kd 0.800000 0.800000 0.800000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 2
+kd 0.6 0.6 0.6
+ka 0 0 0
+ks 0 0 0
+ke 0 0 0
+d 1
+illum 1
+

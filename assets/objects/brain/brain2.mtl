@@ -1,0 +1,15 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl lambert2SG
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.600000 0.600000 0.600000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd lambert2SG_Base_color.png
+map_Ns lambert2SG_Roughness.png
+refl lambert2SG_Metallic.png

@@ -24,6 +24,12 @@ void Model::setModel(glm::mat4 model) {
 
 }
 
+
+void Model::resetModelMatrix()
+{
+    _modelMatrix = glm::mat4(1);
+}
+
 glm::mat4 Model::getModel() {
 
     return _modelMatrix;
