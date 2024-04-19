@@ -259,7 +259,12 @@ int main(int argc, char** argv)
 		
 	
 		//std::vector<PointLight*> pointLights;
-		std::vector<PointLight*> pointLights = createLights(flamecolor);
+		//std::vector<PointLight*> pointLights = createLights(flamecolor);
+		std::vector<PointLight*> pointLights;
+		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.1f));
+		pointLights.push_back(tmpPoint);
+
+		
 		//std::vector<PointLight*> pointLights;
 		//std::vector<PointLight*> lights;
 	
@@ -403,11 +408,15 @@ int main(int argc, char** argv)
 		Timer dashTimer = Timer();
 
 
+		float lastFrameTime = 0.0f;
+
 		// ---------------------------------------
 		// Render Loop
 		// ---------------------------------------
 
 		while (!glfwWindowShouldClose(window)) {
+			
+
 
 			// Clear backbuffer
 			glClearColor(0, 0, 0, 1);
@@ -453,6 +462,12 @@ int main(int argc, char** argv)
 			//drawModelVector(torch,torches);
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
+			
+			PointLight* lightToUpdate = pointLights[0];
+			
+			glm::vec3 newPosition = cam->getPosition();
+			lightToUpdate->position =newPosition;
+
 
 			//wall->Draw(wall->getModel());
 			//wall2->Draw(wall2->getModel());
@@ -504,10 +519,15 @@ int main(int argc, char** argv)
 			}
 
 			//HUD
-			score->setText("Score: " + std::to_string(scoreCounter * 10));
+			float fps = 1.0f / deltaTime;
+			
+
+			score->setText("FPS: " + std::to_string(fps));
 			score->drawText();
+
+
 			highScore->drawText();
-			dashCooldownDraw(*hudShader.get());
+			//dashCooldownDraw(*hudShader.get());
 			//dashCooldown.drawText(true);
 			
 			//apply bloom
@@ -517,6 +537,10 @@ int main(int argc, char** argv)
 			float currentFrame = static_cast<float>(glfwGetTime());
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
+
+
+			
+			//drawText(fpsString, 10, 10);
 
 			pScene->simulate(deltaTime);
 			pScene->fetchResults(true);
