@@ -3,9 +3,6 @@
 #include <ctime>
 #include <glm/gtx/string_cast.hpp>
 
-//TODO
-//improve ball homing ability
-//improve jumping
 
 PhysicsWorld::PhysicsWorld() {}
 
@@ -351,7 +348,7 @@ boolean PhysicsWorld::isPlayerHit() {
 	
 	float distance = calcDirectionBallPlayer().magnitude();
 	//TODO dont hardcode ballradius
-	return distance < 1.3;
+	return distance < 2.2;
 }
 
 boolean PhysicsWorld::isPlayerDead() {
@@ -394,7 +391,7 @@ void PhysicsWorld::updateEnemy() {
 
 void PhysicsWorld::Animate(Player& player) {
 
-	player.HandAnimation();
+	//player.HandAnimation();
 
 	PxVec3 directionToPlayer = calcDirectionBallPlayer();
 	float distance = directionToPlayer.magnitude();
@@ -416,6 +413,17 @@ void PhysicsWorld::draw() {
 		tmp = *it;
 		tmp->draw();	
 	}
+
+
+
+	//Model* tmp2;
+	//std::vector<Model*>::iterator it2;
+
+	//for (it2 = gModels.begin(); it2 != gModels.end(); it2++) {
+	//	tmp2 = *it2;
+	//	tmp2->Draw(tmp2->getModel());
+	//	
+	//}
 
 }
 
