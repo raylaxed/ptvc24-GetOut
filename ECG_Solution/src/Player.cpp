@@ -5,8 +5,8 @@
 	
 
 
-	Player::Player(Camera& camera) : _camera(camera) {
-		
+	Player::Player(Camera& camera){
+		_camera = &camera;
 	}
 
 	Player::~Player() {
@@ -22,7 +22,7 @@
 	}
 
 	Camera* Player::getCamera() {
-		return &_camera;
+		return _camera;
 	}
 
 	
@@ -32,30 +32,30 @@
 	*/
 	void Player::UpdatePosition(glm::vec3 position) {
 		
-		_camera.setPosition(position);
+		_camera->setPosition(position);
 		UpdateHand();
 		
 	}
 
 
 	void Player::ProcessMouseScroll(float offset){
-		_camera.ProcessMouseScroll(offset);
+		_camera->ProcessMouseScroll(offset);
 	}
 
 	void Player::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch) {
-		_camera.ProcessMouseMovement(xoffset, yoffset);
+		_camera->ProcessMouseMovement(xoffset, yoffset);
 		UpdateHand();
 	}
 
 	void Player::UpdateHand(float degree)
 	{
 		
-		glm::vec3 front = _camera.getFront();
+		glm::vec3 front = _camera->getFront();
 		
-		float yaw = _camera.getYaw();
-		float pitch = _camera.getPitch();
+		float yaw = _camera->getYaw();
+		float pitch = _camera->getPitch();
 
-		glm::vec3 position = _camera.getPosition();
+		glm::vec3 position = _camera->getPosition();
 		glm::vec3 frontWithOffset = OwnUtils::calcFront(yaw,pitch);
 		position += frontWithOffset*0.5f;
 		

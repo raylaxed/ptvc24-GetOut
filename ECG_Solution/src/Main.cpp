@@ -261,7 +261,7 @@ int main(int argc, char** argv)
 		//std::vector<PointLight*> pointLights;
 		//std::vector<PointLight*> pointLights = createLights(flamecolor);
 		std::vector<PointLight*> pointLights;
-		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.1f));
+		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.01f));
 		pointLights.push_back(tmpPoint);
 
 		
@@ -437,6 +437,7 @@ int main(int argc, char** argv)
 			}
 
 			
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 			// ---------------------------------------
 			// DRAW
@@ -483,9 +484,9 @@ int main(int argc, char** argv)
 							endOfGame->setText("*You died! Game Over!*");
 							endOfGame->drawText();
 						}
-						
 
-						postProcessing(blurShader, bloomShader, bloom, exposure);
+
+						//postProcessing(blurShader, bloomShader, bloom, exposure);
 						glfwSwapBuffers(window);
 					}
 			}
@@ -501,7 +502,7 @@ int main(int argc, char** argv)
 			highScore->drawText();
 		
 			//apply bloom
-			postProcessing(blurShader, bloomShader, bloom, exposure);
+			//postProcessing(blurShader, bloomShader, bloom, exposure);
 
 			//time logic
 			float currentFrame = static_cast<float>(glfwGetTime());

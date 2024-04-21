@@ -81,12 +81,7 @@ bool PhysicsWorld::playerHasDashed() {
 }
 
 
-/*
-* createShape takes the volume
-* PxTransform the position
-* hitboxes are from now on either spheres or cubes
-* TODO implement cylinders eventually
-*/
+
 void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool isStatic, bool isTorchHitbox) {
 
 	PxVec3 position = OwnUtils::glmModelMatrixToPxVec3(obj.getModelMatrix());

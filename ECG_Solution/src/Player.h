@@ -13,7 +13,7 @@ class Player
 {
 
 private:
-	Camera _camera;
+	Camera* _camera;
 	
 	Model* _skeleton_arm;
 
