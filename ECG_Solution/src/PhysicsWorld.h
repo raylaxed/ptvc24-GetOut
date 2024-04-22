@@ -1,12 +1,15 @@
 #pragma once
 
+#ifndef PHYSICS_WORLD_H
+#define PHYSICS_WORLD_H
+
 #include <vector>
 #include <memory>
+#include "Enemy.h"
 #include "PxPhysicsAPI.h"
 #include "Geometry.h"
 #include "OwnUtils.h"
 #include "Player.h"
-#include "Enemy.h"
 using namespace physx;
 
 //Abstraction of player movement 
@@ -52,7 +55,7 @@ private:
 	PxRigidDynamic* pBall;
 
 	// these vectors are for storing an Enemy and the corresponding rigidbody dynamics
-	//std::vector<Enemy*> movingEnemies;
+	std::vector<Enemy*> movingEnemies;
 	std::vector<PxRigidDynamic*> enemyDynamics;
 
 	//variables for keeping track
@@ -64,9 +67,6 @@ private:
 	
 
 public:
-
-	
-
 	PhysicsWorld();
 	
 	//initializes PhysX context
@@ -131,3 +131,5 @@ public:
 	//resets ball, player and ball velocity 
 	void resetGame();
 };
+
+#endif // PHYSICS_WORLD_H

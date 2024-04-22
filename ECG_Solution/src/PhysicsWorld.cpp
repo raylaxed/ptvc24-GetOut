@@ -3,9 +3,6 @@
 #include <ctime>
 #include <glm/gtx/string_cast.hpp>
 
-//TODO
-//improve ball homing ability
-//improve jumping
 
 PhysicsWorld::PhysicsWorld() {}
 

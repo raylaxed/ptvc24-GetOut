@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <PxPhysicsAPI.h>
-#include "PhysicsWorld.h"
 
 class Enemy
 {
