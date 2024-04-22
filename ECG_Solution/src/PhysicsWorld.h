@@ -100,7 +100,7 @@ public:
 
 	void addSphereToPWorld(Model& obj, float radius, bool isStatic);
 
-	//void addEnemyToPWorld(Model& obj, Enemy& enem, float radius);
+	void addEnemyToPWorld(Model& obj, Enemy& enem, float radius);
 
 	//updates the Player in the rendered World
 	void updatePlayer(Movement movement, float deltaTime);

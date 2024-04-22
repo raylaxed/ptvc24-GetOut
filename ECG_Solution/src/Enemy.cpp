@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Enemy.h"
+#include "PhysicsWorld.h"
 #include <vector>
 
-Enemy::Enemy(std::vector<physx::PxVec3> controlPoints)
-	:controlPoints(controlPoints)
+Enemy::Enemy(std::vector<physx::PxVec3> controlPoints, Model* enemyModel)
+	:controlPoints(controlPoints), enemyModel(*enemyModel)
 {
 }
 
