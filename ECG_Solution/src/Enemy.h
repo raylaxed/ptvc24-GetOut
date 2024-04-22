@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include <vector>
 #include <PxPhysicsAPI.h>
@@ -12,7 +11,7 @@ private:
 	uint16_t controlPoint_index = 0;
 
 public:
-	Enemy(std::vector<physx::PxVec3> controlPoints, PxScene scene);
+	Enemy(std::vector<physx::PxVec3> controlPoints);
 
 	std::vector<physx::PxVec3> getControlPoints();
 

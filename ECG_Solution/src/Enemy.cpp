@@ -8,6 +8,7 @@ Enemy::Enemy(std::vector<physx::PxVec3> controlPoints)
 
 }
 
+
 std::vector<physx::PxVec3> Enemy::getControlPoints()
 {
 	return controlPoints;

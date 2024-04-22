@@ -1,5 +1,7 @@
+#pragma once
 
 #include <vector>
+#include <memory>
 #include "PxPhysicsAPI.h"
 #include "Geometry.h"
 #include "OwnUtils.h"
@@ -49,6 +51,10 @@ private:
 	PxRigidDynamic* pPlayer;
 	PxRigidDynamic* pBall;
 
+	// these vectors are for storing an Enemy and the corresponding rigidbody dynamics
+	//std::vector<Enemy*> movingEnemies;
+	std::vector<PxRigidDynamic*> enemyDynamics;
+
 	//variables for keeping track
 	float _downForce = -10.f;
 	float _UpForce = 40.f;
@@ -93,6 +99,8 @@ public:
 	void addSphereToPWorld(Geometry& obj, float radius, bool isStatic = true);
 
 	void addSphereToPWorld(Model& obj, float radius, bool isStatic);
+
+	//void addEnemyToPWorld(Model& obj, Enemy& enem, float radius);
 
 	//updates the Player in the rendered World
 	void updatePlayer(Movement movement, float deltaTime);

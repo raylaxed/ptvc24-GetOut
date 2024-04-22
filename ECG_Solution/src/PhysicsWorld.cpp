@@ -229,10 +229,23 @@ void PhysicsWorld::addSphereToPWorld(Model& obj, float radius, bool isStatic) {
 		gScene->addActor(*THEHELLISHDODGEBALL);
 		pDynamicObjects.push_back(THEHELLISHDODGEBALL);
 	}
-
-
-
 }
+
+
+//void PhysicsWorld::addEnemyToPWorld(Model& obj, Enemy& enem, float radius) {
+//	gModels.push_back(&obj);
+//	PxVec3 position = OwnUtils::glmModelMatrixToPxVec3(obj.getModel());
+//	PxShape* tmpShape = gPhysics->createShape(PxSphereGeometry(radius), *gMaterial);
+//
+//	//add the object to the physx object
+//	PxRigidDynamic* THEHELLISHDODGEBALL = PxCreateDynamic(*gPhysics, PxTransform(position), *tmpShape, 1);
+//	pBall = THEHELLISHDODGEBALL;
+//	THEHELLISHDODGEBALL->setAngularVelocity(PxVec3(0.5f, 0.5f, 0.5f));
+//	THEHELLISHDODGEBALL->userData = (void*)&obj;
+//	THEHELLISHDODGEBALL->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+//	gScene->addActor(*THEHELLISHDODGEBALL);
+//	pDynamicObjects.push_back(THEHELLISHDODGEBALL);
+//}
 
 void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
