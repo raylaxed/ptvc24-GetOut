@@ -298,6 +298,7 @@ int main(int argc, char** argv)
 
 		// ====================================================================================================================
 
+
 		//Setup Player with hitbox size
 		pWorld->addPlayerToPWorld(player, glm::vec3(1.0f, 3.5f, 1.0f) * 0.5f);
 
@@ -307,6 +308,20 @@ int main(int argc, char** argv)
 		brain->setModel(glm::translate(brain->getModel(), glm::vec3(5.0f, 4.0f, 0.0f)));
 
 		pWorld->addSphereToPWorld(*brain, 1.5f, false);
+
+
+		// ENEMIES
+		std::vector<physx::PxVec3> path1;
+		path1.push_back(physx::PxVec3(-50.0, 7.0, -50.0));
+		path1.push_back(physx::PxVec3(-50.0, 7.0, -50.0));
+		Model* brain_01 = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *cookTexturedShader.get());
+		brain_01->setModel(glm::translate(brain_01->getModel(), glm::vec3(5.0, 7.0, 5.0)));
+
+
+		Enemy* enem1 = new Enemy(path1, brain);
+
+		pWorld->addEnemyToPWorld(*brain_01, *enem1, 2.0);
+
 
 	
 		//TEXT
@@ -429,6 +444,7 @@ int main(int argc, char** argv)
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
 			pWorld->updateEnemy();
+			pWorld->updateEnemies(deltaTime);
 			//TODO: updateBrain
 			
 			//set the uniforms for the texture shader
@@ -462,6 +478,7 @@ int main(int argc, char** argv)
 			room->Draw(room->getModel());
 
 			brain->Draw(brain->getModel());
+			brain_01->Draw(brain_01->getModel());
 			
 			
 			//everything registered in the physicsworld

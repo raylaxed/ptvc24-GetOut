@@ -243,6 +243,7 @@ void PhysicsWorld::addEnemyToPWorld(Model& obj, Enemy& enem, float radius) {
 	PxRigidDynamic* dyn = PxCreateDynamic(*gPhysics, PxTransform(position), *tmpShape, 1);
 	dyn->userData = (void*)&obj;
 	dyn->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	dyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 	gScene->addActor(*dyn);
 	enemyDynamics.push_back(dyn);
 }
@@ -338,8 +339,39 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 	playerObject->UpdatePosition(newPos);
 }
 
-void updateEnemies(float deltaTime) {
+void PhysicsWorld::updateEnemies(float deltaTime) {
 
+	for (size_t i = 0; i < movingEnemies.size(); ++i) {
+		Enemy* currentEnemy = movingEnemies[i];
+		std::vector<physx::PxVec3>& path = currentEnemy->getControlPoints();
+		physx::PxRigidDynamic* actor = enemyDynamics[i];
+
+		//size_t currentPointIndex = currentEnemy->getControlPointIndex();
+		static size_t currentPointIndex = 0;
+
+		// Calculate the direction to the next control point
+		physx::PxVec3 direction = path[currentPointIndex] - actor->getGlobalPose().p;
+		direction.normalize();
+
+		// Move the actor towards the next control point
+		//actor->setGlobalPose(physx::PxTransform(actor->getGlobalPose().p + direction * 3.0 * deltaTime));
+		actor->setKinematicTarget(physx::PxTransform(5.0, 5.0, 5.0));
+		physx::PxVec3 newPos = actor->getGlobalPose().p;
+
+
+		Model* currentEnemy_model = (Model*)actor->userData;
+		currentEnemy_model->resetModelMatrix();
+		currentEnemy_model->setModel(glm::translate(glm::mat4(1.0f), glm::vec3(newPos.x, newPos.y, newPos.z)));
+		//currentEnemy_model->setModel((actor->getGlobalPose().p + direction * 3.0 * deltaTime));
+
+		// Check if the actor has reached the current control point
+		//float distanceToNextPoint = (path[currentPointIndex] - actor->getGlobalPose().p).magnitude();
+		//if (distanceToNextPoint < 0.1f) {
+		//	// Move to the next control point
+		//	currentPointIndex = (currentPointIndex + 1) % path.size();
+		//	//currentEnemy->updateControlPointIndex();
+		//}
+	}
 }
 
 glm::vec3 PhysicsWorld::getBallPosition() {
