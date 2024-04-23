@@ -41,7 +41,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, DirectionalLight& dirL, PointLight& pointL);
 void processKeyInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double x, double y);
-void dashCooldownDraw(Shader& shader);
 std::vector<PointLight*> createLights(glm::vec3 flamecolor);
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
 
@@ -244,7 +243,7 @@ int main(int argc, char** argv)
 	
 		//LIGHTS
 		
-		std::vector<PointLight*> pointLights;
+		std::vector<PointLight*> pointLights = createLights(flamecolor);
 		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
 		player.setLight(*tmpPoint);
 
@@ -332,14 +331,8 @@ int main(int argc, char** argv)
 			std::cout << "Framebuffer not complete!" << std::endl;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	
-
-		bool bloom = false;
-		float exposure = 1.f;
 		// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-		string dashString = "";
-		Timer dashTimer = Timer();
 
 
 		float lastFrameTime = 0.0f;
@@ -377,7 +370,7 @@ int main(int argc, char** argv)
 			
 			//Player Light
 			PointLight* tmpPoint2 = player.getLight();
-			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
+			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
 		//	setPerFrameUniforms(cookTexturedShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
 
 			
@@ -561,42 +554,6 @@ void drawModelVector(Model* model, std::vector<glm::mat4*> x)
 		model->Draw(*tmp);
 	}
 }
-
-//draws the dash cooldown on the HUD
-void dashCooldownDraw(Shader& shader) {
-	
-	bool hasDashed = pWorld->playerHasDashed();
-	static string dashString = "";
-	static Timer dashTimer = Timer();
-	static Text dashCooldown = Text("IIIIIIIIII", glm::vec2(window_width-300, 100.0f), 2.f, glm::vec3(0.2f, 1, 0.2f), _charactersForCooldown, shader);
-
-	if (isDead) {
-		dashCooldown.setText("IIIIIIIIII");
-		dashCooldown.setColor(glm::vec3(0.1f, 1.0f, 0.1f));
-		dashString = "";
-		dashTimer.Reset();
-		return;
-	}
-
-	if (hasDashed) {
-
-		if (dashTimer.Duration() >= 0.25f) {
-			dashCooldown.setText(dashString.append("I"));
-			dashCooldown.setColor(glm::vec3(1.f, 0.1f, 0.1f));
-			dashTimer.Reset();
-		}
-
-	}
-	else {
-
-		dashCooldown.setText("IIIIIIIIII");
-		dashCooldown.setColor(glm::vec3(0.1f, 1.0f, 0.1f));
-		dashString = "";
-	}
-
-	dashCooldown.drawText(true);
-}
-
 
 
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader) {
@@ -997,24 +954,19 @@ std::vector<PointLight*> createLights(glm::vec3 flamecolor)
 {
 	std::vector<PointLight*> lights;
 
-	for (int i = -1; i <= 0; i++) {
-		
-		//lights at the front of the room 
-		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(i*20.f, 9.f, -46.5f), glm::vec3(0.01f));
-		lights.push_back(tmpPoint);
+	PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(46.5f, 5.f, -46.5f), glm::vec3(0.001f));
+	lights.push_back(tmpPoint);
 
-		//lights at the back of the room 
-		PointLight* tmpPoint1 = new PointLight(flamecolor, glm::vec3(-i*20.f, 9.f, 46.5f), glm::vec3(0.01f));
-		lights.push_back(tmpPoint1);
+	PointLight* tmpPoint1 = new PointLight(flamecolor, glm::vec3(-46.5f, 5.f, 46.5f), glm::vec3(0.001f));
+	lights.push_back(tmpPoint1);
 
-		//lights at the right of the room 
-		PointLight* tmpPoint2 = new PointLight(flamecolor, glm::vec3(46.5f, 9.f, i*20.f), glm::vec3(0.01f));
-		lights.push_back(tmpPoint2);
+	
+	PointLight* tmpPoint2 = new PointLight(flamecolor, glm::vec3(46.5f, 5.f, 46.5f), glm::vec3(0.001f));
+	lights.push_back(tmpPoint2);
 
-		//lights at the left of the room 
-		PointLight* tmpPoint3 = new PointLight(flamecolor, glm::vec3(-46.5f, 9.f, -i*20.f), glm::vec3(0.01f));
-		lights.push_back(tmpPoint3);
-	}
+	PointLight* tmpPoint3 = new PointLight(flamecolor, glm::vec3(-46.5f, 5.f, -46.5f), glm::vec3(0.001f));
+	lights.push_back(tmpPoint3);
+	
 
 	return lights;
 }

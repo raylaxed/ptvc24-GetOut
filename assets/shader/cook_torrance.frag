@@ -34,7 +34,7 @@ uniform struct PointLight {
 	vec3 attenuation;
 } pointL;
 
-#define NR_POINT_LIGHTS 1
+#define NR_POINT_LIGHTS 5
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 
