@@ -24,10 +24,6 @@
 
 
 
-
-
-
-
 /* --------------------------------------------- */
 // Prototypes
 /* --------------------------------------------- */
@@ -46,8 +42,6 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, D
 void processKeyInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double x, double y);
 void dashCooldownDraw(Shader& shader);
-void postProcessing(shared_ptr<Shader> blurShader, shared_ptr<Shader> bloomShader, bool bloom, float exposure);
-void createQuad();
 std::vector<PointLight*> createLights(glm::vec3 flamecolor);
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
 
@@ -211,13 +205,10 @@ int main(int argc, char** argv)
 		// Load shader(s)
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 		
-		std::shared_ptr<Shader> cookTexturedShader = std::make_shared<Shader>("textureCook.vert", "cook_torrance_textured.frag");
-		//std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torrance.frag");
 		std::shared_ptr<Shader> hudShader = std::make_shared<Shader>("hud.vert", "hud.frag");
 		
-		//std::shared_ptr<Shader> lightMakerShader = std::make_shared<Shader>("textureCook.vert", "visible_light_maker.frag");
-		std::shared_ptr<Shader> blurShader = std::make_shared<Shader>("blur.vert", "blur.frag");
-		std::shared_ptr<Shader> bloomShader = std::make_shared<Shader>("bloom.vert", "bloom.frag");
+		//std::shared_ptr<Shader> blurShader = std::make_shared<Shader>("blur.vert", "blur.frag");
+		//std::shared_ptr<Shader> bloomShader = std::make_shared<Shader>("bloom.vert", "bloom.frag");
 		
 
 		glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(window_width), 0.0f, static_cast<float>(window_height));
@@ -234,18 +225,12 @@ int main(int argc, char** argv)
 		
 		
 		std::shared_ptr<Texture> groundBase = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.jpg");
-		std::shared_ptr<Texture> groundAO = std::make_shared<Texture>("ground/ground_ambientocclusion.dds");
-		std::shared_ptr<Texture> groundMetallic = std::make_shared<Texture>("ground/ground_metallic.dds");
-		std::shared_ptr<Texture> groundRoughness = std::make_shared<Texture>("ground/ground_roughness.dds");
-		std::shared_ptr<Texture> groundNormal = std::make_shared<Texture>("ground/ground_normal.dds");
-		
-
+	
 
 		// Create materials,																					x = ambient, y = diffuse, z = specular		
 		std::shared_ptr<Material> playerMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, groundBase);
-		std::shared_ptr<Material> groundMat = std::make_shared<TextureMaterial>(cookTexturedShader,groundTexture,groundAO,groundMetallic,groundNormal,groundRoughness);
-
-		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(cookTexturedShader, wallTexture, groundAO, groundMetallic, groundNormal, groundRoughness);
+		std::shared_ptr<Material> groundMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, groundBase);
+		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, groundBase);
 
 		//load models
 		
@@ -258,24 +243,18 @@ int main(int argc, char** argv)
 		
 	
 		//LIGHTS
-		//std::vector<PointLight*> pointLights;
-		//std::vector<PointLight*> pointLights = createLights(flamecolor);
+		
 		std::vector<PointLight*> pointLights;
-		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.001f));
+		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
 		player.setLight(*tmpPoint);
 
 		
-		//std::vector<PointLight*> pointLights;
-		//std::vector<PointLight*> lights;
-	
 		// Room
 		//initialize floor
 		float length = 99.f;
 		float width = 99.f;
 		
 		
-
-		//Geometry* bulb = new Geometry(glm::scale(glm::mat4(1.0f), glm::vec3(1)), Geometry::createSphereGeometry(64, 32, 0.425f), playerMat);
 
 		//WALLS
 		std::vector<Model*> walls = createWalls(textureShader);
@@ -299,7 +278,7 @@ int main(int argc, char** argv)
 		pWorld->addPlayerToPWorld(player, glm::vec3(1.0f, 3.5f, 1.0f) * 0.5f);
 
 		//Setup Enemy
-		Model* brain = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *cookTexturedShader.get());
+		Model* brain = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *textureShader.get());
 		brain->setModel(glm::translate(brain->getModel(), glm::vec3(8.0f, 3.2f, 0.0f)));
 		//addSphere sets as an enemy if last param is "false"
 		pWorld->addSphereToPWorld(*brain, 1.5f, false);
@@ -318,11 +297,7 @@ int main(int argc, char** argv)
 
 	
 
-		// ---------------------------------------
-		//  Set up Buffers for Post-Processing
-		//  //the following buffer code was taken
-		//  from https://learnopengl.com/Advanced-Lighting/Bloom
-		// ---------------------------------------
+	
 
 
 		// configure (floating point) framebuffers
@@ -357,32 +332,7 @@ int main(int argc, char** argv)
 			std::cout << "Framebuffer not complete!" << std::endl;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// ping-pong-framebuffer for blurring
-		glGenFramebuffers(2, pingpongFBO);
-		glGenTextures(2, pingpongColorbuffers);
-		for (unsigned int i = 0; i < 2; i++)
-		{
-			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
-			glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[i]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, window_width, window_height, 0, GL_RGBA, GL_FLOAT, NULL);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // we clamp to the edge as the blur filter would otherwise sample repeated texture values!
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorbuffers[i], 0);
-			// also check if framebuffers are complete (no need for depth buffer)
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-				std::cout << "Framebuffer not complete!" << std::endl;
-		}
-		cookTexturedShader->use();
-		cookTexturedShader->setUniform("diffuseTexture", 0);
-		blurShader->use();
-		blurShader->setUniform("image", 0);
-		bloomShader->use();
-		bloomShader->setUniform("scene",0);
-		bloomShader->setUniform("bloomBlur", 1);
-
-
+	
 
 		bool bloom = false;
 		float exposure = 1.f;
@@ -428,7 +378,7 @@ int main(int argc, char** argv)
 			//Player Light
 			PointLight* tmpPoint2 = player.getLight();
 			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
-			setPerFrameUniforms(cookTexturedShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
+		//	setPerFrameUniforms(cookTexturedShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
 
 			
 			//set the uniforms for the texture shader
@@ -436,11 +386,7 @@ int main(int argc, char** argv)
 				setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
 			}
 
-			//set the uniforms for the physically based shader
-			for (int i = 0; i < pointLights.size(); i++) {
-				setPerFrameUniforms(cookTexturedShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
-			}
-
+			
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -485,8 +431,6 @@ int main(int argc, char** argv)
 							endOfGame->drawText();
 						}
 
-
-						//postProcessing(blurShader, bloomShader, bloom, exposure);
 						glfwSwapBuffers(window);
 					}
 			}
@@ -502,7 +446,7 @@ int main(int argc, char** argv)
 			highScore->drawText();
 		
 			//apply bloom
-			//postProcessing(blurShader, bloomShader, bloom, exposure);
+			
 
 			//time logic
 			float currentFrame = static_cast<float>(glfwGetTime());
@@ -1073,76 +1017,6 @@ std::vector<PointLight*> createLights(glm::vec3 flamecolor)
 	}
 
 	return lights;
-}
-
-//create a quad that fills the screen for the post processing
-void createQuad()
-{
-	if (qVAO == 0)
-	{
-		float qVertices[] = {
-			// (x,	   y,    z) & (u,    v)
-			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-		};
-	    //create VAO
-        glGenVertexArrays(1, &qVAO);
-        glGenBuffers(1, &qVBO);
-		//create VBO
-        glBindVertexArray(qVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, qVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(qVertices), &qVertices, GL_STATIC_DRAW);
-
-		//bind vertices to location 0
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-		//bind uvs to location 2
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    }
-	//draw quad
-    glBindVertexArray(qVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
-}
-
-//apply bloom and glow
-void postProcessing(shared_ptr<Shader> blurShader, shared_ptr<Shader> bloomShader, bool bloom, float exposure)
-{
-	// 2. blur bright fragments with two-pass Gaussian Blur 
-	// --------------------------------------------------
-	bool horizontal = true, first_iteration = true;
-	unsigned int amount = 16;
-	blurShader->use();
-	for (unsigned int i = 0; i < amount; i++)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
-		blurShader->setUniform("horizontal", horizontal);
-		glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
-		createQuad();
-		horizontal = !horizontal;
-		if (first_iteration)
-			first_iteration = false;
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-	// 3. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
-	// --------------------------------------------------------------------------------------------------------------------------
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	bloomShader->use();
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
-
-	bloomShader->setUniform("bloom", bloom);
-	bloomShader->setUniform("exposure", exposure);
-	createQuad();
 }
 
 //processes all key inputs
