@@ -312,10 +312,12 @@ int main(int argc, char** argv)
 
 		// ENEMIES
 		std::vector<physx::PxVec3> path1;
-		path1.push_back(physx::PxVec3(-50.0, 7.0, -50.0));
-		path1.push_back(physx::PxVec3(-50.0, 7.0, -50.0));
+		path1.push_back(physx::PxVec3(-40.0, 7.0, -40.0));
+		path1.push_back(physx::PxVec3(-40.0, 7.0, 40.0));
+		path1.push_back(physx::PxVec3(40.0, 7.0, 40.0));
+		path1.push_back(physx::PxVec3(40.0, 7.0, -40.0));
 		Model* brain_01 = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *cookTexturedShader.get());
-		brain_01->setModel(glm::translate(brain_01->getModel(), glm::vec3(5.0, 7.0, 5.0)));
+		brain_01->setModel(glm::translate(brain_01->getModel(), glm::vec3(-40.0, 7.0, -30.0)));
 
 
 		Enemy* enem1 = new Enemy(path1, brain);
