@@ -249,7 +249,7 @@ int main(int argc, char** argv)
 
 		//load models
 		
-		Model* armModel = new Model("assets/objects/flashlight/flashlight3.obj", glm::mat4(1.f), *textureShader.get());
+		Model* armModel = new Model("assets/objects/lantern/scene2.gltf", glm::mat4(1.f), *textureShader.get());
 		player.setHand(*armModel);
 		
 		Model* room = new Model("assets/objects/room/room2.obj", glm::mat4(1.f), *textureShader.get());
@@ -261,8 +261,8 @@ int main(int argc, char** argv)
 		//std::vector<PointLight*> pointLights;
 		//std::vector<PointLight*> pointLights = createLights(flamecolor);
 		std::vector<PointLight*> pointLights;
-		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.01f));
-		pointLights.push_back(tmpPoint);
+		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.001f));
+		player.setLight(*tmpPoint);
 
 		
 		//std::vector<PointLight*> pointLights;
@@ -424,7 +424,12 @@ int main(int argc, char** argv)
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
 			pWorld->updateEnemy();
-			//TODO: updateBrain
+			
+			//Player Light
+			PointLight* tmpPoint2 = player.getLight();
+			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
+			setPerFrameUniforms(cookTexturedShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
+
 			
 			//set the uniforms for the texture shader
 			for (int i = 0; i < pointLights.size(); i++) {
@@ -446,11 +451,6 @@ int main(int argc, char** argv)
 			//models
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
-			
-			//light attached to player
-			PointLight* lightToUpdate = pointLights[0];
-			glm::vec3 newPosition = player.getCamera()->getPosition();
-			lightToUpdate->position =newPosition;
 			
 			//walls
 			for (size_t i = 0; i < walls.size(); ++i) {

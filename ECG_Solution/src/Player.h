@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Geometry.h"
 #include "Model.h"
-
+#include "Light.h"
 
 /*!
 * the player class is more or less a wrapper class
@@ -17,11 +17,18 @@ private:
 	
 	Model* _skeleton_arm;
 
+	PointLight* _player_light;
+
 public:
 
 	Player(Camera& camera);
 	
 	~Player();
+
+
+	void Player::setLight(PointLight& light);
+
+	Player::PointLight* getLight();
 
 	void setHand(Model& hand);
 
