@@ -2,6 +2,7 @@ build/
 .vs/
 bin/debug/assets
 bin/release/assets
+bin/Release.zip
 bin/debug/GetOut.exe
 bin/debug/GetOut.pdb
 bin/release/GetOut.exe
