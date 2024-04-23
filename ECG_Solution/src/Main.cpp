@@ -437,7 +437,7 @@ int main(int argc, char** argv)
 
 						
 						if (pWorld->isPlayerHit()) {
-							endOfGame->setText("*You died! Game Over!*");
+							endOfGame->setText("*Game Over! Press Enter to Restart*");
 							endOfGame->drawText();
 						}
 
@@ -1029,10 +1029,7 @@ void processKeyInput(GLFWwindow* window)
 		{
 			pWorld->updatePlayer(PJUMP, deltaTime);
 		}
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		{
-			pWorld->updatePlayer(PDASH, deltaTime);
-		}
+		
 		
 	}
 }

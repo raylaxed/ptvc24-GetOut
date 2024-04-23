@@ -43,9 +43,6 @@ public:
 	//Updates the Hand to move in relation to the position and camera
 	void UpdateHand(float degree = 0);
 
-	//animates the left click of the hand
-	void HandAnimation();
-
 	//currently not used, but could be used for a zoom feature
 	void ProcessMouseScroll(float offset);
 

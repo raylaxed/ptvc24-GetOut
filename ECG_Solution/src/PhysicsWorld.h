@@ -21,8 +21,7 @@ enum Movement {
 	PRIGHT,
 	PJUMP,
 	PNOMOVEMENT,
-	PSPRINT,
-	PDASH
+	PSPRINT
 };
 
 class PhysicsWorld
@@ -63,7 +62,7 @@ private:
 	float _UpForce = 40.f;
 	int _hitCounter = 0;
 	int _scoreCounter = 0;
-	bool _hasDashed = false;
+	
 	
 
 public:
@@ -82,11 +81,6 @@ public:
 	//returns the scoreCounter used for highscore 
 	int getScoreCounter();
 
-	void setScoreCounter(unsigned int newScore);
-	
-	void setHitCounter(unsigned int newHits);
-
-	bool playerHasDashed();
 
 	//add a Cube Geometry object into the simulation as a rigidbody
 	void addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool isStatic = true,bool isTorchHitbox = false);

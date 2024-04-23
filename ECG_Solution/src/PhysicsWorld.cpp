@@ -62,22 +62,8 @@ int PhysicsWorld::getScoreCounter() {
 }
 
 
-void PhysicsWorld::setScoreCounter(unsigned int newScore) {
 
-	_scoreCounter = newScore;
 
-}
-
-void PhysicsWorld::setHitCounter(unsigned int newHits) {
-
-	_hitCounter = newHits;
-	
-}
-
-bool PhysicsWorld::playerHasDashed() {
-
-	return _hasDashed;
-}
 
 
 /*
@@ -248,9 +234,9 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
 	static bool airborne = false;
 	static bool gravityEnabled = true;
-	static float dashFactor = 1.f;
+
 	static Timer JumpTimer = Timer();
-	static Timer DashTimer = Timer();
+	
 	static float velocity = -10.f *deltaTime;
 	float gravity = -9.81f *deltaTime;
 
@@ -268,13 +254,7 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 		velocity = gravity * 2;
 	}
 
-	if (movement == PDASH && !_hasDashed) {
-	
-		dashFactor = 5.f;
-		DashTimer.Reset();
-		_hasDashed = true;
-	}
-	
+
 	Player* playerObject = (Player*)controllerPlayer->getUserData();
 	Camera* playerCamera = playerObject->getCamera();
 
@@ -288,17 +268,17 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
 	
 	if (movement == PFORWARD) {
-		controllerPlayer->move(dashFactor * forward,0.02f,deltaTime,NULL);
+		controllerPlayer->move(forward,0.02f,deltaTime,NULL);
 		
 	}
 	if (movement == PBACKWARD) {
-		controllerPlayer->move(dashFactor * backward, 0.02f, deltaTime, NULL);
+		controllerPlayer->move( backward, 0.02f, deltaTime, NULL);
 	}
 	if (movement == PLEFT) {
-		controllerPlayer->move(dashFactor * left, 0.02f, deltaTime, NULL);
+		controllerPlayer->move(left, 0.02f, deltaTime, NULL);
 	}
 	if (movement == PRIGHT) {
-		controllerPlayer->move(dashFactor * right, 0.02f, deltaTime, NULL);
+		controllerPlayer->move(right, 0.02f, deltaTime, NULL);
 	}
 	if (movement == PJUMP && !airborne) {
 		velocity = -7 * gravity;
@@ -307,15 +287,6 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 		airborne = true;
 	}
 
-	if (DashTimer.Duration() > 0.2f) 
-	{
-		dashFactor = 1;
-
-		if (DashTimer.Duration() > 2.5f) 
-		{
-			_hasDashed = false;
-		}
-	}
 
 	if (JumpTimer.Duration() > 1.5f) {
 		airborne = false;
@@ -378,15 +349,15 @@ boolean PhysicsWorld::isPlayerHit() {
 	
 	float distance = calcDirectionEnemyPlayer().magnitude();
 	//TODO dont hardcode ballradius
-	return distance < 2.0;
+	return distance < 2.5;
 }
-
 boolean PhysicsWorld::isPlayerDead() {
 
 	PxExtendedVec3 position = controllerPlayer->getFootPosition();
 	return position.y <= 0.25f;
 
 }
+
 
 PxVec3 PhysicsWorld::calcDirectionEnemyPlayer() {
 
@@ -404,7 +375,7 @@ void PhysicsWorld::updateEnemy() {
 
 	PxVec3 directionToPlayer = calcDirectionEnemyPlayer();
 
-	pTestEnemy->addForce(directionToPlayer / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
+	pTestEnemy->addForce(directionToPlayer / (directionToPlayer.magnitude() * (10 )), PxForceMode::eIMPULSE);
 	PxVec3 position = pTestEnemy->getGlobalPose().p;
 	
 	glm::vec3 newPos = glm::vec3(position.x, 3.0f, position.z);
@@ -417,13 +388,13 @@ void PhysicsWorld::updateEnemy() {
 
 void PhysicsWorld::Animate(Player& player) {
 
-	player.HandAnimation();
+	//player.HandAnimation();
 
 	PxVec3 directionToPlayer = calcDirectionEnemyPlayer();
 	float distance = directionToPlayer.magnitude();
 
 	if (distance < 3) {
-		updateEnemy();
+		//updateEnemy();
 		//updateBall(true);
 	}
 }
@@ -441,13 +412,9 @@ void PhysicsWorld::draw() {
 
 void PhysicsWorld::resetGame() {
 
-	controllerPlayer->setPosition(PxExtendedVec3(5.0f, 7.0f, 35.0f));
-	pTestEnemy->setAngularVelocity(PxVec3(0, 0, 0));
-	pTestEnemy->setLinearVelocity(PxVec3(0, 0, 0));
-	pTestEnemy->setGlobalPose(PxTransform(PxVec3(0.0f, 6.5f, -10.0f)));
-	_hasDashed = false;
-	setScoreCounter(0);
-	setHitCounter(0);
+	controllerPlayer->setPosition(PxExtendedVec3(0.0f, 7.0f, 0.0f));
+	
+
 }
 
 

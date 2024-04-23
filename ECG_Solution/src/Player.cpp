@@ -87,25 +87,5 @@
 
 	}
 
-	void Player::HandAnimation()
-	{
-		static Timer AnimationTimer = Timer();
-		static float rotationdeg = 90.0f;
-
-			
-			if (AnimationTimer.Duration() ) {
-
-				UpdateHand(rotationdeg);
-				AnimationTimer.Reset();
-
-			}
-			else {
-				rotationdeg = 45.f;
-			}
-		
-
-			
-			
-		
-	}
+	
 
