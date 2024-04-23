@@ -5,7 +5,6 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\OwnUtils.cpp" />
-    <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Shader.cpp" />
@@ -22,7 +21,6 @@
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\OwnUtils.h" />
-    <ClInclude Include="src\ParticleSystem.h" />
     <ClInclude Include="src\PhysicsWorld.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\Shader.h" />
