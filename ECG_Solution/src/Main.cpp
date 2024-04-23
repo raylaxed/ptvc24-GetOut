@@ -300,7 +300,7 @@ int main(int argc, char** argv)
 		//TEXT
 		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*hudShader.get());
 		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
-		Text* highScore = new Text("HUD TEST ", glm::vec2(850.0f, 1000.0f), 1.f, glm::vec3(1, 0.2f, 0.5f), _characters, *hudShader.get());
+		Text* HUD_TEST = new Text("HUD TEST ", glm::vec2(800.0f, 1000.0f), 2.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
 		
 
 		double mouse_x, mouse_y;
@@ -453,7 +453,7 @@ int main(int argc, char** argv)
 			fps->drawText();
 
 
-			highScore->drawText();
+			HUD_TEST->drawText();
 		
 			//apply bloom
 			
