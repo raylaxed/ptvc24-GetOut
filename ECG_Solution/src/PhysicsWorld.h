@@ -52,7 +52,7 @@ private:
 
 	//the rigidbody dynamics 
 	PxRigidDynamic* pPlayer;
-	PxRigidDynamic* pBall;
+	PxRigidDynamic* pTestEnemy;
 
 	// these vectors are for storing an Enemy and the corresponding rigidbody dynamics
 	std::vector<Enemy*> movingEnemies;
@@ -114,7 +114,7 @@ public:
 	//boolean wether the player is dead or alive 
 	boolean isPlayerDead();
 
-	glm::vec3 getBallPosition();
+	glm::vec3 getEnemyPosition();
 
 	//TODO: starts the animation of the players hand
 	void Animate(Player& player);
@@ -123,7 +123,7 @@ public:
 	boolean isPlayerHit();
 
 	//calculates the vector from ball to player
-	PxVec3 calcDirectionBallPlayer();
+	PxVec3 calcDirectionEnemyPlayer();
 
 	//draws all added objects in the rendered world
 	void draw();
