@@ -411,7 +411,7 @@ void PhysicsWorld::updateEnemy() {
 	pBall->addForce(directionToPlayer / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
 	PxVec3 position = pBall->getGlobalPose().p;
 	
-	glm::vec3 newPos = glm::vec3(position.x, position.y, position.z);
+	glm::vec3 newPos = glm::vec3(position.x, 3.0f, position.z);
 
 	Model* enemy = (Model*)pBall->userData;
 	enemy->resetModelMatrix();
