@@ -220,11 +220,11 @@ int main(int argc, char** argv)
 		
 
 		// Create textures 
-		std::shared_ptr<Texture> groundTexture = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.jpg");
+		std::shared_ptr<Texture> groundTexture = std::make_shared<Texture>("wall.dds");
 		std::shared_ptr<Texture> wallTexture = std::make_shared<Texture>("wall.dds");
 		
 		
-		std::shared_ptr<Texture> groundBase = std::make_shared<Texture>("asstes/textures/textures/large_pebbles_diff_1k.jpg");
+		std::shared_ptr<Texture> groundBase = std::make_shared<Texture>("wall.dds");
 	
 
 		// Create materials,																					x = ambient, y = diffuse, z = specular		
