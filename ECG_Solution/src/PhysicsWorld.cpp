@@ -354,16 +354,13 @@ void PhysicsWorld::updateEnemies(float deltaTime) {
 		direction.normalize();
 
 		// Move the actor towards the next control point
-		//actor->setGlobalPose(physx::PxTransform(actor->getGlobalPose().p + direction * 3.0 * deltaTime));
-		//actor->addForce(direction, physx::PxForceMode::eFORCE);
-		physx::PxVec3 newPos = actor->getGlobalPose().p + direction * 3.0;
+		physx::PxVec3 newPos = actor->getGlobalPose().p + direction * 3.0 *deltaTime;
 		actor->setKinematicTarget(physx::PxTransform(newPos));
 
-
+		// Update model position
 		Model* currentEnemy_model = (Model*)actor->userData;
 		currentEnemy_model->resetModelMatrix();
 		currentEnemy_model->setModel(glm::translate(glm::mat4(1.0f), glm::vec3(newPos.x, newPos.y, newPos.z)));
-		//currentEnemy_model->setModel((actor->getGlobalPose().p + direction * 3.0 * deltaTime));
 
 		// Check if the actor has reached the current control point
 		float distanceToNextPoint = (path[currentPointIndex] - actor->getGlobalPose().p).magnitude();
