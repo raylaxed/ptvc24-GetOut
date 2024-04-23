@@ -50,8 +50,6 @@ std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
 
 static bool _wireframe = false;
 static bool _culling = true;
-static bool _dragging = false;
-static bool _strafing = false;
 static float _zoom = 6.0f;
 //time between frame and its predecesor
 float deltaTime = 0.0f; 
@@ -60,8 +58,6 @@ float lastFrame = 0.0f;
 //GameLogic bool
 bool resetGame = false;
 bool isDead = false;
-int highscore = 0;
-
 
 // Initialize camera
 Camera camera(glm::vec3(0.0f, 1.0f, 0.0f));
@@ -204,32 +200,28 @@ int main(int argc, char** argv)
 		// Load shader(s)
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 		
-		std::shared_ptr<Shader> hudShader = std::make_shared<Shader>("hud.vert", "hud.frag");
+		std::shared_ptr<Shader> uiShader = std::make_shared<Shader>("hud.vert", "hud.frag");
 		
 		//std::shared_ptr<Shader> blurShader = std::make_shared<Shader>("blur.vert", "blur.frag");
 		//std::shared_ptr<Shader> bloomShader = std::make_shared<Shader>("bloom.vert", "bloom.frag");
 		
 
 		glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(window_width), 0.0f, static_cast<float>(window_height));
-		hudShader->use();
-		hudShader->setUniform("projection", projection);
-		hudShader->initFreeType(_charactersForCooldown, "assets/arial.ttf");
-		hudShader->initFreeType(_characters, "assets/Alice_in_Wonderland_3.ttf");
+		uiShader->use();
+		uiShader->setUniform("projection", projection);
+		uiShader->initFreeType(_charactersForCooldown, "assets/arial.ttf");
+		uiShader->initFreeType(_characters, "assets/Alice_in_Wonderland_3.ttf");
 
 		
 
 		// Create textures 
-		std::shared_ptr<Texture> groundTexture = std::make_shared<Texture>("wall.dds");
-		std::shared_ptr<Texture> wallTexture = std::make_shared<Texture>("wall.dds");
-		
-		
-		std::shared_ptr<Texture> groundBase = std::make_shared<Texture>("wall.dds");
+		std::shared_ptr<Texture> floorTXT = std::make_shared<Texture>("wall.dds");
 	
 
 		// Create materials,																					x = ambient, y = diffuse, z = specular		
-		std::shared_ptr<Material> playerMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, groundBase);
-		std::shared_ptr<Material> groundMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, groundBase);
-		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, groundBase);
+		std::shared_ptr<Material> playerMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
+		std::shared_ptr<Material> groundMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
+		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 
 		//load models
 		
@@ -252,23 +244,21 @@ int main(int argc, char** argv)
 		//initialize floor
 		float length = 99.f;
 		float width = 99.f;
-		
-		
-
+	
 		//WALLS
 		std::vector<Model*> walls = createWalls(textureShader);
 
-		Geometry* ground = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), Geometry::createCubeGeometry(width + 2, 1.f, length + 2), groundMat);
-		Geometry* wallRight = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.f, length), wallMat);
-		Geometry* wallLeft = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.5f, length), wallMat);
-		Geometry* wallFront = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, 51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
-		Geometry* wallBack = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, -51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
+		Geometry* floor = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), Geometry::createCubeGeometry(width + 2, 1.f, length + 2), groundMat);
+		Geometry* rightLimit = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.f, length), wallMat);
+		Geometry* leftLimit = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.5f, length), wallMat);
+		Geometry* frontLimit = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, 51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
+		Geometry* backLimit = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, -51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
 		
-		pWorld->addCubeToPWorld(*ground, glm::vec3(width +2, 1.f, length +2) * 0.5f);
-		pWorld->addCubeToPWorld(*wallRight, glm::vec3(3.f, 50.5f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*wallLeft, glm::vec3(3.f, 50.5f, length) * 0.5f);
-		pWorld->addCubeToPWorld(*wallBack, glm::vec3(width, 50.5f, 3.f) * 0.5f);
-		pWorld->addCubeToPWorld(*wallFront, glm::vec3(width, 50.5f, 3.f) * 0.5f);
+		pWorld->addCubeToPWorld(*floor, glm::vec3(width +2, 1.f, length +2) * 0.5f);
+		pWorld->addCubeToPWorld(*rightLimit, glm::vec3(3.f, 50.5f, length) * 0.5f);
+		pWorld->addCubeToPWorld(*leftLimit, glm::vec3(3.f, 50.5f, length) * 0.5f);
+		pWorld->addCubeToPWorld(*backLimit, glm::vec3(width, 50.5f, 3.f) * 0.5f);
+		pWorld->addCubeToPWorld(*frontLimit, glm::vec3(width, 50.5f, 3.f) * 0.5f);
 		
 
 		// ====================================================================================================================
@@ -298,19 +288,15 @@ int main(int argc, char** argv)
 
 	
 		//TEXT
-		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*hudShader.get());
-		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *hudShader.get());
-		Text* HUD_TEST = new Text("HUD TEST ", glm::vec2(800.0f, 1000.0f), 2.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *hudShader.get());
+		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*uiShader.get());
+		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *uiShader.get());
+		Text* UI_test = new Text("GET OUT!", glm::vec2(850.0f, 100.0f), 1.f, glm::vec3(1.0f, 1.0f, 1.0f), _characters, *uiShader.get());
 		
 
 		double mouse_x, mouse_y;
 		
 		glm::mat4 projMatrix = glm::perspective(glm::radians(fov), (float)window_width / (float)window_height, nearZ, farZ);
 		player.getCamera()->setProjectionMatrix(projMatrix);
-
-	
-
-	
 
 
 		// configure (floating point) framebuffers
@@ -337,7 +323,6 @@ int main(int argc, char** argv)
 		glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, window_width, window_height);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-		// tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
 		unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 		glDrawBuffers(2, attachments);
 		// finally check if framebuffer is complete
@@ -453,11 +438,9 @@ int main(int argc, char** argv)
 			fps->drawText();
 
 
-			HUD_TEST->drawText();
+			UI_test->drawText();
 		
-			//apply bloom
 			
-
 			//time logic
 			float currentFrame = static_cast<float>(glfwGetTime());
 			deltaTime = currentFrame - lastFrame;
@@ -1066,14 +1049,13 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {	
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		pWorld->Animate(player); 
-		
+		//do some interaction
 	} else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-		_dragging = false;
+		//do some interaction
 	} else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		_strafing = true;
+		//do some interaction
 	} else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-		_strafing = false;
+		//do some interaction
 	}
 }
 

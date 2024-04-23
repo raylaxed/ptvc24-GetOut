@@ -110,9 +110,6 @@ public:
 
 	glm::vec3 getEnemyPosition();
 
-	//TODO: starts the animation of the players hand
-	void Animate(Player& player);
-
 	//checks if player collides with the ball
 	boolean isPlayerHit();
 

@@ -386,18 +386,6 @@ void PhysicsWorld::updateEnemy() {
 }
 
 
-void PhysicsWorld::Animate(Player& player) {
-
-	//player.HandAnimation();
-
-	PxVec3 directionToPlayer = calcDirectionEnemyPlayer();
-	float distance = directionToPlayer.magnitude();
-
-	if (distance < 3) {
-		//updateEnemy();
-		//updateBall(true);
-	}
-}
 
 void PhysicsWorld::draw() {
 
