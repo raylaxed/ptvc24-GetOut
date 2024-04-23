@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="src\Enemy.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
@@ -10,6 +11,7 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\Timer.cpp" />
+    <ClInclude Include="src\Enemy.h" />
     <ClInclude Include="src\Camera.h" />
     <ClCompile Include="src\Geometry.cpp" />
     <ClInclude Include="src\Geometry.h" />

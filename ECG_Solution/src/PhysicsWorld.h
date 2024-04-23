@@ -1,10 +1,15 @@
+#pragma once
+
+#ifndef PHYSICS_WORLD_H
+#define PHYSICS_WORLD_H
 
 #include <vector>
+#include <memory>
+#include "Enemy.h"
 #include "PxPhysicsAPI.h"
 #include "Geometry.h"
 #include "OwnUtils.h"
 #include "Player.h"
-
 using namespace physx;
 
 //Abstraction of player movement 
@@ -22,7 +27,6 @@ enum Movement {
 
 class PhysicsWorld
 {
-
 private:
 
 	//necessary init variables for PhysX Foundation
@@ -46,9 +50,13 @@ private:
 	std::vector<PxRigidStatic*> pStaticObjects;
 	std::vector<PxRigidDynamic*> pDynamicObjects;
 
-	//the two rigidbody dynamics 
+	//the rigidbody dynamics 
 	PxRigidDynamic* pPlayer;
 	PxRigidDynamic* pBall;
+
+	// these vectors are for storing an Enemy and the corresponding rigidbody dynamics
+	std::vector<Enemy*> movingEnemies;
+	std::vector<PxRigidDynamic*> enemyDynamics;
 
 	//variables for keeping track
 	float _downForce = -10.f;
@@ -56,11 +64,9 @@ private:
 	int _hitCounter = 0;
 	int _scoreCounter = 0;
 	bool _hasDashed = false;
-
-public:
-
 	
 
+public:
 	PhysicsWorld();
 	
 	//initializes PhysX context
@@ -87,17 +93,22 @@ public:
 	
 	void addCubeToPWorld(Model& obj, glm::vec3 measurements, bool isStatic = true, bool isTorchHitbox = false);
 
-
 	void addPlayerToPWorld(Player& player, glm::vec3 measurements);
 
 	//add a Sphere Geometry object into the simulation as a rigidbody
 	void addSphereToPWorld(Geometry& obj, float radius, bool isStatic = true);
 
 	void addSphereToPWorld(Model& obj, float radius, bool isStatic);
+
+	void addEnemyToPWorld(Model& obj, Enemy& enem, float radius);
+
 	//updates the Player in the rendered World
 	void updatePlayer(Movement movement, float deltaTime);
 
-	//TODO update enemy
+	// updates the patroling enemies
+	void updateEnemies(float deltaTime);
+
+	// updates the single brain enemy
 	void updateEnemy();
 
 	//boolean wether the player is dead or alive 
@@ -120,3 +131,5 @@ public:
 	//resets ball, player and ball velocity 
 	void resetGame();
 };
+
+#endif // PHYSICS_WORLD_H

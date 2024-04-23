@@ -42,7 +42,6 @@ void PhysicsWorld::initPhysics() {
 	//gScene->addActor(*groundPlane);
 
 	gManager = PxCreateControllerManager(*gScene);
-
 }
 
 
@@ -81,7 +80,12 @@ bool PhysicsWorld::playerHasDashed() {
 }
 
 
-
+/*
+* createShape takes the volume
+* PxTransform the position
+* hitboxes are from now on either spheres or cubes
+* TODO implement cylinders eventually
+*/
 void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool isStatic, bool isTorchHitbox) {
 
 	PxVec3 position = OwnUtils::glmModelMatrixToPxVec3(obj.getModelMatrix());
@@ -116,7 +120,6 @@ void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool i
 		gScene->addActor(*playerHitbox);
 		pDynamicObjects.push_back(playerHitbox);
 		pPlayer = playerHitbox;
-
 	}
 
 
@@ -155,10 +158,7 @@ void PhysicsWorld::addCubeToPWorld(Model& obj, glm::vec3 measurements, bool isSt
 		gScene->addActor(*playerHitbox);
 		pDynamicObjects.push_back(playerHitbox);
 		pPlayer = playerHitbox;
-
 	}
-
-
 }
 
 void PhysicsWorld::addPlayerToPWorld(Player& player, glm::vec3 measurements) {
@@ -172,9 +172,7 @@ void PhysicsWorld::addPlayerToPWorld(Player& player, glm::vec3 measurements) {
 	desc.material = gMaterial;
 	desc.userData = (void*)&player;
 	controllerPlayer = gManager->createController(desc);
-	
 }
-
 
 
 void PhysicsWorld::addSphereToPWorld(Geometry& obj, float radius, bool isStatic) {
@@ -182,7 +180,6 @@ void PhysicsWorld::addSphereToPWorld(Geometry& obj, float radius, bool isStatic)
 	gObjects.push_back(&obj);
 	PxVec3 position = OwnUtils::glmModelMatrixToPxVec3(obj.getModelMatrix());
 	PxShape* tmpShape = gPhysics->createShape(PxSphereGeometry(radius), *gMaterial);
-
 
 	//add the object to the physx object
 	if (isStatic) {
@@ -193,7 +190,6 @@ void PhysicsWorld::addSphereToPWorld(Geometry& obj, float radius, bool isStatic)
 	}
 	//else clause sets THEHELLISHDODGEBALL
 	else {
-
 		PxRigidDynamic* THEHELLISHDODGEBALL = PxCreateDynamic(*gPhysics, PxTransform(position), *tmpShape, 1);
 		pBall = THEHELLISHDODGEBALL;
 		THEHELLISHDODGEBALL->setAngularVelocity(PxVec3(0.5f, 0.5f, 0.5f));
@@ -230,14 +226,30 @@ void PhysicsWorld::addSphereToPWorld(Model& obj, float radius, bool isStatic) {
 		gScene->addActor(*THEHELLISHDODGEBALL);
 		pDynamicObjects.push_back(THEHELLISHDODGEBALL);
 	}
+}
 
 
+void PhysicsWorld::addEnemyToPWorld(Model& obj, Enemy& enem, float radius) {
 
+	//Model
+	gModels.push_back(&obj);
+	PxVec3 position = OwnUtils::glmModelMatrixToPxVec3(obj.getModel());
+	PxShape* tmpShape = gPhysics->createShape(PxSphereGeometry(radius), *gMaterial);
+
+	//Enemy
+	movingEnemies.push_back(&enem);
+
+	//add the object to the physx object
+	PxRigidDynamic* dyn = PxCreateDynamic(*gPhysics, PxTransform(position), *tmpShape, 1);
+	dyn->userData = (void*)&obj;
+	dyn->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	dyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	gScene->addActor(*dyn);
+	enemyDynamics.push_back(dyn);
 }
 
 void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
-	
 	static bool airborne = false;
 	static bool gravityEnabled = true;
 	static float dashFactor = 1.f;
@@ -254,7 +266,6 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 		{
 			velocity += gravity / 15;
 		}
-		
 	}
 	else {
 		gravity = -9.81f * 0.005f ;
@@ -313,7 +324,6 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 	if (JumpTimer.Duration() > 1.5f) {
 		airborne = false;
 		
-		
 		if (!gravityEnabled) {
 			gravityEnabled = true;
 		}
@@ -323,27 +333,56 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 		controllerPlayer->move(PxVec3(0.f, velocity, 0.f), 0.02f, deltaTime, NULL);
 	}
 	
-
 	PxExtendedVec3 position = controllerPlayer->getPosition();
 
 	glm::vec3 newPos = glm::vec3(position.x, position.y, position.z);
 	playerObject->UpdatePosition(newPos);
-	
-	
+}
+
+void PhysicsWorld::updateEnemies(float deltaTime) {
+
+	for (size_t i = 0; i < movingEnemies.size(); ++i) {
+		Enemy* currentEnemy = movingEnemies[i];
+		std::vector<physx::PxVec3>& path = currentEnemy->getControlPoints();
+		physx::PxRigidDynamic* actor = enemyDynamics[i];
+
+		//size_t currentPointIndex = currentEnemy->getControlPointIndex();
+		static size_t currentPointIndex = 0;
+
+		// Calculate the direction to the next control point
+		physx::PxVec3 direction = path[currentPointIndex] - actor->getGlobalPose().p;
+		direction.normalize();
+
+		// Move the actor towards the next control point
+		physx::PxVec3 newPos = actor->getGlobalPose().p + direction * 3.0 *deltaTime;
+		actor->setKinematicTarget(physx::PxTransform(newPos));
+
+		// Update model position
+		Model* currentEnemy_model = (Model*)actor->userData;
+		currentEnemy_model->resetModelMatrix();
+		currentEnemy_model->setModel(glm::translate(glm::mat4(1.0f), glm::vec3(newPos.x, newPos.y, newPos.z)));
+
+		// Check if the actor has reached the current control point
+		float distanceToNextPoint = (path[currentPointIndex] - actor->getGlobalPose().p).magnitude();
+		if (distanceToNextPoint < 0.1f) {
+			// Move to the next control point
+			currentPointIndex = (currentPointIndex + 1) % path.size();
+			//currentEnemy->updateControlPointIndex();
+		}
+	}
 }
 
 glm::vec3 PhysicsWorld::getBallPosition() {
 
 	PxVec3 tmp = pBall->getGlobalPose().p;
 	return glm::vec3(tmp.x, tmp.y, tmp.z);
-
 }
 
 boolean PhysicsWorld::isPlayerHit() {
 	
 	float distance = calcDirectionBallPlayer().magnitude();
 	//TODO dont hardcode ballradius
-	return distance < 2.2;
+	return distance < 2.0;
 }
 
 boolean PhysicsWorld::isPlayerDead() {
@@ -362,8 +401,6 @@ PxVec3 PhysicsWorld::calcDirectionBallPlayer() {
 	PxVec3 directionToPlayer =playerPos - ballPos;
 
 	return directionToPlayer;
-
-
 }
 
 
@@ -371,22 +408,20 @@ void PhysicsWorld::updateEnemy() {
 
 	PxVec3 directionToPlayer = calcDirectionBallPlayer();
 
-	pBall->addForce(directionToPlayer *10  / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
+	pBall->addForce(directionToPlayer / (directionToPlayer.magnitude() * (20 - _hitCounter)), PxForceMode::eIMPULSE);
 	PxVec3 position = pBall->getGlobalPose().p;
 	
-	glm::vec3 newPos = glm::vec3(position.x, 3.2f , position.z);
+	glm::vec3 newPos = glm::vec3(position.x, position.y, position.z);
 
 	Model* enemy = (Model*)pBall->userData;
 	enemy->resetModelMatrix();
 	enemy->setModel(glm::translate(glm::mat4(1.0f), newPos));
-
-
 }
 
 
 void PhysicsWorld::Animate(Player& player) {
 
-	//player.HandAnimation();
+	player.HandAnimation();
 
 	PxVec3 directionToPlayer = calcDirectionBallPlayer();
 	float distance = directionToPlayer.magnitude();
@@ -395,8 +430,6 @@ void PhysicsWorld::Animate(Player& player) {
 		updateEnemy();
 		//updateBall(true);
 	}
-	
-
 }
 
 void PhysicsWorld::draw() {
@@ -408,18 +441,6 @@ void PhysicsWorld::draw() {
 		tmp = *it;
 		tmp->draw();	
 	}
-
-
-
-	//Model* tmp2;
-	//std::vector<Model*>::iterator it2;
-
-	//for (it2 = gModels.begin(); it2 != gModels.end(); it2++) {
-	//	tmp2 = *it2;
-	//	tmp2->Draw(tmp2->getModel());
-	//	
-	//}
-
 }
 
 void PhysicsWorld::resetGame() {
@@ -431,8 +452,6 @@ void PhysicsWorld::resetGame() {
 	_hasDashed = false;
 	setScoreCounter(0);
 	setHitCounter(0);
-
-
 }
 
 
