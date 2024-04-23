@@ -282,6 +282,20 @@ int main(int argc, char** argv)
 		//addSphere sets as an enemy if last param is "false"
 		pWorld->addSphereToPWorld(*brain, 1.5f, false);
 
+
+		// ENEMIES
+		std::vector<physx::PxVec3> path1;
+		path1.push_back(physx::PxVec3(-40.0, 7.0, -40.0));
+		path1.push_back(physx::PxVec3(-40.0, 7.0, 40.0));
+		path1.push_back(physx::PxVec3(40.0, 7.0, 40.0));
+		path1.push_back(physx::PxVec3(40.0, 7.0, -40.0));
+		Model* brain_01 = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *textureShader.get());
+		brain_01->setModel(glm::translate(brain_01->getModel(), glm::vec3(-40.0, 7.0, -30.0)));
+
+		Enemy* enem1 = new Enemy(path1, brain);
+
+		pWorld->addEnemyToPWorld(*brain_01, *enem1, 2.0);
+
 	
 		//TEXT
 		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*hudShader.get());
@@ -367,6 +381,7 @@ int main(int argc, char** argv)
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
 			pWorld->updateEnemy();
+			pWorld->updateEnemies(deltaTime);
 			
 			//Player Light
 			PointLight* tmpPoint2 = player.getLight();
@@ -400,6 +415,8 @@ int main(int argc, char** argv)
 			room->Draw(room->getModel());
 
 			brain->Draw(brain->getModel());
+
+			brain_01->Draw(brain_01->getModel());
 			
 			
 			//everything registered in the physicsworld
