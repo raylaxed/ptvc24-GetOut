@@ -238,13 +238,13 @@ int main(int argc, char** argv)
 		
 		Model* room = new Model("assets/objects/room/room2.obj", glm::mat4(1.f), *textureShader.get());
 
-		glm::vec3 flamecolor = glm::vec3(0.902f, 0.376f, 0.118f);
+		glm::vec3 lightColor = glm::vec3(0.9f, 0.4f, 0.1f);
 		
 	
 		//LIGHTS
 		
-		std::vector<PointLight*> pointLights = createLights(flamecolor);
-		PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
+		std::vector<PointLight*> pointLights = createLights(lightColor);
+		PointLight* tmpPoint = new PointLight(lightColor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
 		player.setLight(*tmpPoint);
 
 		
