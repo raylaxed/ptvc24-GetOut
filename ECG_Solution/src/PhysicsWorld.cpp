@@ -154,7 +154,7 @@ void PhysicsWorld::addPlayerToPWorld(Player& player, glm::vec3 measurements) {
 	desc.halfHeight = measurements.y;
 	desc.halfForwardExtent = measurements.z;
 	desc.stepOffset = 0.2f;
-	desc.position = PxExtendedVec3(0.0f, 7.0f, 0.0f);
+	desc.position = PxExtendedVec3(0.0f, 3.0f, 0.0f);
 	desc.material = gMaterial;
 	desc.userData = (void*)&player;
 	controllerPlayer = gManager->createController(desc);
@@ -237,22 +237,17 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
 	static Timer JumpTimer = Timer();
 	
-	static float velocity = -10.f *deltaTime;
-	float gravity = -9.81f *deltaTime;
+	static float velocity = 0.f;
+	float gravity = -9.81f;
 
+	// Update gravity effect if airborne
 	if (airborne) {
-
-		gravity += gravity *0.001f;
-		
-		if (gravityEnabled && velocity > -0.1) 
-		{
-			velocity += gravity / 15;
-		}
+		velocity += gravity * deltaTime; // Properly scale velocity by deltaTime
 	}
 	else {
-		gravity = -9.81f * 0.005f ;
-		velocity = gravity * 2;
+		velocity = 0; // Reset velocity if not airborne
 	}
+
 
 
 	Player* playerObject = (Player*)controllerPlayer->getUserData();
@@ -281,23 +276,20 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 		controllerPlayer->move(right, 0.02f, deltaTime, NULL);
 	}
 	if (movement == PJUMP && !airborne) {
-		velocity = -7 * gravity;
-		controllerPlayer->move(PxVec3(0.f, velocity, 0.f), 0.02f, deltaTime, NULL);
-		JumpTimer.Reset();
+		velocity = 7.0f; // Set initial jump velocity
 		airborne = true;
+		JumpTimer.Reset();
 	}
 
-
-	if (JumpTimer.Duration() > 1.5f) {
-		airborne = false;
-		
-		if (!gravityEnabled) {
-			gravityEnabled = true;
-		}
-	}
-
+	// Apply gravity
 	if (gravityEnabled) {
-		controllerPlayer->move(PxVec3(0.f, velocity, 0.f), 0.02f, deltaTime, NULL);
+		controllerPlayer->move(PxVec3(0.f, velocity * deltaTime, 0.f), 0.02f, deltaTime, NULL);
+	}
+
+	// Check if the player is no longer airborne
+	if (controllerPlayer->getPosition().y <= 3.5) {
+		airborne = false;
+		gravityEnabled = true;
 	}
 	
 	PxExtendedVec3 position = controllerPlayer->getPosition();
@@ -400,7 +392,7 @@ void PhysicsWorld::draw() {
 
 void PhysicsWorld::resetGame() {
 
-	controllerPlayer->setPosition(PxExtendedVec3(0.0f, 7.0f, 0.0f));
+	controllerPlayer->setPosition(PxExtendedVec3(0.0f, 3.5f, 0.0f));
 	
 
 }

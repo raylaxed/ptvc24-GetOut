@@ -390,6 +390,7 @@ int main(int argc, char** argv)
 			//models
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
+			pWorld->draw();
 			
 			//walls
 			for (size_t i = 0; i < walls.size(); ++i) {
@@ -405,8 +406,7 @@ int main(int argc, char** argv)
 			
 			
 			//everything registered in the physicsworld
-			pWorld->draw();
-			
+		
 
 			//End of game Condition
 			if ( pWorld->isPlayerHit()) 
