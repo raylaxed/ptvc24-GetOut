@@ -23,7 +23,6 @@
 #include <iostream>
 
 
-
 /* --------------------------------------------- */
 // Prototypes
 /* --------------------------------------------- */
@@ -43,6 +42,9 @@ void processKeyInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double x, double y);
 std::vector<PointLight*> createLights(glm::vec3 flamecolor);
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
+//unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
+
+
 
 /* --------------------------------------------- */
 // Global variables
@@ -196,10 +198,41 @@ int main(int argc, char** argv)
 	/* --------------------------------------------- */
 	{
 
+		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normal.frag");
+		textureShaderNormals->use();
+		textureShaderNormals->setUniform("diffuseMap", 0);
+		textureShaderNormals->setUniform("normalMap", 1);
+		std::string directory = "assets/textures";
+
+		unsigned int diffuseMap = TextureFromFile("T_Wall_Damaged_2x1_A_BC.png", directory);
+		unsigned int normalMap = TextureFromFile("T_Wall_Damaged_2x1_A_N.png", directory);
+
+
+		//Load Textures
+		
+		std::shared_ptr<Texture> wallDiffuse = std::make_shared<Texture>("wall.dds");
+		std::shared_ptr<Texture> wallNormal = std::make_shared<Texture>("Jute_cocomat_pxr128.dds");
+		std::shared_ptr<Texture> wallRoughness = std::make_shared<Texture>("wall.dds");
+		std::shared_ptr<Texture> wallAO = std::make_shared<Texture>("wall.dds");
+		std::shared_ptr<Texture> wallMetallic = std::make_shared<Texture>("wall.dds");
+		/*
+		*/
 
 		// Load shader(s)
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
+
+
 		
+
+		std::shared_ptr<Material> wallMat3 = std::make_shared<Material>(textureShaderNormals);
+		//std::shared_ptr<Material> wallMat3 = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallDiffuse);
+
+
+		Geometry* testBox = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 4.0f, 0.0f)), Geometry::createCubeGeometry(1.f, 1.f, 1.f), wallMat3);
+		//pWorld->addCubeToPWorld(*testBox, glm::vec3(1.f, 1.f, 1.f));
+
+		//std::shared_ptr<Material> wallMat2 = std::make_shared<TextureMaterial>(textureShaderNormals, wallDiffuse, wallAO, wallMetallic, wallNormal, wallRoughness);
+		//std::shared_ptr<Shader> wallShader = std::make_shared<Shader>(wallMat2->getShader());
 		std::shared_ptr<Shader> uiShader = std::make_shared<Shader>("hud.vert", "hud.frag");
 		
 		//std::shared_ptr<Shader> blurShader = std::make_shared<Shader>("blur.vert", "blur.frag");
@@ -365,7 +398,7 @@ int main(int argc, char** argv)
 			
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
-			pWorld->updateEnemy();
+			//pWorld->updateEnemy();
 			pWorld->updateEnemies(deltaTime);
 			
 			//Player Light
@@ -387,6 +420,11 @@ int main(int argc, char** argv)
 			// DRAW
 			// ---------------------------------------
 
+			
+			
+
+
+
 			//models
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
@@ -398,13 +436,29 @@ int main(int argc, char** argv)
 			}
 
 
+			//testBox->draw(textureShaderNormals.get());
+
 			room->Draw(room->getModel());
 
 			brain->Draw(brain->getModel());
 
 			brain_01->Draw(brain_01->getModel());
 			
-			
+			textureShaderNormals->use();
+			textureShaderNormals->setUniform("projection", player.getCamera()->getProjectionMatrix());
+			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
+		
+			textureShaderNormals->setUniform("model", testBox->getModelMatrix());
+			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
+			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, diffuseMap);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, normalMap);
+			//renderQuad();
+			testBox->draw();
+
 			//everything registered in the physicsworld
 		
 
@@ -429,6 +483,8 @@ int main(int argc, char** argv)
 						glfwSwapBuffers(window);
 					}
 			}
+
+
 
 			//HUD
 			float framesPerSec = 1.0f / deltaTime;
@@ -558,7 +614,7 @@ void drawModelVector(Model* model, std::vector<glm::mat4*> x)
 
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader) {
 
-	Model* wall = new Model("assets/objects/damaged_wall/damagedWall.obj", glm::mat4(1.f), *shader.get());
+	Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *shader.get());
 	//pWorld->addCubeToPWorld(*wall, glm::vec3(10.0f, 5.0f, 1.0f) * 0.5f);
 
 	std::vector<Model*> walls;
@@ -1096,6 +1152,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			break;
 	}
 }
+// utility function for loading a 2D texture from file
+// ---------------------------------------------------
 
 //DEBUG 
 static void APIENTRY DebugCallbackDefault(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam) 
