@@ -43,7 +43,7 @@ void mouse_callback(GLFWwindow* window, double x, double y);
 std::vector<PointLight*> createLights(glm::vec3 flamecolor);
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
 void drawTrapsOrLava(std::vector<Geometry*> x, boolean isTrap);
-
+void drawNormalMapped(Model* model, Shader& shader);
 //unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
 
 
@@ -220,7 +220,8 @@ int main(int argc, char** argv)
 
 
 
-		unsigned int waterTexture = TextureFromFile("T_Wall_Damaged_2x1_A_N.png", directory);
+		unsigned int roomDiffuseMap = TextureFromFile("initialShadingGroup_Base_color.png", directory);
+		unsigned int roomNormalMap = TextureFromFile("initialShadingGroup_Normal_OpenGL.png", directory);
 
 
 		//std::shared_ptr<TextureMaterial> normalMaterial = std::make_shared<TextureMaterial>(textureShaderNormals, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f);
@@ -243,12 +244,21 @@ int main(int argc, char** argv)
 		animationShader->use();
 		animationShader->setUniform("diffuseTexture", 0);
 
+		unsigned int waterTexture = TextureFromFile("T_Wall_Damaged_2x1_A_N.png", directory);
 
+		Model* pond = new Model("assets/objects/pond/pond.gltf", glm::mat4(1.f), *animationShader.get());
+		pond->setModel(glm::translate(glm::scale(pond->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)) ,glm::vec3(3.f, 2.0f, 0.f)));
+		Model* pondRand = new Model("assets/objects/pond/pondRand.gltf", glm::mat4(1.f), *textureShader.get());
+		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)),glm::vec3(3.f, 2.0f, 0.f)));
+
+
+
+		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
 		// lighting info
    // -------------
 
-		std::shared_ptr<TextureMaterial> lavaMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallNormal);
-		Geometry* testlava = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 2.5f, 0.f)), Geometry::createPlaneGeometry(10.0f), lavaMat);
+		std::shared_ptr<TextureMaterial> lavaMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallDiffuse);
+		Geometry* testlava = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.5f, 0.f)), Geometry::createPlaneGeometry(10.0f), lavaMat);
 
 		std::shared_ptr<Material> normalMat = std::make_shared<Material>(textureShaderNormals);
 
@@ -281,7 +291,7 @@ int main(int argc, char** argv)
 		Model* armModel = new Model("assets/objects/lantern/scene2.gltf", glm::mat4(1.f), *textureShader.get());
 		player.setHand(*armModel);
 		
-		Model* room = new Model("assets/objects/room/room2.obj", glm::mat4(1.f), *textureShader.get());
+		Model* room = new Model("assets/objects/room/room2.obj", glm::mat4(1.f), *textureShaderNormals.get());
 
 		glm::vec3 lightColor = glm::vec3(0.9f, 0.4f, 0.1f);
 		
@@ -430,14 +440,12 @@ int main(int argc, char** argv)
 
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
-			//pWorld->updateEnemy();
+			pWorld->updateEnemy();
 			pWorld->updateEnemies(deltaTime);
 			
 			//Player Light
 			PointLight* tmpPoint2 = player.getLight();
 			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
-
-		
 			//set the uniforms for the texture shader
 			for (int i = 0; i < pointLights.size(); i++) {
 				setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
@@ -467,56 +475,65 @@ int main(int argc, char** argv)
 
 			//testBox->draw(textureShaderNormals.get());
 
-			room->Draw(room->getModel());
+			//room->Draw(room->getModel());
 
 			brain->Draw(brain->getModel());
 
 			brain_01->Draw(brain_01->getModel());
-			
+			/*
 			//walls
-			for (size_t i = 0; i < walls.size(); ++i) {
+			for (size_t i = 4; i < walls.size(); ++i) {
 				walls[i]->setModel(walls[i]->getModel());
 				walls[i]->Draw(walls[i]->getModel()); // Assuming Draw is a member function of the Model class
 			}
-
-
+			*/
+			pondRand->Draw(pondRand->getModel());
+			
+			
+			// Use the animation shader and set its uniforms
+			
+			//testlava->draw(static_cast<float>(glfwGetTime()));
+			animationShader->use();
+			animationShader->setUniform("u_time", static_cast<float>(glfwGetTime()));
 			//set the uniforms for the animation shader
 			setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
 			for (int i = 0; i < pointLights.size(); i++) {
 				setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
 			}
-			// Use the animation shader and set its uniforms
-			
 			testlava->draw(static_cast<float>(glfwGetTime()));
 
-
-
-
+			pond->Draw(pond->getModel());
+			
 			textureShaderNormals->use();
 			textureShaderNormals->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
-
-			textureShaderNormals->setUniform("model", testBox->getModelMatrix());
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
 			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
-
+			textureShaderNormals->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
+			
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, normalMap);
 
-			//renderQuad();
-			testBox->draw();
-			//testlava->draw(static_cast<float>(glfwGetTime()));
-			/*
-			animationShader->use();
+			textureShaderNormals->setUniform("model", wall->getModel());
+
+			//wall->Draw(wall->getModel());
 
 
-			testlava->draw(static_cast<float>(glfwGetTime()));*/
-
-			//everything registered in the physicsworld
 		
+			for (size_t i = 0; i < walls.size(); ++i) {
+				drawNormalMapped(walls[i], *textureShaderNormals.get());
+			
+			}
+			
 
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, roomDiffuseMap);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, roomNormalMap);
+		
+			drawNormalMapped(room, *textureShaderNormals.get());
 			//End of game Condition
 			if ( pWorld->isPlayerHit()) 
 			{
@@ -586,22 +603,12 @@ int main(int argc, char** argv)
 }
 
 //draw traps or lava
-void drawTrapsOrLava(std::vector<Geometry*> x, boolean isTrap)
+void drawNormalMapped(Model* model, Shader& shader)
 {
-
-	Geometry* tmp;
-	std::vector<Geometry*>::iterator it;
-	Camera* cam = player.getCamera();
-	for (it = x.begin(); it != x.end(); it++) {
-		tmp = *it;
-		if (isTrap) {
-			tmp->draw();
-		}
-		else {
-			tmp->draw(static_cast<float>(glfwGetTime()));
-		}
-	}
-
+	
+	shader.setUniform("model", model->getModel());
+	
+	model->Draw(shader);
 }
 
 

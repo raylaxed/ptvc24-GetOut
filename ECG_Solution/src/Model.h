@@ -41,8 +41,9 @@ public:
 
     // draws the model, and thus all its meshes
     void Draw(glm::mat4 model);
-
+    void Draw(Shader& shader);
     void setModel(glm::mat4 model);
+
 
     void resetModelMatrix();
 
@@ -54,6 +55,7 @@ private:
 
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const& path);
+    
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
     void processNode(aiNode* node, const aiScene* scene);
