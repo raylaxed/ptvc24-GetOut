@@ -67,7 +67,9 @@ protected:
 	/*!
 	 * The diffuse texture of this material
 	 */
+
 	std::shared_ptr<Texture> _diffuseTexture;
+	std::shared_ptr<Texture> _normalTexture;
 	std::shared_ptr<Texture> _baseColor;
 	std::shared_ptr<Texture> _ambientOcclusion;
 	std::shared_ptr<Texture> _metallic;
@@ -87,8 +89,10 @@ public:
 	TextureMaterial::TextureMaterial(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> baseColor,
 		std::shared_ptr<Texture> ambientOcclusion, std::shared_ptr<Texture> metallic,
 		std::shared_ptr<Texture> normal, std::shared_ptr<Texture> roughness);
+	TextureMaterial::TextureMaterial(std::shared_ptr<Shader> shader, glm::vec3 materialCoefficients, float alpha);
 
 	virtual ~TextureMaterial();
+
 
 	/*!
 	 * Set's this material's parameters as uniforms in the shader

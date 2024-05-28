@@ -52,6 +52,18 @@ TextureMaterial::TextureMaterial(std::shared_ptr<Shader> shader, glm::vec3 mater
 
 }
 
+TextureMaterial::TextureMaterial(std::shared_ptr<Shader> shader, glm::vec3 materialCoefficients, float alpha)
+	: Material(shader, materialCoefficients, alpha)
+{
+
+	_baseColor = nullptr;
+	_ambientOcclusion = nullptr;
+	_metallic = nullptr;
+	_normal = nullptr;
+	_roughness = nullptr;
+
+}
+
 
 TextureMaterial::TextureMaterial(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> baseColor,
 								std::shared_ptr<Texture> ambientOcclusion, std::shared_ptr<Texture> metallic,
@@ -78,6 +90,7 @@ void TextureMaterial::setUniforms()
 		_shader->setUniform("diffuseTexture", 0);
 	}
 	else {
+
 
 		_baseColor -> bind(0);
 		

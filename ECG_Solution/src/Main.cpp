@@ -42,6 +42,8 @@ void processKeyInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double x, double y);
 std::vector<PointLight*> createLights(glm::vec3 flamecolor);
 std::vector<Model*> createWalls(std::shared_ptr<Shader>& shader);
+void drawTrapsOrLava(std::vector<Geometry*> x, boolean isTrap);
+
 //unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
 
 
@@ -83,6 +85,10 @@ unsigned int qVAO = 0;
 unsigned int qVBO;
 int window_width;
 int window_height;
+
+// meshes
+unsigned int planeVAO;
+
 
 /* --------------------------------------------- */
 // Main
@@ -197,17 +203,28 @@ int main(int argc, char** argv)
 	// Initialize scene and render loop
 	/* --------------------------------------------- */
 	{
+		std::string directory = "assets/textures";
 
 		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normal.frag");
 		textureShaderNormals->use();
+
 		textureShaderNormals->setUniform("diffuseMap", 0);
-		textureShaderNormals->setUniform("normalMap", 1);
-		std::string directory = "assets/textures";
-
 		unsigned int diffuseMap = TextureFromFile("T_Wall_Damaged_2x1_A_BC.png", directory);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+
+		textureShaderNormals->setUniform("normalMap", 1);
 		unsigned int normalMap = TextureFromFile("T_Wall_Damaged_2x1_A_N.png", directory);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, normalMap);
 
 
+
+		unsigned int waterTexture = TextureFromFile("T_Wall_Damaged_2x1_A_N.png", directory);
+
+
+		//std::shared_ptr<TextureMaterial> normalMaterial = std::make_shared<TextureMaterial>(textureShaderNormals, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f);
+		
 		//Load Textures
 		
 		std::shared_ptr<Texture> wallDiffuse = std::make_shared<Texture>("wall.dds");
@@ -221,22 +238,25 @@ int main(int argc, char** argv)
 		// Load shader(s)
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 
+		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torranceDublicate.frag");
+		//std::shared_ptr<Material> lavaMat = std::make_shared<Material>(animationShader);
+		animationShader->use();
+		animationShader->setUniform("diffuseTexture", 0);
+
+
+		// lighting info
+   // -------------
+
+		std::shared_ptr<TextureMaterial> lavaMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallNormal);
+		Geometry* testlava = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 2.5f, 0.f)), Geometry::createPlaneGeometry(10.0f), lavaMat);
+
+		std::shared_ptr<Material> normalMat = std::make_shared<Material>(textureShaderNormals);
+
+
+		Geometry* testBox = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.5f, 0.f)), Geometry::createCubeGeometry(1.0f, 1.0f, 1.0f), normalMat);
 
 		
-
-		std::shared_ptr<Material> wallMat3 = std::make_shared<Material>(textureShaderNormals);
-		//std::shared_ptr<Material> wallMat3 = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallDiffuse);
-
-
-		Geometry* testBox = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 4.0f, 0.0f)), Geometry::createCubeGeometry(1.f, 1.f, 1.f), wallMat3);
-		//pWorld->addCubeToPWorld(*testBox, glm::vec3(1.f, 1.f, 1.f));
-
-		//std::shared_ptr<Material> wallMat2 = std::make_shared<TextureMaterial>(textureShaderNormals, wallDiffuse, wallAO, wallMetallic, wallNormal, wallRoughness);
-		//std::shared_ptr<Shader> wallShader = std::make_shared<Shader>(wallMat2->getShader());
 		std::shared_ptr<Shader> uiShader = std::make_shared<Shader>("hud.vert", "hud.frag");
-		
-		//std::shared_ptr<Shader> blurShader = std::make_shared<Shader>("blur.vert", "blur.frag");
-		//std::shared_ptr<Shader> bloomShader = std::make_shared<Shader>("bloom.vert", "bloom.frag");
 		
 
 		glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(window_width), 0.0f, static_cast<float>(window_height));
@@ -271,6 +291,11 @@ int main(int argc, char** argv)
 		std::vector<PointLight*> pointLights = createLights(lightColor);
 		PointLight* tmpPoint = new PointLight(lightColor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
 		player.setLight(*tmpPoint);
+
+
+		DirectionalLight* tmpDirLight = new DirectionalLight(lightColor, glm::vec3(0.0f, 0.0f, 0.0f), true);
+		//lights.push_back(tmpPoint);
+
 
 		
 		// Room
@@ -388,6 +413,8 @@ int main(int argc, char** argv)
 			glfwGetCursorPos(window, &mouse_x, &mouse_y);
 			processKeyInput(window);
 
+			
+
 
 			// Buffers for post processing
 			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
@@ -395,7 +422,12 @@ int main(int argc, char** argv)
 
 
 			Camera* cam = player.getCamera();
+
+
+
 			
+
+
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
 			//pWorld->updateEnemy();
@@ -404,14 +436,16 @@ int main(int argc, char** argv)
 			//Player Light
 			PointLight* tmpPoint2 = player.getLight();
 			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
-		//	setPerFrameUniforms(cookTexturedShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
 
-			
+		
 			//set the uniforms for the texture shader
 			for (int i = 0; i < pointLights.size(); i++) {
 				setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
 			}
 
+			
+			
+			
 			
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -421,19 +455,14 @@ int main(int argc, char** argv)
 			// ---------------------------------------
 
 			
-			
-
-
 
 			//models
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
 			pWorld->draw();
+
 			
-			//walls
-			for (size_t i = 0; i < walls.size(); ++i) {
-				walls[i]->Draw(walls[i]->getModel()); // Assuming Draw is a member function of the Model class
-			}
+			
 
 
 			//testBox->draw(textureShaderNormals.get());
@@ -444,10 +473,29 @@ int main(int argc, char** argv)
 
 			brain_01->Draw(brain_01->getModel());
 			
+			//walls
+			for (size_t i = 0; i < walls.size(); ++i) {
+				walls[i]->setModel(walls[i]->getModel());
+				walls[i]->Draw(walls[i]->getModel()); // Assuming Draw is a member function of the Model class
+			}
+
+
+			//set the uniforms for the animation shader
+			setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
+			for (int i = 0; i < pointLights.size(); i++) {
+				setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
+			}
+			// Use the animation shader and set its uniforms
+			
+			testlava->draw(static_cast<float>(glfwGetTime()));
+
+
+
+
 			textureShaderNormals->use();
 			textureShaderNormals->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
-		
+
 			textureShaderNormals->setUniform("model", testBox->getModelMatrix());
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
 			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
@@ -456,8 +504,15 @@ int main(int argc, char** argv)
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, normalMap);
+
 			//renderQuad();
 			testBox->draw();
+			//testlava->draw(static_cast<float>(glfwGetTime()));
+			/*
+			animationShader->use();
+
+
+			testlava->draw(static_cast<float>(glfwGetTime()));*/
 
 			//everything registered in the physicsworld
 		
@@ -529,6 +584,26 @@ int main(int argc, char** argv)
 
 	return EXIT_SUCCESS;
 }
+
+//draw traps or lava
+void drawTrapsOrLava(std::vector<Geometry*> x, boolean isTrap)
+{
+
+	Geometry* tmp;
+	std::vector<Geometry*>::iterator it;
+	Camera* cam = player.getCamera();
+	for (it = x.begin(); it != x.end(); it++) {
+		tmp = *it;
+		if (isTrap) {
+			tmp->draw();
+		}
+		else {
+			tmp->draw(static_cast<float>(glfwGetTime()));
+		}
+	}
+
+}
+
 
 
 //set Shader Uniforms if scene is lit by a directional light and a pointlight
@@ -1010,7 +1085,7 @@ std::vector<PointLight*> createLights(glm::vec3 flamecolor)
 {
 	std::vector<PointLight*> lights;
 
-	PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(46.5f, 5.f, -46.5f), glm::vec3(0.001f));
+	PointLight* tmpPoint = new PointLight(flamecolor, glm::vec3(0.0f, 5.f, 0.0f), glm::vec3(0.001f));
 	lights.push_back(tmpPoint);
 
 	PointLight* tmpPoint1 = new PointLight(flamecolor, glm::vec3(-46.5f, 5.f, 46.5f), glm::vec3(0.001f));

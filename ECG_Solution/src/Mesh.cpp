@@ -13,7 +13,7 @@ Mesh::~Mesh()
 {
 
 }
-
+ 
 void Mesh::Draw(Shader& shader)
 {
 	// bind appropriate textures
