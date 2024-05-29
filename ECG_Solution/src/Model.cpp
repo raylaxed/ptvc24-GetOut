@@ -24,7 +24,6 @@ void Model::setModel(glm::mat4 model) {
 
 }
 
-
 void Model::resetModelMatrix()
 {
     _modelMatrix = glm::mat4(1);
@@ -41,6 +40,13 @@ void Model::Draw(glm::mat4 model)
         for (unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(*_shader);
     }
+void Model::Draw(Shader& shader)
+{
+   
+    for (unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i].Draw(shader);
+}
+
 
 void Model::loadModel(string const& path)
     {
