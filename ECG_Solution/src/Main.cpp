@@ -375,7 +375,7 @@ int main(int argc, char** argv)
 
 		 //PARTICLE SYSTEM
 		particleShader->use();
-		int maxParticles = 10000;
+		int maxParticles = 100;
 		ParticleSystem particleSystem(particleShader, camera, 1.0f, 1.0f, 1000, glm::vec3(-0.0, 2.0, -0.0));
 
 		// configure (floating point) framebuffers
@@ -549,8 +549,8 @@ int main(int argc, char** argv)
 
 			// PARTICLES
 			particleShader->use();
-			particleSystem.Update(deltaTime, 100, glm::vec3(5.0, 2.0, 5.0));
-			//particleSystem.Draw();
+			particleSystem.Update(deltaTime, 10, glm::vec3(5.0, 2.0, 5.0));
+			particleSystem.Draw();
 
 
 			//End of game Condition

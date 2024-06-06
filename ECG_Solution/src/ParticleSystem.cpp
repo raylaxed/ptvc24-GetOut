@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ParticleSystem.h"
-
+#include <algorithm>
 
 
 
@@ -71,10 +71,10 @@ void ParticleSystem::Update(float deltaTime, unsigned int newParticles,
 			temp._position += temp._velocity * deltaTime;
 
 			if ((float)temp.r != 0) {
-				temp.r -= (deltaTime / 1000.f);
+				temp.r -= (deltaTime / 10.f);
 			}
 			if ((float)temp.g != 0) {
-				temp.g -= (deltaTime / 100.f);
+				temp.g -= (deltaTime / 10.f);
 			}
 			if ((float)temp.b != 0) {
 				temp.b += (deltaTime / 10.f);
@@ -185,11 +185,28 @@ void ParticleSystem::Draw()
 
 	glBindBuffer(GL_ARRAY_BUFFER, _particles_position_buffer);
 	glBufferData(GL_ARRAY_BUFFER, _amount * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW); // Buffer orphaning, a common way to improve streaming perf.
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR) {
+		std::cerr << "OpenGL error after position buffer orphaning: " << err << std::endl;
+	}
+
 	glBufferSubData(GL_ARRAY_BUFFER, 0, _pCount * sizeof(GLfloat) * 4, _particle_position_data);
+	err = glGetError();
+	if (err != GL_NO_ERROR) {
+		std::cerr << "OpenGL error after position buffer update: " << err << std::endl;
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, _particles_color_buffer);
 	glBufferData(GL_ARRAY_BUFFER, _amount * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW); // Buffer orphaning, a common way to improve streaming perf.
+	if (err != GL_NO_ERROR) {
+		std::cerr << "OpenGL error after color buffer orphaning: " << err << std::endl;
+	}
+
 	glBufferSubData(GL_ARRAY_BUFFER, 0, _pCount * sizeof(GLfloat) * 4, _particle_color_data);
+ 	err = glGetError();
+	if (err != GL_NO_ERROR) {
+		std::cerr << "OpenGL error after color buffer update: " << err << std::endl;
+	}
 
 
 	glGenVertexArrays(1, &VertexArrayID);
