@@ -21,6 +21,7 @@
 #include "Timer.h"
 #include "Model.h"
 #include <iostream>
+#include "ParticleSystem.h"
 
 
 /* --------------------------------------------- */
@@ -206,6 +207,8 @@ int main(int argc, char** argv)
 		std::string directory = "assets/textures";
 
 		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normal.frag");
+
+		//wwwwstd::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normalPlusSpecular.frag");
 		textureShaderNormals->use();
 
 		textureShaderNormals->setUniform("diffuseMap", 0);
@@ -218,7 +221,10 @@ int main(int argc, char** argv)
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, normalMap);
 
-
+		textureShaderNormals->setUniform("specularMap", 2);
+		unsigned int specularMap = TextureFromFile("T_Wall_Damaged_2x1_A_BC.png", directory);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		unsigned int roomDiffuseMap = TextureFromFile("initialShadingGroup_Base_color.png", directory);
 		unsigned int roomNormalMap = TextureFromFile("initialShadingGroup_Normal_OpenGL.png", directory);
@@ -238,7 +244,7 @@ int main(int argc, char** argv)
 
 		// Load shader(s)
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
-
+		std::shared_ptr<Shader> particleShader = std::make_shared<Shader>("particle_system.vert", "particle_system.frag");
 		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torranceDublicate.frag");
 		//std::shared_ptr<Material> lavaMat = std::make_shared<Material>(animationShader);
 		animationShader->use();
@@ -367,6 +373,11 @@ int main(int argc, char** argv)
 		player.getCamera()->setProjectionMatrix(projMatrix);
 
 
+		// PARTICLE SYSTEM
+		//particleShader->use();
+	//	int maxParticles = 10000;
+		//ParticleSystem particleSystem(particleShader, camera, 1.0f, 1.0f, 1000, glm::vec3(-0.0, 2.0, -0.0));
+
 		// configure (floating point) framebuffers
 		// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 		unsigned int hdrFBO;
@@ -469,8 +480,7 @@ int main(int argc, char** argv)
 			hand->Draw(hand->getModel());
 			pWorld->draw();
 
-			
-			
+		
 
 
 			//testBox->draw(textureShaderNormals.get());
@@ -488,7 +498,6 @@ int main(int argc, char** argv)
 			}
 			*/
 			pondRand->Draw(pondRand->getModel());
-			
 			
 			// Use the animation shader and set its uniforms
 			
@@ -515,6 +524,8 @@ int main(int argc, char** argv)
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, normalMap);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, specularMap);
 
 			textureShaderNormals->setUniform("model", wall->getModel());
 
@@ -534,6 +545,14 @@ int main(int argc, char** argv)
 			glBindTexture(GL_TEXTURE_2D, roomNormalMap);
 		
 			drawNormalMapped(room, *textureShaderNormals.get());
+
+
+			// PARTICLES
+			//particleShader->use();
+		//	particleSystem.Update(deltaTime, 100, glm::vec3(5.0, 2.0, 5.0));
+		//	particleSystem.Draw();
+
+
 			//End of game Condition
 			if ( pWorld->isPlayerHit()) 
 			{
@@ -589,7 +608,6 @@ int main(int argc, char** argv)
 	/* --------------------------------------------- */
 	// Destroy framework
 	/* --------------------------------------------- */
-
 	destroyFramework();
 
 

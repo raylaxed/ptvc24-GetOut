@@ -11,9 +11,11 @@ in VS_OUT {
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalMap;
+uniform sampler2D specularMap;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+
 
 void main()
 {           
@@ -30,6 +32,7 @@ void main()
     vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
     float diff = max(dot(lightDir, normal), 0.0);
     vec3 diffuse = diff * color;
+
     // specular
     vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
