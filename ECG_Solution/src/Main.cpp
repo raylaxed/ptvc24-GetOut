@@ -206,9 +206,9 @@ int main(int argc, char** argv)
 	{
 		std::string directory = "assets/textures";
 
-		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normal.frag");
+		//std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normal.frag");
 
-		//wwwwstd::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normalPlusSpecular.frag");
+		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normalPlusSpecular.frag");
 		textureShaderNormals->use();
 
 		textureShaderNormals->setUniform("diffuseMap", 0);
@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, normalMap);
 
 		textureShaderNormals->setUniform("specularMap", 2);
-		unsigned int specularMap = TextureFromFile("T_Wall_Damaged_2x1_A_BC.png", directory);
+		unsigned int specularMap = TextureFromFile("T_Wall_Damaged_2x1_A_R.png", directory);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
@@ -550,7 +550,7 @@ int main(int argc, char** argv)
 			// PARTICLES
 			particleShader->use();
 			particleSystem.Update(deltaTime, 100, glm::vec3(5.0, 2.0, 5.0));
-			particleSystem.Draw();
+			//particleSystem.Draw();
 
 
 			//End of game Condition

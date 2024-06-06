@@ -37,9 +37,10 @@ void main()
     vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
 
-
     float spec =  pow(max(dot(viewDir, reflectDir), 0.0), 64.0f);
-    vec3 specular = spec * texture(specularMap, fs_in.TexCoords).rgb; 
+    vec3 rougness = vec3(1.0) - texture(specularMap, fs_in.TexCoords).rgb;
+    vec3 specular = spec * rougness;
+
 
     FragColor = vec4(ambient + diffuse + specular, 1.0);
 }
