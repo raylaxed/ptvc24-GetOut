@@ -382,9 +382,6 @@ int main(int argc, char** argv)
 			glfwGetCursorPos(window, &mouse_x, &mouse_y);
 			processKeyInput(window);
 
-	
-
-
 			Camera* cam = player.getCamera();
 
 			//Update our Dynamic Actors
@@ -426,6 +423,8 @@ int main(int argc, char** argv)
 			lightMakerShader->use();
 			lightMakerShader->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			lightMakerShader->setUniform("view", player.getCamera()->GetViewMatrix());
+			lightMakerShader->setUniform("lightColor", glm::vec3(5.0f, 5.0f, 5.0f));
+
 			//lightMakerShader->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
 			key->Draw(key->getModel());
 			
