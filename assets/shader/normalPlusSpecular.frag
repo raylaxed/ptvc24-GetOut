@@ -1,5 +1,6 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in VS_OUT {
     vec3 FragPos;
@@ -41,6 +42,13 @@ void main()
     vec3 rougness = vec3(1.0) - texture(specularMap, fs_in.TexCoords).rgb;
     vec3 specular = spec * rougness;
 
-
     FragColor = vec4(ambient + diffuse + specular, 1.0);
+
+    // for bloom
+    // check whether fragment output is higher than threshold, if so output as brightness color
+    float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 1.0)
+        BrightColor = vec4(FragColor.rgb, 1.0);
+    else
+        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
