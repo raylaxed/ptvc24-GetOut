@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 
 		unsigned int roomDiffuseMap = TextureFromFile("initialShadingGroup_Base_color.png", directory);
 		unsigned int roomNormalMap = TextureFromFile("initialShadingGroup_Normal_OpenGL.png", directory);
-
+		unsigned int roomSpecularMap = TextureFromFile("white.jpg", directory);
 
 		//Load Textures
 		std::shared_ptr<Texture> wallDiffuse = std::make_shared<Texture>("wall.dds");
@@ -524,6 +524,8 @@ int main(int argc, char** argv)
 			glBindTexture(GL_TEXTURE_2D, roomDiffuseMap);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, roomNormalMap);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, roomSpecularMap);
 		
 			drawNormalMapped(room, *textureShaderNormals.get());
 
