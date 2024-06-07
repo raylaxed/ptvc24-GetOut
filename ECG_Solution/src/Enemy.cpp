@@ -27,3 +27,7 @@ void Enemy::updateControlPointIndex()
 	}
 	return;
 }
+
+physx::PxVec3 Enemy::getControllPointByIndex(int index) {
+	return controlPoints[index];
+}

@@ -2,6 +2,8 @@
 #include "Timer.h"
 #include <ctime>
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 
 
 PhysicsWorld::PhysicsWorld() {}
@@ -313,13 +315,31 @@ void PhysicsWorld::updateEnemies(float deltaTime) {
 		direction.normalize();
 
 		// Move the actor towards the next control point
-		physx::PxVec3 newPos = actor->getGlobalPose().p + direction * 3.0 *deltaTime;
-		actor->setKinematicTarget(physx::PxTransform(newPos));
+		physx::PxVec3 newPos = actor->getGlobalPose().p + direction * deltaTime;
+		// Calculate the rotation needed to face the direction
+		physx::PxVec3 forward = path[1] - path[0]; // initial forward direction
+		forward.normalize();
+		physx::PxQuat rotationQuat;
 
-		// Update model position
+		if (direction.magnitude() > 0) {
+			physx::PxVec3 cross = forward.cross(direction);
+			float dot = forward.dot(direction);
+			float angle = acos(dot);
+
+			rotationQuat = physx::PxQuat(angle, cross.getNormalized());
+		}
+
+		// Set the new position and rotation
+		physx::PxTransform newTransform(newPos, rotationQuat);
+		actor->setKinematicTarget(newTransform);
+
+		// Update model position and rotation
 		Model* currentEnemy_model = (Model*)actor->userData;
 		currentEnemy_model->resetModelMatrix();
-		currentEnemy_model->setModel(glm::translate(glm::mat4(1.0f), glm::vec3(newPos.x, newPos.y, newPos.z)));
+		glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(newPos.x, newPos.y, newPos.z));
+		glm::quat glmQuat(rotationQuat.w, rotationQuat.x, rotationQuat.y, rotationQuat.z);
+		modelMatrix *= glm::mat4_cast(glmQuat);
+		currentEnemy_model->setModel(modelMatrix);
 
 		// Check if the actor has reached the current control point
 		float distanceToNextPoint = (path[currentPointIndex] - actor->getGlobalPose().p).magnitude();
@@ -358,6 +378,7 @@ PxVec3 PhysicsWorld::calcDirectionEnemyPlayer() {
 	PxExtendedVec3 tmp = controllerPlayer->getPosition();
 	PxVec3 playerPos = PxVec3(tmp.x,tmp.y,tmp.z);
 	PxVec3 directionToPlayer =playerPos - ballPos;
+	//directionToPlayer.normalize();
 
 	return directionToPlayer;
 }
@@ -367,14 +388,31 @@ void PhysicsWorld::updateEnemy() {
 
 	PxVec3 directionToPlayer = calcDirectionEnemyPlayer();
 
-	pTestEnemy->addForce(directionToPlayer / (directionToPlayer.magnitude() * (10 )), PxForceMode::eIMPULSE);
+	pTestEnemy->addForce(directionToPlayer / (directionToPlayer.magnitude() * (10)), PxForceMode::eIMPULSE);
 	PxVec3 position = pTestEnemy->getGlobalPose().p;
 	
 	glm::vec3 newPos = glm::vec3(position.x, 3.0f, position.z);
 
+	directionToPlayer.normalize();
+	// Calculate the rotation needed to look at the player
+	PxVec3 forward = directionToPlayer;
+	PxVec3 up(0.0f, 1.0f, 0.0f); // Assuming Y-up world
+	PxVec3 right = up.cross(forward).getNormalized();
+	up = forward.cross(right);
+
+	PxMat33 rotationMatrix(right, up, forward);
+	PxQuat rotationQuat(rotationMatrix);
+
+	// Get the enemy model
 	Model* enemy = (Model*)pTestEnemy->userData;
 	enemy->resetModelMatrix();
-	enemy->setModel(glm::translate(glm::mat4(1.0f), newPos));
+
+	// Convert PxQuat to glm::quat
+	glm::quat glmQuat(rotationQuat.w, rotationQuat.x, rotationQuat.y, rotationQuat.z);
+
+	// Create the model matrix with the new position and rotation
+	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), newPos) * glm::toMat4(glmQuat);
+	enemy->setModel(modelMatrix);
 }
 
 

@@ -19,4 +19,6 @@ public:
 	uint16_t getControlPointIndex();
 
 	void updateControlPointIndex();
+
+	physx::PxVec3 getControllPointByIndex(int index);
 };
