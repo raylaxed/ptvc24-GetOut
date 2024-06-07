@@ -27,7 +27,7 @@
 /* --------------------------------------------- */
 // Prototypes
 /* --------------------------------------------- */
-
+void renderQuad();
 void drawModelVector(Model* model, std::vector<glm::mat4*> x);
 void drawGeometryVector(std::vector<Geometry*> x);
 void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, PointLight& pointL);
@@ -83,9 +83,11 @@ unsigned int qVAO = 0;
 unsigned int qVBO;
 int window_width;
 int window_height;
-
+bool bloom = true;
+bool bloomKeyPressed = false;
 // meshes
 unsigned int planeVAO;
+float exposure = 1.0f;
 
 
 /* --------------------------------------------- */
@@ -238,6 +240,14 @@ int main(int argc, char** argv)
 
 		// Load shader(s)
 		std::shared_ptr<Shader> lightMakerShader = std::make_shared<Shader>("light.vert", "light.frag");
+		std::shared_ptr<Shader> blurShader = std::make_shared<Shader>("blur.vert", "blur.frag");
+		blurShader->use();
+		blurShader->setUniform("image", 0);
+		std::shared_ptr<Shader> bloomShader = std::make_shared<Shader>("bloomFinal.vert", "bloomFinal.frag");
+		bloomShader->use();
+		bloomShader->setUniform("scene", 0);
+		bloomShader->setUniform("bloomBlur", 1);
+	
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 		std::shared_ptr<Shader> particleShader = std::make_shared<Shader>("particle_system.vert", "particle_system.frag");
 		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torranceDublicate.frag");
@@ -363,6 +373,59 @@ int main(int argc, char** argv)
 
 		float lastFrameTime = 0.0f;
 
+
+		// configure (floating point) framebuffers
+	// ---------------------------------------
+		unsigned int hdrFBO;
+		glGenFramebuffers(1, &hdrFBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+		// create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
+		unsigned int colorBuffers[2];
+		glGenTextures(2, colorBuffers);
+		for (unsigned int i = 0; i < 2; i++)
+		{
+			glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, window_width, window_height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  // we clamp to the edge as the blur filter would otherwise sample repeated texture values!
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			// attach texture to framebuffer
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0);
+		}
+		// create and attach depth buffer (renderbuffer)
+		unsigned int rboDepth;
+		glGenRenderbuffers(1, &rboDepth);
+		glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, window_width, window_height);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+		// tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+		unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+		glDrawBuffers(2, attachments);
+		// finally check if framebuffer is complete
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			std::cout << "Framebuffer not complete!" << std::endl;
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// ping-pong-framebuffer for blurring
+		unsigned int pingpongFBO[2];
+		unsigned int pingpongColorbuffers[2];
+		glGenFramebuffers(2, pingpongFBO);
+		glGenTextures(2, pingpongColorbuffers);
+		for (unsigned int i = 0; i < 2; i++)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+			glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[i]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, window_width, window_height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // we clamp to the edge as the blur filter would otherwise sample repeated texture values!
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorbuffers[i], 0);
+			// also check if framebuffers are complete (no need for depth buffer)
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << "Framebuffer not complete!" << std::endl;
+		}
 		// ---------------------------------------
 		// Render Loop
 		// ---------------------------------------
@@ -397,8 +460,10 @@ int main(int argc, char** argv)
 				setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
 			}
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+			// 1. render scene into floating point framebuffer
+			// -----------------------------------------------
+			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// ---------------------------------------
 			// DRAW
 			// ---------------------------------------
@@ -420,14 +485,6 @@ int main(int argc, char** argv)
 
 			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
 
-			lightMakerShader->use();
-			lightMakerShader->setUniform("projection", player.getCamera()->getProjectionMatrix());
-			lightMakerShader->setUniform("view", player.getCamera()->GetViewMatrix());
-			lightMakerShader->setUniform("lightColor", glm::vec3(5.0f, 5.0f, 5.0f));
-
-			//lightMakerShader->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
-			key->Draw(key->getModel());
-			
 
 
 			// Use the animation shader and set its uniforms
@@ -470,12 +527,58 @@ int main(int argc, char** argv)
 		
 			drawNormalMapped(room, *textureShaderNormals.get());
 
+			//HUD
+			float framesPerSec = 1.0f / deltaTime;
+
+
+			fps->setText("FPS: " + std::to_string(framesPerSec));
+			fps->drawText();
+
+
+			UI_test->drawText();
 
 			// PARTICLES
 			particleShader->use();
 			particleSystem.Update(deltaTime, 10, glm::vec3(5.0, 2.0, 5.0));
 			particleSystem.Draw();
 
+
+			lightMakerShader->use();
+			lightMakerShader->setUniform("projection", player.getCamera()->getProjectionMatrix());
+			lightMakerShader->setUniform("view", player.getCamera()->GetViewMatrix());
+			lightMakerShader->setUniform("lightColor", glm::vec3(5.0f, 5.0f, 5.0f));
+
+			//lightMakerShader->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
+			key->Draw(key->getModel());
+
+			// 2. blur bright fragments with two-pass Gaussian Blur 
+		// --------------------------------------------------
+			bool horizontal = true, first_iteration = true;
+			unsigned int amount = 2;
+			blurShader->use();
+			for (unsigned int i = 0; i < amount; i++)
+			{
+				glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+				blurShader->setUniform("horizontal", horizontal);
+				glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
+				renderQuad();
+				horizontal = !horizontal;
+				if (first_iteration)
+					first_iteration = false;
+			}
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			// 3. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
+		// --------------------------------------------------------------------------------------------------------------------------
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			bloomShader->use();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
+			bloomShader->setUniform("bloom", bloom);
+			bloomShader->setUniform("exposure", exposure);
+			renderQuad();
 
 			//End of game Condition
 			if ( pWorld->isPlayerHit()) 
@@ -501,15 +604,6 @@ int main(int argc, char** argv)
 
 
 
-			//HUD
-			float framesPerSec = 1.0f / deltaTime;
-			
-
-			fps->setText("FPS: " + std::to_string(framesPerSec));
-			fps->drawText();
-
-
-			UI_test->drawText();
 		
 			
 			//time logic
@@ -543,6 +637,38 @@ int main(int argc, char** argv)
 
 	return EXIT_SUCCESS;
 }
+// renderQuad() renders a 1x1 XY quad in NDC
+// -----------------------------------------
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+	if (quadVAO == 0)
+	{
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+		// setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+}
+
+
 
 //draw traps or lava
 void drawNormalMapped(Model* model, Shader& shader)
@@ -1069,6 +1195,26 @@ void processKeyInput(GLFWwindow* window)
 		}
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && !bloomKeyPressed)
+	{
+		bloom = !bloom;
+		bloomKeyPressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE)
+	{
+		bloomKeyPressed = false;
+	}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		if (exposure > 0.0f)
+			exposure -= 0.001f;
+		else
+			exposure = 0.0f;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		exposure += 0.001f;
+	}
 
 	if (!isDead) {
 
@@ -1174,6 +1320,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			if (_culling) glEnable(GL_CULL_FACE);
 			else glDisable(GL_CULL_FACE);
 			break;
+		
 	}
 }
 // utility function for loading a 2D texture from file
