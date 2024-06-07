@@ -87,7 +87,7 @@ bool bloom = true;
 bool bloomKeyPressed = false;
 // meshes
 unsigned int planeVAO;
-float exposure = 1.0f;
+float exposure = 0.5f;
 
 
 /* --------------------------------------------- */
@@ -1207,13 +1207,13 @@ void processKeyInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		if (exposure > 0.0f)
-			exposure -= 0.001f;
+			exposure -= 0.1f;
 		else
 			exposure = 0.0f;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
-		exposure += 0.001f;
+		exposure += 0.1f;
 	}
 
 	if (!isDead) {
