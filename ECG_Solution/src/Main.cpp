@@ -78,9 +78,6 @@ std::map<GLchar, Character> _characters;
 
 //global buffers
 unsigned int VAO, VBO;
-unsigned int pingpongFBO[2];
-unsigned int pingpongColorbuffers[2];
-unsigned int colorBuffers[2];
 
 unsigned int qVAO = 0;
 unsigned int qVBO;
@@ -362,40 +359,7 @@ int main(int argc, char** argv)
 		int maxParticles = 100;
 		ParticleSystem particleSystem(particleShader, camera, 1.0f, 1.0f, 1000, glm::vec3(-0.0, 2.0, -0.0));
 
-		// configure (floating point) framebuffers
 		// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-		unsigned int hdrFBO;
-		glGenFramebuffers(1, &hdrFBO);
-		glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-		// create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
-		glGenTextures(2, colorBuffers);
-		for (unsigned int i = 0; i < 2; i++)
-		{
-			glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, window_width, window_height, 0, GL_RGBA, GL_FLOAT, NULL);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  // we clamp to the edge as the blur filter would otherwise sample repeated texture values!
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			// attach texture to framebuffer
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0);
-		}
-		// create and attach depth buffer (renderbuffer)
-		unsigned int rboDepth;
-		glGenRenderbuffers(1, &rboDepth);
-		glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, window_width, window_height);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-		unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-		glDrawBuffers(2, attachments);
-		// finally check if framebuffer is complete
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			std::cout << "Framebuffer not complete!" << std::endl;
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 		float lastFrameTime = 0.0f;
 
@@ -419,9 +383,6 @@ int main(int argc, char** argv)
 			processKeyInput(window);
 
 	
-			// Buffers for post processing
-			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 			Camera* cam = player.getCamera();
