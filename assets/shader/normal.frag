@@ -1,5 +1,6 @@
 #version 330 core
 out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in VS_OUT {
     vec3 FragPos;
@@ -41,4 +42,5 @@ void main()
 
     vec3 specular = vec3(0.2) * spec;
     FragColor = vec4(ambient + diffuse + specular, 1.0);
+    BrightColor = vec4(result, 1.0);
 }
