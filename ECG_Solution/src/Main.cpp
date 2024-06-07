@@ -243,6 +243,8 @@ int main(int argc, char** argv)
 		*/
 
 		// Load shader(s)
+		std::shared_ptr<Shader> lightMakerShader = std::make_shared<Shader>("light.vert", "light.frag");
+
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 		std::shared_ptr<Shader> particleShader = std::make_shared<Shader>("particle_system.vert", "particle_system.frag");
 		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torranceDublicate.frag");
@@ -295,7 +297,7 @@ int main(int argc, char** argv)
 		//load models
 
 
-		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *textureShader.get());
+		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *lightMakerShader.get());
 		key->setModel(glm::translate(key->getModel(), glm::vec3(0.0f, 3.2f, 0.0f)));
 		
 		Model* armModel = new Model("assets/objects/lantern/scene2.gltf", glm::mat4(1.f), *textureShader.get());
@@ -495,7 +497,8 @@ int main(int argc, char** argv)
 
 			brain_01->Draw(brain_01->getModel());
 
-			key->Draw(key->getModel());
+
+			
 			/*
 			//walls
 			for (size_t i = 4; i < walls.size(); ++i) {
@@ -505,7 +508,16 @@ int main(int argc, char** argv)
 			*/
 			pondRand->Draw(pondRand->getModel());
 
-			
+			glm::mat4 modelMatrix = key->getModel(); // Your model matrix here
+
+// Calculate the normal matrix
+			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
+
+			lightMakerShader->use();
+			lightMakerShader->setUniform("projection", player.getCamera()->getProjectionMatrix());
+			lightMakerShader->setUniform("view", player.getCamera()->GetViewMatrix());
+			//lightMakerShader->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
+			key->Draw(key->getModel());
 			
 			// Use the animation shader and set its uniforms
 			
