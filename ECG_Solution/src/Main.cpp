@@ -293,6 +293,10 @@ int main(int argc, char** argv)
 		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 
 		//load models
+
+
+		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *textureShader.get());
+		key->setModel(glm::translate(key->getModel(), glm::vec3(0.0f, 3.2f, 0.0f)));
 		
 		Model* armModel = new Model("assets/objects/lantern/scene2.gltf", glm::mat4(1.f), *textureShader.get());
 		player.setHand(*armModel);
@@ -490,6 +494,8 @@ int main(int argc, char** argv)
 			brain->Draw(brain->getModel());
 
 			brain_01->Draw(brain_01->getModel());
+
+			key->Draw(key->getModel());
 			/*
 			//walls
 			for (size_t i = 4; i < walls.size(); ++i) {
@@ -498,6 +504,8 @@ int main(int argc, char** argv)
 			}
 			*/
 			pondRand->Draw(pondRand->getModel());
+
+			
 			
 			// Use the animation shader and set its uniforms
 			
