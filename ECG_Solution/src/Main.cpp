@@ -204,9 +204,9 @@ int main(int argc, char** argv)
 	// Initialize scene and render loop
 	/* --------------------------------------------- */
 	{
-		std::string directory = "assets/textures";
 
-		//std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normal.frag");
+		//Loading Textures for Normal/specular Shader
+		std::string directory = "assets/textures";
 
 		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normalPlusSpecular.frag");
 		textureShaderNormals->use();
@@ -230,10 +230,7 @@ int main(int argc, char** argv)
 		unsigned int roomNormalMap = TextureFromFile("initialShadingGroup_Normal_OpenGL.png", directory);
 
 
-		//std::shared_ptr<TextureMaterial> normalMaterial = std::make_shared<TextureMaterial>(textureShaderNormals, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f);
-		
 		//Load Textures
-		
 		std::shared_ptr<Texture> wallDiffuse = std::make_shared<Texture>("wall.dds");
 		std::shared_ptr<Texture> wallNormal = std::make_shared<Texture>("Jute_cocomat_pxr128.dds");
 		std::shared_ptr<Texture> wallRoughness = std::make_shared<Texture>("wall.dds");
@@ -244,84 +241,72 @@ int main(int argc, char** argv)
 
 		// Load shader(s)
 		std::shared_ptr<Shader> lightMakerShader = std::make_shared<Shader>("light.vert", "light.frag");
-
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 		std::shared_ptr<Shader> particleShader = std::make_shared<Shader>("particle_system.vert", "particle_system.frag");
 		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torranceDublicate.frag");
-		//std::shared_ptr<Material> lavaMat = std::make_shared<Material>(animationShader);
 		animationShader->use();
 		animationShader->setUniform("diffuseTexture", 0);
 
-		unsigned int waterTexture = TextureFromFile("T_Wall_Damaged_2x1_A_N.png", directory);
-
-		Model* pond = new Model("assets/objects/pond/pond.gltf", glm::mat4(1.f), *animationShader.get());
-		pond->setModel(glm::translate(glm::scale(pond->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)) ,glm::vec3(3.f, 2.0f, 0.f)));
-		Model* pondRand = new Model("assets/objects/pond/pondRand.gltf", glm::mat4(1.f), *textureShader.get());
-		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)),glm::vec3(3.f, 2.0f, 0.f)));
-
-
-
-		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
-		// lighting info
-   // -------------
-
-		std::shared_ptr<TextureMaterial> lavaMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallDiffuse);
-		Geometry* testlava = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.5f, 0.f)), Geometry::createPlaneGeometry(10.0f), lavaMat);
-
-		std::shared_ptr<Material> normalMat = std::make_shared<Material>(textureShaderNormals);
-
-
-		Geometry* testBox = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.5f, 0.f)), Geometry::createCubeGeometry(1.0f, 1.0f, 1.0f), normalMat);
-
-		
+		//UI Shader
 		std::shared_ptr<Shader> uiShader = std::make_shared<Shader>("hud.vert", "hud.frag");
-		
-
 		glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(window_width), 0.0f, static_cast<float>(window_height));
 		uiShader->use();
 		uiShader->setUniform("projection", projection);
 		uiShader->initFreeType(_charactersForCooldown, "assets/arial.ttf");
 		uiShader->initFreeType(_characters, "assets/Alice_in_Wonderland_3.ttf");
 
-		
 
-		// Create textures 
+		// UI TEXT
+		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *uiShader.get());
+		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width / 2.0f - 580, window_height - 300.0f), 2.f, glm::vec3(1, 0, 0), _characters, *uiShader.get());
+		Text* UI_test = new Text("GET OUT!", glm::vec2(850.0f, 100.0f), 1.f, glm::vec3(1.0f, 1.0f, 1.0f), _characters, *uiShader.get());
+
+
+		// Loading Models 
+		Model* pond = new Model("assets/objects/pond/pond.gltf", glm::mat4(1.f), *animationShader.get());
+		pond->setModel(glm::translate(glm::scale(pond->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)) ,glm::vec3(3.f, 2.0f, 0.f)));
+		Model* pondRand = new Model("assets/objects/pond/pondRand.gltf", glm::mat4(1.f), *textureShader.get());
+		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)),glm::vec3(3.f, 2.0f, 0.f)));
+
+		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
+
+		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *lightMakerShader.get());
+		key->setModel(glm::translate(key->getModel(), glm::vec3(0.0f, 3.2f, 0.0f)));
+
+		Model* armModel = new Model("assets/objects/lantern/scene2.gltf", glm::mat4(1.f), *textureShader.get());
+		player.setHand(*armModel);
+
+		Model* room = new Model("assets/objects/room/room2.obj", glm::mat4(1.f), *textureShaderNormals.get());
+
+
+		//this is here for no reason - anim shader breaks if this doesnt exist for some fing reason
+		std::shared_ptr<TextureMaterial> waterMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallDiffuse);
+		Geometry* water = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.5f, 0.f)), Geometry::createPlaneGeometry(10.0f), waterMat);
+
+
+		// Dummy Texture
 		std::shared_ptr<Texture> floorTXT = std::make_shared<Texture>("wall.dds");
 	
-
-		// Create materials,																					x = ambient, y = diffuse, z = specular		
+		// Dummy Materials for logic																					x = ambient, y = diffuse, z = specular		
 		std::shared_ptr<Material> playerMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 		std::shared_ptr<Material> groundMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 
-		//load models
 
-
-		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *lightMakerShader.get());
-		key->setModel(glm::translate(key->getModel(), glm::vec3(0.0f, 3.2f, 0.0f)));
-		
-		Model* armModel = new Model("assets/objects/lantern/scene2.gltf", glm::mat4(1.f), *textureShader.get());
-		player.setHand(*armModel);
-		
-		Model* room = new Model("assets/objects/room/room2.obj", glm::mat4(1.f), *textureShaderNormals.get());
-
-		glm::vec3 lightColor = glm::vec3(0.9f, 0.4f, 0.1f);
 		
 	
 		//LIGHTS
-		
+
+
+		glm::vec3 lightColor = glm::vec3(0.9f, 0.4f, 0.1f);
+
+		//currently only works on anim shader
 		std::vector<PointLight*> pointLights = createLights(lightColor);
 		PointLight* tmpPoint = new PointLight(lightColor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
 		player.setLight(*tmpPoint);
 
-
-		DirectionalLight* tmpDirLight = new DirectionalLight(lightColor, glm::vec3(0.0f, 0.0f, 0.0f), true);
-		//lights.push_back(tmpPoint);
-
-
 		
-		// Room
-		//initialize floor
+		//Room and stuff
 		float length = 99.f;
 		float width = 99.f;
 	
@@ -343,17 +328,16 @@ int main(int argc, char** argv)
 
 		// ====================================================================================================================
 
-		//Setup Player with hitbox size
+		// PLAYER
 		pWorld->addPlayerToPWorld(player, glm::vec3(1.0f, 3.5f, 1.0f) * 0.5f);
 
-		//Setup Enemy
+
+		// ENEMIES
 		Model* brain = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *textureShader.get());
 		brain->setModel(glm::translate(brain->getModel(), glm::vec3(8.0f, 3.2f, 0.0f)));
 		//addSphere sets as an enemy if last param is "false"
 		pWorld->addSphereToPWorld(*brain, 1.5f, false);
 
-
-		// ENEMIES
 		std::vector<physx::PxVec3> path1;
 		path1.push_back(physx::PxVec3(-40.0, 7.0, -40.0));
 		path1.push_back(physx::PxVec3(-40.0, 7.0, 40.0));
@@ -366,12 +350,6 @@ int main(int argc, char** argv)
 
 		pWorld->addEnemyToPWorld(*brain_01, *enem1, 2.0);
 
-	
-		//TEXT
-		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters,*uiShader.get());
-		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width/2.0f - 580, window_height-300.0f), 2.f, glm::vec3(1, 0,0), _characters, *uiShader.get());
-		Text* UI_test = new Text("GET OUT!", glm::vec2(850.0f, 100.0f), 1.f, glm::vec3(1.0f, 1.0f, 1.0f), _characters, *uiShader.get());
-		
 
 		double mouse_x, mouse_y;
 		
@@ -379,7 +357,7 @@ int main(int argc, char** argv)
 		player.getCamera()->setProjectionMatrix(projMatrix);
 
 
-		 //PARTICLE SYSTEM
+		// PARTICLE SYSTEM
 		particleShader->use();
 		int maxParticles = 100;
 		ParticleSystem particleSystem(particleShader, camera, 1.0f, 1.0f, 1000, glm::vec3(-0.0, 2.0, -0.0));
@@ -440,20 +418,13 @@ int main(int argc, char** argv)
 			glfwGetCursorPos(window, &mouse_x, &mouse_y);
 			processKeyInput(window);
 
-			
-
-
+	
 			// Buffers for post processing
 			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 			Camera* cam = player.getCamera();
-
-
-
-			
-
 
 			//Update our Dynamic Actors
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
@@ -468,11 +439,6 @@ int main(int argc, char** argv)
 				setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
 			}
 
-			
-			
-			
-			
-			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 			// ---------------------------------------
@@ -486,31 +452,14 @@ int main(int argc, char** argv)
 			hand->Draw(hand->getModel());
 			pWorld->draw();
 
-		
-
-
-			//testBox->draw(textureShaderNormals.get());
-
-			//room->Draw(room->getModel());
-
 			brain->Draw(brain->getModel());
 
 			brain_01->Draw(brain_01->getModel());
 
-
-			
-			/*
-			//walls
-			for (size_t i = 4; i < walls.size(); ++i) {
-				walls[i]->setModel(walls[i]->getModel());
-				walls[i]->Draw(walls[i]->getModel()); // Assuming Draw is a member function of the Model class
-			}
-			*/
 			pondRand->Draw(pondRand->getModel());
 
 			glm::mat4 modelMatrix = key->getModel(); // Your model matrix here
 
-// Calculate the normal matrix
 			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
 
 			lightMakerShader->use();
@@ -519,17 +468,17 @@ int main(int argc, char** argv)
 			//lightMakerShader->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
 			key->Draw(key->getModel());
 			
+
+
 			// Use the animation shader and set its uniforms
-			
-			//testlava->draw(static_cast<float>(glfwGetTime()));
 			animationShader->use();
 			animationShader->setUniform("u_time", static_cast<float>(glfwGetTime()));
-			//set the uniforms for the animation shader
 			setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
 			for (int i = 0; i < pointLights.size(); i++) {
 				setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
 			}
-			testlava->draw(static_cast<float>(glfwGetTime()));
+			water->draw(static_cast<float>(glfwGetTime()));
+
 
 			pond->Draw(pond->getModel());
 			
@@ -549,16 +498,11 @@ int main(int argc, char** argv)
 
 			textureShaderNormals->setUniform("model", wall->getModel());
 
-			//wall->Draw(wall->getModel());
-
-
-		
+			
 			for (size_t i = 0; i < walls.size(); ++i) {
 				drawNormalMapped(walls[i], *textureShaderNormals.get());
-			
 			}
 			
-
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, roomDiffuseMap);
 			glActiveTexture(GL_TEXTURE1);
