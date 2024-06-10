@@ -277,7 +277,9 @@ int main(int argc, char** argv)
 
 		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
 
-		glm::vec3 keyPosition = glm::vec3(0.0f, 3.2f, 0.0f);
+		// set Key model and the Position in physics world
+		glm::vec3 keyPosition = glm::vec3(3.0f, 3.2f, 3.0f);
+		pWorld->setKeyPosition(PxVec3(keyPosition.x, keyPosition.y, keyPosition.z));
 		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *lightMakerShader.get());
 		key->setModel(glm::translate(key->getModel(), keyPosition));
 
@@ -366,9 +368,7 @@ int main(int argc, char** argv)
 
 
 		// PARTICLE SYSTEM
-		particleShader->use();
-		int maxParticles = 100;
-		ParticleSystem particleSystem(particleShader, camera, 1.0f, 0.15f, 100, keyPosition);
+		ParticleSystem particleSystem(particleShader, camera, 1.0f, 0.15f, 100, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -532,17 +532,13 @@ int main(int argc, char** argv)
 
 			//HUD
 			float framesPerSec = 1.0f / deltaTime;
-
-
 			fps->setText("FPS: " + std::to_string(framesPerSec));
 			fps->drawText();
-
-
 			UI_test->drawText();
 
 			// PARTICLES
 			particleShader->use();
-			particleSystem.Update(deltaTime, 3, keyPosition - glm::vec3(0.0f, 3.0f, 0.0f));
+			particleSystem.Update(deltaTime, 3, keyPosition);
 			particleSystem.Draw();
 
 			// Key
@@ -595,20 +591,30 @@ int main(int argc, char** argv)
 						glfwPollEvents();
 						processKeyInput(window);
 
-						
-						if (pWorld->isPlayerHit()) {
-							endOfGame->setText("*Game Over! Press Enter to Restart*");
-							endOfGame->drawText();
-						}
+						endOfGame->setText("*Game Over! Press Enter to Restart*");
+						endOfGame->drawText();
 
 						glfwSwapBuffers(window);
 					}
 			}
+			else if (pWorld->playerFoundKey())
+			{
+				Timer endTimer = Timer();
+				isDead = true;
+				resetGame = false;
 
+				while (!glfwWindowShouldClose(window) && !resetGame) {
 
+					glfwPollEvents();
+					processKeyInput(window);
 
-		
-			
+					endOfGame->setText("*You won! Press Enter to restart*");
+					endOfGame->drawText();
+
+					glfwSwapBuffers(window);
+				}
+			}
+	
 			//time logic
 			float currentFrame = static_cast<float>(glfwGetTime());
 			deltaTime = currentFrame - lastFrame;
