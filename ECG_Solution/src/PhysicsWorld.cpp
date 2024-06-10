@@ -64,10 +64,6 @@ int PhysicsWorld::getScoreCounter() {
 }
 
 
-
-
-
-
 /*
 * createShape takes the volume
 * PxTransform the position
@@ -361,6 +357,10 @@ boolean PhysicsWorld::isPlayerHit() {
 	
 	float distance = calcDirectionEnemyPlayer().magnitude();
 	//TODO dont hardcode ballradius
+	//for each (Enemy* enemy in movingEnemies)
+	//{
+
+	//}
 	return distance < 2.5;
 }
 boolean PhysicsWorld::isPlayerDead() {

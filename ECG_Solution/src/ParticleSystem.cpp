@@ -150,23 +150,23 @@ void ParticleSystem::respawnParticle(Particle& particle, glm::vec3 objectPositio
 
 	particle._position = objectPosition + _position + offset * _offsetFactor;
 
-	glm::vec3 mainDirection = glm::vec3(0.0f, -3.0f, 0.0f);
+	glm::vec3 mainDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 randomDirection = glm::vec3(
 		distMinus(rd) / 2.0f,
 		distMinus(rd) / 2.0f,
 		distMinus(rd) / 2.0f
 	);
 
-	float spread = 2.f;
+	float spread = 1.5f;
 
-	particle._life = 3.0f;
+	particle._life = 2.0f;
 	particle._velocity = mainDirection + randomDirection * spread;
 	particle._size = distSize(rd);
 
-	particle.r = 20;
-	particle.g = 64;
-	particle.b = 82;
-	particle.a = 255;
+	particle.r = 255;
+	particle.g = 215;
+	particle.b = 0;
+	particle.a = 127;
 
 }
 

@@ -61,7 +61,7 @@ private:
 	void respawnParticle(Particle& particle, glm::vec3 objectPosition);
 
 public:
-	ParticleSystem(std::shared_ptr<Shader>& shader, Camera& cam, float offsetFactor, float size, unsigned int amount, glm::vec3 position = glm::vec3(0.f));
+	ParticleSystem(std::shared_ptr<Shader>& shader, Camera& cam, float offsetFactor, float size, unsigned int amount, glm::vec3 position);
 
 	void Update(float deltaTime, unsigned int newParticles, glm::vec3 objectPosition = glm::vec3(0.f));
 	void Draw();

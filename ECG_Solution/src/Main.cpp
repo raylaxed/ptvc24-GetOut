@@ -277,8 +277,9 @@ int main(int argc, char** argv)
 
 		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
 
+		glm::vec3 keyPosition = glm::vec3(0.0f, 3.2f, 0.0f);
 		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *lightMakerShader.get());
-		key->setModel(glm::translate(key->getModel(), glm::vec3(0.0f, 3.2f, 0.0f)));
+		key->setModel(glm::translate(key->getModel(), keyPosition));
 
 		Model* armModel = new Model("assets/objects/lantern/scene2.gltf", glm::mat4(1.f), *textureShader.get());
 		player.setHand(*armModel);
@@ -367,7 +368,7 @@ int main(int argc, char** argv)
 		// PARTICLE SYSTEM
 		particleShader->use();
 		int maxParticles = 100;
-		ParticleSystem particleSystem(particleShader, camera, 1.0f, 1.0f, 1000, glm::vec3(-0.0, 2.0, -0.0));
+		ParticleSystem particleSystem(particleShader, camera, 1.0f, 0.15f, 100, keyPosition);
 
 		// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -541,10 +542,10 @@ int main(int argc, char** argv)
 
 			// PARTICLES
 			particleShader->use();
-			particleSystem.Update(deltaTime, 10, glm::vec3(5.0, 2.0, 5.0));
+			particleSystem.Update(deltaTime, 3, keyPosition - glm::vec3(0.0f, 3.0f, 0.0f));
 			particleSystem.Draw();
 
-
+			// Key
 			lightMakerShader->use();
 			lightMakerShader->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			lightMakerShader->setUniform("view", player.getCamera()->GetViewMatrix());
@@ -556,7 +557,7 @@ int main(int argc, char** argv)
 			// 2. blur bright fragments with two-pass Gaussian Blur 
 		// --------------------------------------------------
 			bool horizontal = true, first_iteration = true;
-			unsigned int amount = 2;
+			unsigned int amount = 4;
 			blurShader->use();
 			for (unsigned int i = 0; i < amount; i++)
 			{
