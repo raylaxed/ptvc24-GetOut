@@ -62,25 +62,26 @@ private:
 	float _UpForce = 40.f;
 	int _hitCounter = 0;
 	int _scoreCounter = 0;
+	boolean foundKey = false;
+	PxVec3 keyPosition = PxVec3(0.0f, 0.0f, 0.0f);
 	
-	
-
 public:
 	PhysicsWorld();
 	
 	//initializes PhysX context
 	void initPhysics();
 
-
 	//returns the simulation scene
 	PxScene* getScene();
+
+	// sets the positon for the key in the Physics World
+	void setKeyPosition(PxVec3 position);
 
 	//returns the HitCounter increasing ball speed
 	int getHitCounter();
 
 	//returns the scoreCounter used for highscore 
 	int getScoreCounter();
-
 
 	//add a Cube Geometry object into the simulation as a rigidbody
 	void addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool isStatic = true,bool isTorchHitbox = false);
@@ -112,6 +113,9 @@ public:
 
 	//checks if player collides with the ball
 	boolean isPlayerHit();
+
+	// checks if the player found the key and got close enough to win
+	boolean playerFoundKey();
 
 	//calculates the vector from ball to player
 	PxVec3 calcDirectionEnemyPlayer();
