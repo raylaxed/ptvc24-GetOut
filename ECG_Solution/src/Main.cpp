@@ -306,8 +306,6 @@ int main(int argc, char** argv)
 		
 	
 		//LIGHTS
-
-
 		glm::vec3 lightColor = glm::vec3(0.9f, 0.4f, 0.1f);
 
 		//currently only works on anim shader
@@ -585,7 +583,8 @@ int main(int argc, char** argv)
 					Timer endTimer = Timer();
 					isDead = true;
 					resetGame = false;
-					
+					uiShader->use();
+
 					while (!glfwWindowShouldClose(window) && !resetGame) {
 
 						glfwPollEvents();
@@ -602,6 +601,7 @@ int main(int argc, char** argv)
 				Timer endTimer = Timer();
 				isDead = true;
 				resetGame = false;
+				uiShader->use();
 
 				while (!glfwWindowShouldClose(window) && !resetGame) {
 
@@ -627,8 +627,6 @@ int main(int argc, char** argv)
 			glfwSwapBuffers(window);
 
 		}
-
-		
 	}
 
 
@@ -682,7 +680,6 @@ void renderQuad()
 //draw traps or lava
 void drawNormalMapped(Model* model, Shader& shader)
 {
-	
 	shader.setUniform("model", model->getModel());
 	
 	model->Draw(shader);
@@ -726,7 +723,6 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 	shader->setUniform("projMatrix", projMatrix);
 	shader->setUniform("camera_world", player.getCamera()->getPosition());
 
-	
 	shader->setUniform("pointL.color", pointL.color);
 	shader->setUniform("pointL.position", pointL.position);
 	shader->setUniform("pointL.attenuation", pointL.attenuation);
@@ -740,7 +736,6 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 	shader->setUniform("projMatrix", projMatrix);
 	shader->setUniform("camera_world", player.getCamera()->getPosition());
 
-
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].color", pointL.color);
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].position", pointL.position);
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].attenuation", pointL.attenuation);	
@@ -749,7 +744,6 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 //draw multiple geometry objects stored in a vector
 void drawGeometryVector(std::vector<Geometry*> x) 
 {
-
 	Geometry* tmp;
 	std::vector<Geometry*>::iterator it;
 	for (it = x.begin(); it != x.end(); it++) {
@@ -761,7 +755,6 @@ void drawGeometryVector(std::vector<Geometry*> x)
 //draw multiple models stored in a vector
 void drawModelVector(Model* model, std::vector<glm::mat4*> x) 
 {
-
 	glm::mat4* tmp;
 	std::vector<glm::mat4*>::iterator it;
 	for (it = x.begin(); it != x.end(); it++) {
