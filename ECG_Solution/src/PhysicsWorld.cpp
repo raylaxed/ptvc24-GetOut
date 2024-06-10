@@ -371,7 +371,7 @@ boolean PhysicsWorld::isPlayerHit() {
 		PxVec3 enemyPosition = actor->getGlobalPose().p;
 		distance = calcDirectionEnemyPlayer(enemyPosition).magnitude();
 
-		if (distance < 2.5)
+		if (distance < 3.0)
 		{
 			return true;
 		}
