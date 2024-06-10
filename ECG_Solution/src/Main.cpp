@@ -88,6 +88,7 @@ bool bloomKeyPressed = false;
 // meshes
 unsigned int planeVAO;
 float exposure = 0.5f;
+bool mode = true;
 
 
 /* --------------------------------------------- */
@@ -225,6 +226,9 @@ int main(int argc, char** argv)
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
+		textureShaderNormals->setUniform("mode", 3);
+		
+
 		unsigned int roomDiffuseMap = TextureFromFile("initialShadingGroup_Base_color.png", directory);
 		unsigned int roomNormalMap = TextureFromFile("initialShadingGroup_Normal_OpenGL.png", directory);
 		unsigned int roomSpecularMap = TextureFromFile("white.jpg", directory);
@@ -262,6 +266,8 @@ int main(int argc, char** argv)
 		uiShader->initFreeType(_charactersForCooldown, "assets/arial.ttf");
 		uiShader->initFreeType(_characters, "assets/Alice_in_Wonderland_3.ttf");
 
+		// PhongShader
+		textureShaderNormals->setUniform("materialCoefficients", glm::vec4(0.2f, 0.6f, 0.1f, 10.0f));
 
 		// UI TEXT
 		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *uiShader.get());
@@ -279,7 +285,9 @@ int main(int argc, char** argv)
 
 		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
 
-		glm::vec3 keyPosition = glm::vec3(0.0f, 3.2f, 0.0f);
+		// set Key model and the Position in physics world
+		glm::vec3 keyPosition = glm::vec3(3.0f, 3.2f, 3.0f);
+		pWorld->setKeyPosition(PxVec3(keyPosition.x, keyPosition.y, keyPosition.z));
 		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *lightMakerShader.get());
 		key->setModel(glm::translate(key->getModel(), keyPosition));
 
@@ -306,8 +314,6 @@ int main(int argc, char** argv)
 
 
 		//LIGHTS
-
-
 		glm::vec3 lightColor = glm::vec3(0.9f, 0.4f, 0.1f);
 
 		//currently only works on anim shader
@@ -351,10 +357,10 @@ int main(int argc, char** argv)
 		pWorld->addSphereToPWorld(*brain, 1.5f, false);
 
 		std::vector<physx::PxVec3> path1;
-		path1.push_back(physx::PxVec3(-40.0, 7.0, -40.0));
-		path1.push_back(physx::PxVec3(-40.0, 7.0, 40.0));
-		path1.push_back(physx::PxVec3(40.0, 7.0, 40.0));
-		path1.push_back(physx::PxVec3(40.0, 7.0, -40.0));
+		path1.push_back(physx::PxVec3(-15.0, 3.0, -15.0));
+		path1.push_back(physx::PxVec3(-15.0, 3.0, 15.0));
+		path1.push_back(physx::PxVec3(15.0, 3.0, 15.0));
+		path1.push_back(physx::PxVec3(15.0, 3.0, -15.0));
 		Model* brain_01 = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *textureShader.get());
 		brain_01->setModel(glm::translate(brain_01->getModel(), glm::vec3(-40.0, 7.0, -30.0)));
 
@@ -370,9 +376,7 @@ int main(int argc, char** argv)
 
 
 		// PARTICLE SYSTEM
-		particleShader->use();
-		int maxParticles = 100;
-		ParticleSystem particleSystem(particleShader, camera, 1.0f, 0.15f, 100, keyPosition);
+		ParticleSystem particleSystem(particleShader, camera, 1.0f, 0.15f, 100, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -438,7 +442,7 @@ int main(int argc, char** argv)
 		while (!glfwWindowShouldClose(window)) {
 
 
-
+			
 			// Clear backbuffer
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -469,11 +473,12 @@ int main(int argc, char** argv)
 			// -----------------------------------------------
 			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+
 			// ---------------------------------------
 			// DRAW
 			// ---------------------------------------
-
-
 
 			//models
 			Model* hand = player.getHand();
@@ -506,18 +511,24 @@ int main(int argc, char** argv)
 			pond->Draw(pond->getModel());
 
 			textureShaderNormals->use();
+			textureShaderNormals->setUniform("mode", mode);
 			textureShaderNormals->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
-			//textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
-			textureShaderNormals->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
-
+			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
+			//textureShaderNormals->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
+			//textureShaderNormals->setUniform("pointLights", pointLights);
+			
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, normalMap);
+			if (mode == true) {
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, normalMap);
+			}
+			
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, specularMap);
+			
 
 			textureShaderNormals->setUniform("model", wall->getModel());
 
@@ -541,17 +552,14 @@ int main(int argc, char** argv)
 			
 			//HUD
 			float framesPerSec = 1.0f / deltaTime;
-
-
-			fps->setText("FPS: " + std::to_string(framesPerSec));
+			//fps->setText("FPS: " + std::to_string(framesPerSec));
+			fps->setText(std::to_string(mode));
 			fps->drawText();
-
-
 			UI_test->drawText();
 
 			// PARTICLES
 			particleShader->use();
-			particleSystem.Update(deltaTime, 3, keyPosition - glm::vec3(0.0f, 3.0f, 0.0f));
+			particleSystem.Update(deltaTime, 3, keyPosition);
 			particleSystem.Draw();
 
 			// Key
@@ -586,24 +594,41 @@ int main(int argc, char** argv)
 			//End of game Condition
 			if (pWorld->isPlayerHit())
 			{
+					Timer endTimer = Timer();
+					isDead = true;
+					resetGame = false;
+					uiShader->use();
+
+					while (!glfwWindowShouldClose(window) && !resetGame) {
+
+					glfwPollEvents();
+					processKeyInput(window);
+
+						endOfGame->setText("*Game Over! Press Enter to Restart*");
+						endOfGame->drawText();
+
+					glfwSwapBuffers(window);
+				}
+			}
+			else if (pWorld->playerFoundKey())
+			{
 				Timer endTimer = Timer();
 				isDead = true;
 				resetGame = false;
+				uiShader->use();
 
 				while (!glfwWindowShouldClose(window) && !resetGame) {
 
 					glfwPollEvents();
 					processKeyInput(window);
 
-
-					if (pWorld->isPlayerHit()) {
-						endOfGame->setText("*Game Over! Press Enter to Restart*");
-						endOfGame->drawText();
-					}
+					endOfGame->setText("*You won! Press Enter to restart*");
+					endOfGame->drawText();
 
 					glfwSwapBuffers(window);
 				}
 			}
+	
 			// 3. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
 		// --------------------------------------------------------------------------------------------------------------------------
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -615,12 +640,6 @@ int main(int argc, char** argv)
 			bloomShader->setUniform("bloom", bloom);
 			bloomShader->setUniform("exposure", exposure);
 			renderQuad();
-
-
-
-
-
-
 			//time logic
 			float currentFrame = static_cast<float>(glfwGetTime());
 			deltaTime = currentFrame - lastFrame;
@@ -633,8 +652,6 @@ int main(int argc, char** argv)
 			glfwSwapBuffers(window);
 
 		}
-
-
 	}
 
 
@@ -688,7 +705,6 @@ void renderQuad()
 //draw traps or lava
 void drawNormalMapped(Model* model, Shader& shader)
 {
-
 	shader.setUniform("model", model->getModel());
 
 	model->Draw(shader);
@@ -732,7 +748,6 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 	shader->setUniform("projMatrix", projMatrix);
 	shader->setUniform("camera_world", player.getCamera()->getPosition());
 
-
 	shader->setUniform("pointL.color", pointL.color);
 	shader->setUniform("pointL.position", pointL.position);
 	shader->setUniform("pointL.attenuation", pointL.attenuation);
@@ -746,7 +761,6 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 	shader->setUniform("projMatrix", projMatrix);
 	shader->setUniform("camera_world", player.getCamera()->getPosition());
 
-
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].color", pointL.color);
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].position", pointL.position);
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].attenuation", pointL.attenuation);
@@ -755,7 +769,6 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 //draw multiple geometry objects stored in a vector
 void drawGeometryVector(std::vector<Geometry*> x)
 {
-
 	Geometry* tmp;
 	std::vector<Geometry*>::iterator it;
 	for (it = x.begin(); it != x.end(); it++) {
@@ -767,7 +780,6 @@ void drawGeometryVector(std::vector<Geometry*> x)
 //draw multiple models stored in a vector
 void drawModelVector(Model* model, std::vector<glm::mat4*> x)
 {
-
 	glm::mat4* tmp;
 	std::vector<glm::mat4*>::iterator it;
 	for (it = x.begin(); it != x.end(); it++) {
@@ -1218,6 +1230,15 @@ void processKeyInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE)
 	{
 		bloomKeyPressed = false;
+	}
+	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+	{
+		mode = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+	{
+		mode = false;
+
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{

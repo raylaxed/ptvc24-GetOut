@@ -46,20 +46,20 @@ void PhysicsWorld::initPhysics() {
 	gManager = PxCreateControllerManager(*gScene);
 }
 
+void PhysicsWorld::setKeyPosition(PxVec3 position) {
+	keyPosition = position;
+}
+
 
 PxScene* PhysicsWorld::getScene() {
-
 	return gScene;
-
 }
 
 int PhysicsWorld::getHitCounter() {
-
 	return _hitCounter;
 }
 
 int PhysicsWorld::getScoreCounter() {
-
 	return _scoreCounter;
 }
 
@@ -92,7 +92,6 @@ void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool i
 	// disabling x and z axis for not falling over
 	else {
 
-
 		PxMaterial* playerMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 		PxShape* playerShape = gPhysics->createShape(PxBoxGeometry(measurements.x, measurements.y, measurements.z), *playerMaterial);
 		PxRigidDynamic* playerHitbox = PxCreateDynamic(*gPhysics, PxTransform(position), *playerShape, 1);
@@ -105,9 +104,9 @@ void PhysicsWorld::addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool i
 		pDynamicObjects.push_back(playerHitbox);
 		pPlayer = playerHitbox;
 	}
-
-
 }
+
+
 void PhysicsWorld::addCubeToPWorld(Model& obj, glm::vec3 measurements, bool isStatic, bool isTorchHitbox) {
 
 	PxVec3 position = OwnUtils::glmModelMatrixToPxVec3(obj.getModel());
@@ -228,6 +227,7 @@ void PhysicsWorld::addEnemyToPWorld(Model& obj, Enemy& enem, float radius) {
 	enemyDynamics.push_back(dyn);
 }
 
+
 void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 
 	static bool airborne = false;
@@ -296,6 +296,7 @@ void PhysicsWorld::updatePlayer(Movement movement, float deltaTime) {
 	playerObject->UpdatePosition(newPos);
 }
 
+
 void PhysicsWorld::updateEnemies(float deltaTime) {
 
 	for (size_t i = 0; i < movingEnemies.size(); ++i) {
@@ -347,11 +348,13 @@ void PhysicsWorld::updateEnemies(float deltaTime) {
 	}
 }
 
+
 glm::vec3 PhysicsWorld::getEnemyPosition() {
 
 	PxVec3 tmp = pTestEnemy->getGlobalPose().p;
 	return glm::vec3(tmp.x, tmp.y, tmp.z);
 }
+
 
 boolean PhysicsWorld::isPlayerHit() {
 	
@@ -368,7 +371,7 @@ boolean PhysicsWorld::isPlayerHit() {
 		PxVec3 enemyPosition = actor->getGlobalPose().p;
 		distance = calcDirectionEnemyPlayer(enemyPosition).magnitude();
 
-		if (distance < 2.5)
+		if (distance < 3.0)
 		{
 			return true;
 		}
@@ -377,11 +380,20 @@ boolean PhysicsWorld::isPlayerHit() {
 	return false;
 }
 
+
+boolean PhysicsWorld::playerFoundKey() {
+	PxExtendedVec3 tmp = controllerPlayer->getPosition();
+	PxVec3 playerPos = PxVec3(tmp.x, tmp.y, tmp.z);
+	PxVec3 directionToPlayer = playerPos - keyPosition;
+
+	return directionToPlayer.magnitude() < 2.0f;
+}
+
+
 boolean PhysicsWorld::isPlayerDead() {
 
 	PxExtendedVec3 position = controllerPlayer->getFootPosition();
 	return position.y <= 0.25f;
-
 }
 
 
@@ -397,6 +409,7 @@ PxVec3 PhysicsWorld::calcDirectionEnemyPlayer() {
 	return directionToPlayer;
 }
 
+
 PxVec3 PhysicsWorld::calcDirectionEnemyPlayer(PxVec3 position) {
 
 	PxExtendedVec3 tmp = controllerPlayer->getPosition();
@@ -406,7 +419,6 @@ PxVec3 PhysicsWorld::calcDirectionEnemyPlayer(PxVec3 position) {
 
 	return directionToPlayer;
 }
-
 
 
 void PhysicsWorld::updateEnemy() {
@@ -457,7 +469,6 @@ void PhysicsWorld::resetGame() {
 
 	controllerPlayer->setPosition(PxExtendedVec3(0.0f, 3.5f, 0.0f));
 	
-
 }
 
 

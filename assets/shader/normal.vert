@@ -13,6 +13,8 @@ out VS_OUT {
     vec3 TangentFragPos;
 } vs_out;
 
+out vec3 Normal;
+
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
@@ -24,7 +26,7 @@ void main()
 {
     vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
     vs_out.TexCoords = aTexCoords;
-    
+    Normal = mat3(transpose(inverse(model))) * aNormal;  
     mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 T = normalize(normalMatrix * aTangent);
     vec3 N = normalize(normalMatrix * aNormal);
