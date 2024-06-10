@@ -57,7 +57,7 @@ static bool _wireframe = false;
 static bool _culling = true;
 static float _zoom = 6.0f;
 //time between frame and its predecesor
-float deltaTime = 0.0f; 
+float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 //GameLogic bool
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
 	/* --------------------------------------------- */
 
 
-	
+
 	INIReader reader("assets/settings.ini");
 
 	window_width = reader.GetInteger("window", "width", 800);
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
 	/* --------------------------------------------- */
 
 	//TEXT SHADERS IMPLEMENT LIKE IN SHADER.h
-	
+
 	pWorld->initPhysics();
 	PxScene* pScene = pWorld->getScene();
 
@@ -247,7 +247,7 @@ int main(int argc, char** argv)
 		bloomShader->use();
 		bloomShader->setUniform("scene", 0);
 		bloomShader->setUniform("bloomBlur", 1);
-	
+
 		std::shared_ptr<Shader> textureShader = std::make_shared<Shader>("texture.vert", "cook_torrance.frag");
 		std::shared_ptr<Shader> particleShader = std::make_shared<Shader>("particle_system.vert", "particle_system.frag");
 		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torranceDublicate.frag");
@@ -266,14 +266,16 @@ int main(int argc, char** argv)
 		// UI TEXT
 		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *uiShader.get());
 		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width / 2.0f - 580, window_height - 300.0f), 2.f, glm::vec3(1, 0, 0), _characters, *uiShader.get());
-		Text* UI_test = new Text("GET OUT!", glm::vec2(850.0f, 100.0f), 1.f, glm::vec3(1.0f, 1.0f, 1.0f), _characters, *uiShader.get());
+		Text* UI_test = new Text("Thank you learnopengl.com for making us survive this semester", glm::vec2(600.0f, 100.0f), 1.f, glm::vec3(1.0f, 1.0f, 1.0f), _characters, *uiShader.get());
 
 
 		// Loading Models 
 		Model* pond = new Model("assets/objects/pond/pond.gltf", glm::mat4(1.f), *animationShader.get());
-		pond->setModel(glm::translate(glm::scale(pond->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)) ,glm::vec3(3.f, 2.0f, 0.f)));
+		pond->setModel(glm::translate(glm::scale(pond->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)), glm::vec3(13.f, 2.0f, 13.f)));
 		Model* pondRand = new Model("assets/objects/pond/pondRand.gltf", glm::mat4(1.f), *textureShader.get());
-		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)),glm::vec3(3.f, 2.0f, 0.f)));
+		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)), glm::vec3(13.f, 2.0f, 13.f)));
+		pWorld->addCubeToPWorld(*pondRand, glm::vec3(1.0f, 1.f, 1.0f));
+
 
 		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
 
@@ -294,15 +296,15 @@ int main(int argc, char** argv)
 
 		// Dummy Texture
 		std::shared_ptr<Texture> floorTXT = std::make_shared<Texture>("wall.dds");
-	
+
 		// Dummy Materials for logic																					x = ambient, y = diffuse, z = specular		
 		std::shared_ptr<Material> playerMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 		std::shared_ptr<Material> groundMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 		std::shared_ptr<Material> wallMat = std::make_shared<TextureMaterial>(textureShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, floorTXT);
 
 
-		
-	
+
+
 		//LIGHTS
 
 
@@ -313,11 +315,11 @@ int main(int argc, char** argv)
 		PointLight* tmpPoint = new PointLight(lightColor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
 		player.setLight(*tmpPoint);
 
-		
+
 		//Room and stuff
 		float length = 99.f;
 		float width = 99.f;
-	
+
 		//WALLS
 		std::vector<Model*> walls = createWalls(textureShader);
 
@@ -326,13 +328,13 @@ int main(int argc, char** argv)
 		Geometry* leftLimit = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(-51.4f, 10.25f, 0.0f)), Geometry::createCubeGeometry(1.f, 50.5f, length), wallMat);
 		Geometry* frontLimit = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, 51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
 		Geometry* backLimit = new Geometry(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.25f, -51.4f)), Geometry::createCubeGeometry(width, 50.5f, 1.f), wallMat);
-		
-		pWorld->addCubeToPWorld(*floor, glm::vec3(width +2, 1.f, length +2) * 0.5f);
+
+		pWorld->addCubeToPWorld(*floor, glm::vec3(width + 2, 1.f, length + 2) * 0.5f);
 		pWorld->addCubeToPWorld(*rightLimit, glm::vec3(3.f, 50.5f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*leftLimit, glm::vec3(3.f, 50.5f, length) * 0.5f);
 		pWorld->addCubeToPWorld(*backLimit, glm::vec3(width, 50.5f, 3.f) * 0.5f);
 		pWorld->addCubeToPWorld(*frontLimit, glm::vec3(width, 50.5f, 3.f) * 0.5f);
-		
+
 
 		// ====================================================================================================================
 
@@ -343,6 +345,8 @@ int main(int argc, char** argv)
 		// ENEMIES
 		Model* brain = new Model("assets/objects/brain/brain2.obj", glm::mat4(1.f), *textureShader.get());
 		brain->setModel(glm::translate(brain->getModel(), glm::vec3(8.0f, 3.2f, 0.0f)));
+		
+
 		//addSphere sets as an enemy if last param is "false"
 		pWorld->addSphereToPWorld(*brain, 1.5f, false);
 
@@ -360,7 +364,7 @@ int main(int argc, char** argv)
 
 
 		double mouse_x, mouse_y;
-		
+
 		glm::mat4 projMatrix = glm::perspective(glm::radians(fov), (float)window_width / (float)window_height, nearZ, farZ);
 		player.getCamera()->setProjectionMatrix(projMatrix);
 
@@ -432,13 +436,13 @@ int main(int argc, char** argv)
 		// ---------------------------------------
 
 		while (!glfwWindowShouldClose(window)) {
-			
+
 
 
 			// Clear backbuffer
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
+
 			// Poll events
 			glfwPollEvents();
 
@@ -452,7 +456,7 @@ int main(int argc, char** argv)
 			pWorld->updatePlayer(PNOMOVEMENT, deltaTime);
 			pWorld->updateEnemy();
 			pWorld->updateEnemies(deltaTime);
-			
+
 			//Player Light
 			PointLight* tmpPoint2 = player.getLight();
 			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
@@ -469,14 +473,15 @@ int main(int argc, char** argv)
 			// DRAW
 			// ---------------------------------------
 
-			
+
 
 			//models
 			Model* hand = player.getHand();
 			hand->Draw(hand->getModel());
 			pWorld->draw();
 
-			brain->Draw(brain->getModel());
+
+
 
 			brain_01->Draw(brain_01->getModel());
 
@@ -486,7 +491,7 @@ int main(int argc, char** argv)
 
 			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
 
-
+			brain->Draw(brain->getModel());
 
 			// Use the animation shader and set its uniforms
 			animationShader->use();
@@ -499,14 +504,14 @@ int main(int argc, char** argv)
 
 
 			pond->Draw(pond->getModel());
-			
+
 			textureShaderNormals->use();
 			textureShaderNormals->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
-			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
+			//textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
 			textureShaderNormals->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
-			
+
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
 			glActiveTexture(GL_TEXTURE1);
@@ -516,20 +521,24 @@ int main(int argc, char** argv)
 
 			textureShaderNormals->setUniform("model", wall->getModel());
 
-			
+
+
 			for (size_t i = 0; i < walls.size(); ++i) {
 				drawNormalMapped(walls[i], *textureShaderNormals.get());
 			}
-			
+
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, roomDiffuseMap);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, roomNormalMap);
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, roomSpecularMap);
-		
+
 			drawNormalMapped(room, *textureShaderNormals.get());
 
+			
+			
+			
 			//HUD
 			float framesPerSec = 1.0f / deltaTime;
 
@@ -554,6 +563,9 @@ int main(int argc, char** argv)
 			//lightMakerShader->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
 			key->Draw(key->getModel());
 
+
+
+
 			// 2. blur bright fragments with two-pass Gaussian Blur 
 		// --------------------------------------------------
 			bool horizontal = true, first_iteration = true;
@@ -571,6 +583,27 @@ int main(int argc, char** argv)
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+			//End of game Condition
+			if (pWorld->isPlayerHit())
+			{
+				Timer endTimer = Timer();
+				isDead = true;
+				resetGame = false;
+
+				while (!glfwWindowShouldClose(window) && !resetGame) {
+
+					glfwPollEvents();
+					processKeyInput(window);
+
+
+					if (pWorld->isPlayerHit()) {
+						endOfGame->setText("*Game Over! Press Enter to Restart*");
+						endOfGame->drawText();
+					}
+
+					glfwSwapBuffers(window);
+				}
+			}
 			// 3. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
 		// --------------------------------------------------------------------------------------------------------------------------
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -583,32 +616,11 @@ int main(int argc, char** argv)
 			bloomShader->setUniform("exposure", exposure);
 			renderQuad();
 
-			//End of game Condition
-			if ( pWorld->isPlayerHit()) 
-			{
-					Timer endTimer = Timer();
-					isDead = true;
-					resetGame = false;
-					
-					while (!glfwWindowShouldClose(window) && !resetGame) {
-
-						glfwPollEvents();
-						processKeyInput(window);
-
-						
-						if (pWorld->isPlayerHit()) {
-							endOfGame->setText("*Game Over! Press Enter to Restart*");
-							endOfGame->drawText();
-						}
-
-						glfwSwapBuffers(window);
-					}
-			}
 
 
 
-		
-			
+
+
 			//time logic
 			float currentFrame = static_cast<float>(glfwGetTime());
 			deltaTime = currentFrame - lastFrame;
@@ -622,7 +634,7 @@ int main(int argc, char** argv)
 
 		}
 
-		
+
 	}
 
 
@@ -676,9 +688,9 @@ void renderQuad()
 //draw traps or lava
 void drawNormalMapped(Model* model, Shader& shader)
 {
-	
+
 	shader.setUniform("model", model->getModel());
-	
+
 	model->Draw(shader);
 }
 
@@ -720,7 +732,7 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 	shader->setUniform("projMatrix", projMatrix);
 	shader->setUniform("camera_world", player.getCamera()->getPosition());
 
-	
+
 	shader->setUniform("pointL.color", pointL.color);
 	shader->setUniform("pointL.position", pointL.position);
 	shader->setUniform("pointL.attenuation", pointL.attenuation);
@@ -737,11 +749,11 @@ void setPerFrameUniforms(Shader* shader, Camera& camera, glm::mat4 projMatrix, P
 
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].color", pointL.color);
 	shader->setUniform("pointLights[" + std::to_string(lightID) + "].position", pointL.position);
-	shader->setUniform("pointLights[" + std::to_string(lightID) + "].attenuation", pointL.attenuation);	
+	shader->setUniform("pointLights[" + std::to_string(lightID) + "].attenuation", pointL.attenuation);
 }
 
 //draw multiple geometry objects stored in a vector
-void drawGeometryVector(std::vector<Geometry*> x) 
+void drawGeometryVector(std::vector<Geometry*> x)
 {
 
 	Geometry* tmp;
@@ -753,7 +765,7 @@ void drawGeometryVector(std::vector<Geometry*> x)
 }
 
 //draw multiple models stored in a vector
-void drawModelVector(Model* model, std::vector<glm::mat4*> x) 
+void drawModelVector(Model* model, std::vector<glm::mat4*> x)
 {
 
 	glm::mat4* tmp;
@@ -1169,19 +1181,19 @@ std::vector<PointLight*> createLights(glm::vec3 flamecolor)
 	PointLight* tmpPoint1 = new PointLight(flamecolor, glm::vec3(-46.5f, 5.f, 46.5f), glm::vec3(0.001f));
 	lights.push_back(tmpPoint1);
 
-	
+
 	PointLight* tmpPoint2 = new PointLight(flamecolor, glm::vec3(46.5f, 5.f, 46.5f), glm::vec3(0.001f));
 	lights.push_back(tmpPoint2);
 
 	PointLight* tmpPoint3 = new PointLight(flamecolor, glm::vec3(-46.5f, 5.f, -46.5f), glm::vec3(0.001f));
 	lights.push_back(tmpPoint3);
-	
+
 
 	return lights;
 }
 
 //processes all key inputs
-void processKeyInput(GLFWwindow* window) 
+void processKeyInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -1190,7 +1202,7 @@ void processKeyInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
 	{
 
-		if (isDead) 
+		if (isDead)
 		{
 			pWorld->resetGame();
 			resetGame = true;
@@ -1241,8 +1253,8 @@ void processKeyInput(GLFWwindow* window)
 		{
 			pWorld->updatePlayer(PJUMP, deltaTime);
 		}
-		
-		
+
+
 	}
 }
 
@@ -1276,14 +1288,17 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 //callback for mouse buttons
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{	
+{
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		//do some interaction
-	} else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+	}
+	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
 		//do some interaction
-	} else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		//do some interaction
-	} else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		//do some interaction
 	}
 }
@@ -1299,45 +1314,45 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	switch (key)
 	{
-		case GLFW_KEY_LEFT_SHIFT:
-			
-			break;
-		case GLFW_KEY_2:
-			if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
-				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			}
-			else {
-				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			}
+	case GLFW_KEY_LEFT_SHIFT:
 
-			break;
-		case GLFW_KEY_ESCAPE:
-			glfwSetWindowShouldClose(window, true);
-			break;
-		case GLFW_KEY_F1:
-			_wireframe = !_wireframe;
-			glPolygonMode(GL_FRONT_AND_BACK, _wireframe ? GL_LINE : GL_FILL);
-			break;
-		case GLFW_KEY_F2:
-			_culling = !_culling;
-			if (_culling) glEnable(GL_CULL_FACE);
-			else glDisable(GL_CULL_FACE);
-			break;
-		
+		break;
+	case GLFW_KEY_2:
+		if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+		else {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+
+		break;
+	case GLFW_KEY_ESCAPE:
+		glfwSetWindowShouldClose(window, true);
+		break;
+	case GLFW_KEY_F1:
+		_wireframe = !_wireframe;
+		glPolygonMode(GL_FRONT_AND_BACK, _wireframe ? GL_LINE : GL_FILL);
+		break;
+	case GLFW_KEY_F2:
+		_culling = !_culling;
+		if (_culling) glEnable(GL_CULL_FACE);
+		else glDisable(GL_CULL_FACE);
+		break;
+
 	}
 }
 // utility function for loading a 2D texture from file
 // ---------------------------------------------------
 
 //DEBUG 
-static void APIENTRY DebugCallbackDefault(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam) 
+static void APIENTRY DebugCallbackDefault(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
 {
-	if (id == 131185 || id == 131218 || id==131185) return; // ignore performance warnings from nvidia
+	if (id == 131185 || id == 131218 || id == 131185) return; // ignore performance warnings from nvidia
 	std::string error = FormatDebugOutput(source, type, id, severity, message);
 	std::cout << error << std::endl;
 }
 //DEBUG
-static std::string FormatDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, const char* msg) 
+static std::string FormatDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, const char* msg)
 {
 	std::stringstream stringStream;
 	std::string sourceString;
