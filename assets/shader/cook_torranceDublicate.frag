@@ -19,14 +19,10 @@ uniform vec3 materialCoefficients; // x = ambient, y = diffuse, z = specular
 uniform float specularAlpha;
 uniform sampler2D diffuseTexture;
 
-
-
 //F0 is the fresnel factor we set it at 0.8 as our default value 
 uniform float roughness = 0.8;
 uniform float metallic = 0.9;
 uniform float ao = 0.05;
-
-
 
 uniform struct PointLight {
 	vec3 color;
@@ -37,16 +33,12 @@ uniform struct PointLight {
 #define NR_POINT_LIGHTS 5
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
-
-
-
 vec3 fresnelSchlick(float cosT, vec3 F0New){
 
 
 	return F0New + (1.0 - F0New) * pow(clamp(1.0 - cosT, 0.0, 1.0), 5.0);
 
 }
-
 
 float beckmannDist(float roughness, float NdotH){
 
@@ -61,10 +53,7 @@ float beckmannDist(float roughness, float NdotH){
 	return num/(PI*den*den);
 
 	//return r1 * exp(r2);
-
-
 }
-
 
 
 float GeometrySchlickGGX(float NdotV, float roughness)
@@ -77,7 +66,6 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 	
     return num / denom;
 }
-
 
 
 void main()
