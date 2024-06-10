@@ -262,6 +262,8 @@ int main(int argc, char** argv)
 		uiShader->initFreeType(_charactersForCooldown, "assets/arial.ttf");
 		uiShader->initFreeType(_characters, "assets/Alice_in_Wonderland_3.ttf");
 
+		// PhongShader
+		textureShaderNormals->setUniform("materialCoefficients", glm::vec4(0.2f, 0.6f, 0.1f, 10.0f));
 
 		// UI TEXT
 		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *uiShader.get());
@@ -505,6 +507,7 @@ int main(int argc, char** argv)
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
 			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
 			textureShaderNormals->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
+			//textureShaderNormals->setUniform("pointLights", pointLights);
 			
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);

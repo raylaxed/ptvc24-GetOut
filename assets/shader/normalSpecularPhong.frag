@@ -25,8 +25,8 @@ uniform struct PointLight {
 	vec3 attenuation;
 } pointL;
 
-#define nrOfPointLights 2
-uniform PointLight pointLights[nrOfPointLights];
+#define nrOfPointLights 5
+uniform PointL pointLights[nrOfPointLights];
 
 // Computes the reflection direction for an incident vector I about normal N,
 // and clamps the reflection to a maximum of 180, i.e. the reflection vector
@@ -73,5 +73,5 @@ void main()
 	    color += phong(n, pointL.position - fs_in.TangentFragPos, -v, pointL.color * diffuseColor, materialCoefficients.y, pointL.color, materialCoefficients.z, materialCoefficients.w, true, pointL.attenuation);
     }
 
-    FragColor = vec4(ambient + diffuse + specular, 1.0);
+    FragColor = vec4(color, 1.0);
 }
