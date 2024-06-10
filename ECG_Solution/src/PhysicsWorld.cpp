@@ -356,13 +356,27 @@ glm::vec3 PhysicsWorld::getEnemyPosition() {
 boolean PhysicsWorld::isPlayerHit() {
 	
 	float distance = calcDirectionEnemyPlayer().magnitude();
+	if (distance < 2.5)
+	{
+		return true;
+	}
 	//TODO dont hardcode ballradius
-	//for each (Enemy* enemy in movingEnemies)
-	//{
+	for (size_t i = 0; i < movingEnemies.size(); ++i) {
+		Enemy* currentEnemy = movingEnemies[i];
+		physx::PxRigidDynamic* actor = enemyDynamics[i];
 
-	//}
-	return distance < 2.5;
+		PxVec3 enemyPosition = actor->getGlobalPose().p;
+		distance = calcDirectionEnemyPlayer(enemyPosition).magnitude();
+
+		if (distance < 2.5)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
+
 boolean PhysicsWorld::isPlayerDead() {
 
 	PxExtendedVec3 position = controllerPlayer->getFootPosition();
@@ -382,6 +396,17 @@ PxVec3 PhysicsWorld::calcDirectionEnemyPlayer() {
 
 	return directionToPlayer;
 }
+
+PxVec3 PhysicsWorld::calcDirectionEnemyPlayer(PxVec3 position) {
+
+	PxExtendedVec3 tmp = controllerPlayer->getPosition();
+	PxVec3 playerPos = PxVec3(tmp.x, tmp.y, tmp.z);
+	PxVec3 directionToPlayer = playerPos - position;
+	//directionToPlayer.normalize();
+
+	return directionToPlayer;
+}
+
 
 
 void PhysicsWorld::updateEnemy() {

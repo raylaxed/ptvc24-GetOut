@@ -116,6 +116,9 @@ public:
 	//calculates the vector from ball to player
 	PxVec3 calcDirectionEnemyPlayer();
 
+	//calculates the vector from enemy on path to player
+	PxVec3 calcDirectionEnemyPlayer(PxVec3 position);
+
 	//draws all added objects in the rendered world
 	void draw();
 
