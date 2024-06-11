@@ -208,7 +208,7 @@ int main(int argc, char** argv)
 		//Loading Textures for Normal/specular Shader
 		std::string directory = "assets/textures";
 
-		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normalPlusSpecular.frag");
+		std::shared_ptr<Shader> textureShaderNormals = std::make_shared<Shader>("normal.vert", "normalPlusLights.frag");
 		textureShaderNormals->use();
 
 		textureShaderNormals->setUniform("diffuseMap", 0);
@@ -463,6 +463,8 @@ int main(int argc, char** argv)
 
 			//Player Light
 			PointLight* tmpPoint2 = player.getLight();
+			setPerFrameUniforms(textureShaderNormals.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
+
 			setPerFrameUniforms(textureShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
 			//set the uniforms for the texture shader
 			for (int i = 0; i < pointLights.size(); i++) {
@@ -515,8 +517,11 @@ int main(int argc, char** argv)
 			textureShaderNormals->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
+			textureShaderNormals->setUniform("constant", 1.0f);
+			textureShaderNormals->setUniform("linear", 0.7f);
+			textureShaderNormals->setUniform("quadratic", 0.9f);
+			//textureShaderNormals->setUniform("ltextureShaderNormals->setUniform("constant", 1.0f);ightPos", player.getCamera()->getPosition());
 			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
-			//textureShaderNormals->setUniform("lightPos", glm::vec3(10.5f, 10.5f, 10.5f));
 			//textureShaderNormals->setUniform("pointLights", pointLights);
 			
 			glActiveTexture(GL_TEXTURE0);

@@ -18,7 +18,6 @@ uniform sampler2D specularMap;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
-uniform bool mode;
 
 
 vec3 phong(vec3 n, vec3 l, vec3 v, vec3 diffuseC, float diffuseF, vec3 specularC, float specularF, float alpha, bool attenuate, vec3 attenuation) {
