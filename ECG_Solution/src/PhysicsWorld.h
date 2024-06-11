@@ -77,12 +77,6 @@ public:
 	// sets the positon for the key in the Physics World
 	void setKeyPosition(PxVec3 position);
 
-	//returns the HitCounter increasing ball speed
-	int getHitCounter();
-
-	//returns the scoreCounter used for highscore 
-	int getScoreCounter();
-
 	//add a Cube Geometry object into the simulation as a rigidbody
 	void addCubeToPWorld(Geometry& obj, glm::vec3 measurements, bool isStatic = true,bool isTorchHitbox = false);
 	
