@@ -527,10 +527,10 @@ int main(int argc, char** argv)
 			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
 			textureShaderNormals->setUniform("constant", 1.0f);
-			textureShaderNormals->setUniform("linear", 0.7f);
-			textureShaderNormals->setUniform("quadratic", 0.9f);
+			textureShaderNormals->setUniform("linear", 0.4f);
+			textureShaderNormals->setUniform("quadratic", 0.3f);
 			//textureShaderNormals->setUniform("ltextureShaderNormals->setUniform("constant", 1.0f);ightPos", player.getCamera()->getPosition());
-			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition() + glm::vec3(0.0f,2.0f,0.0f));
+			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition() + glm::vec3(0.0f,0.0f,0.0f));
 			//textureShaderNormals->setUniform("pointLights", pointLights);
 			// 
 			// 
@@ -635,9 +635,9 @@ int main(int argc, char** argv)
 
 					glfwPollEvents();
 					processKeyInput(window);
-
-						endOfGame->setText("*Game Over! Press Enter to Restart*");
-						endOfGame->drawText();
+					endOfGame->setColor(glm::vec3(1, 0, 0));
+					endOfGame->setText("*Game Over! Press Enter to Restart*");
+					endOfGame->drawText();
 
 					glfwSwapBuffers(window);
 				}
@@ -653,7 +653,7 @@ int main(int argc, char** argv)
 
 					glfwPollEvents();
 					processKeyInput(window);
-
+					endOfGame->setColor(glm::vec3(0, 1, 0));
 					endOfGame->setText("*You won! Press Enter to restart*");
 					endOfGame->drawText();
 

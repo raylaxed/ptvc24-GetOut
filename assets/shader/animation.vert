@@ -25,10 +25,7 @@ uniform float amp = 0.3;
 
 
 	/* --------------------------------------------- */
-	// We implemented the vertex animation using sine 
-	// and cosine but realized our lava does not look 
-	// that good so we decided to use a noise function
-	// instead. 
+	//  we used perlin noise instead of sin and cos 
 	/* --------------------------------------------- */
 
 
