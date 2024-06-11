@@ -233,6 +233,17 @@ int main(int argc, char** argv)
 		unsigned int roomNormalMap = TextureFromFile("initialShadingGroup_Normal_OpenGL.png", directory);
 		unsigned int roomSpecularMap = TextureFromFile("white.jpg", directory);
 
+
+
+		std::string directory3 = "assets/assets/objects/lantern";
+		unsigned int handDiffuseMap = TextureFromFile("lantern_baseColor.png", directory3);
+		unsigned int handNormalMap = TextureFromFile("lantern_normal.png", directory3);
+		unsigned int handSpecularMap = roomSpecularMap;
+
+		std::string directory4 = "assets/assets/objects/brain";
+		unsigned int brainDiffuseMap = TextureFromFile("lambert2SG_Base_color.png", directory4);
+		unsigned int brainNormalMap = TextureFromFile("lambert2SG_Normal_OpenGL.png", directory4);
+		unsigned int brainSpecularMap = TextureFromFile("lambert2SG_Roughness.png", directory4);
 		//Load Textures
 		std::shared_ptr<Texture> wallDiffuse = std::make_shared<Texture>("wall.dds");
 		std::shared_ptr<Texture> wallNormal = std::make_shared<Texture>("Jute_cocomat_pxr128.dds");
@@ -278,7 +289,7 @@ int main(int argc, char** argv)
 		// Loading Models 
 		Model* pond = new Model("assets/objects/pond/pond.gltf", glm::mat4(1.f), *animationShader.get());
 		pond->setModel(glm::translate(glm::scale(pond->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)), glm::vec3(13.f, 2.0f, 13.f)));
-		Model* pondRand = new Model("assets/objects/pond/pondRand.gltf", glm::mat4(1.f), *textureShader.get());
+		Model* pondRand = new Model("assets/objects/pond/pondRand.gltf", glm::mat4(1.f), *textureShaderNormals.get());
 		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)), glm::vec3(13.f, 2.0f, 13.f)));
 		pWorld->addCubeToPWorld(*pondRand, glm::vec3(1.0f, 1.f, 1.0f));
 
@@ -482,9 +493,7 @@ int main(int argc, char** argv)
 			// DRAW
 			// ---------------------------------------
 
-			//models
-			Model* hand = player.getHand();
-			hand->Draw(hand->getModel());
+		
 			pWorld->draw();
 
 
@@ -492,7 +501,7 @@ int main(int argc, char** argv)
 
 			brain_01->Draw(brain_01->getModel());
 
-			pondRand->Draw(pondRand->getModel());
+			
 
 			glm::mat4 modelMatrix = key->getModel(); // Your model matrix here
 
@@ -521,9 +530,28 @@ int main(int argc, char** argv)
 			textureShaderNormals->setUniform("linear", 0.7f);
 			textureShaderNormals->setUniform("quadratic", 0.9f);
 			//textureShaderNormals->setUniform("ltextureShaderNormals->setUniform("constant", 1.0f);ightPos", player.getCamera()->getPosition());
-			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition());
+			textureShaderNormals->setUniform("lightPos", player.getCamera()->getPosition() + glm::vec3(0.0f,2.0f,0.0f));
 			//textureShaderNormals->setUniform("pointLights", pointLights);
-			
+			// 
+			// 
+			//pondRand->Draw(pondRand->getModel());
+				//models#
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, handDiffuseMap);
+			if (mode == true) {
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, handNormalMap);
+			}
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, handSpecularMap);
+			Model* hand = player.getHand();
+			drawNormalMapped(hand, *textureShaderNormals.get());
+			drawNormalMapped(pondRand, *textureShaderNormals.get());
+
+			//hand->Draw(hand->getModel());
+
+
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseMap);
 			if (mode == true) {
@@ -536,7 +564,6 @@ int main(int argc, char** argv)
 			
 
 			textureShaderNormals->setUniform("model", wall->getModel());
-
 
 
 			for (size_t i = 0; i < walls.size(); ++i) {
