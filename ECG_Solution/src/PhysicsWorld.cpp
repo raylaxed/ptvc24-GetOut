@@ -55,14 +55,6 @@ PxScene* PhysicsWorld::getScene() {
 	return gScene;
 }
 
-int PhysicsWorld::getHitCounter() {
-	return _hitCounter;
-}
-
-int PhysicsWorld::getScoreCounter() {
-	return _scoreCounter;
-}
-
 
 /*
 * createShape takes the volume
