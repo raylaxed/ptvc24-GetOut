@@ -24,7 +24,7 @@ uniform float linear;
 uniform float quadratic;
 
 uniform bool mode;
-
+uniform bool mode2;
 void main()
 {   
 
@@ -54,7 +54,9 @@ void main()
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64.0f);
     vec3 roughness = vec3(1.0) - texture(specularMap, fs_in.TexCoords).rgb;
-    vec3 specular = spec * roughness * attenuation; // Apply attenuation to specular
+	vec3 specular = spec * roughness * attenuation; // Apply attenuation to specular
+	
+   
 
     FragColor = vec4(ambient + diffuse + specular, 1.0);
 

@@ -46,7 +46,17 @@ void Model::Draw(Shader& shader)
     for (unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);
 }
-
+void Model::Draw(float time, glm::mat4 model)
+{
+    _shader->setUniform("modelMatrix", model);
+    _shader->setUniform("u_time", time);
+    _shader->setUniform("metallic", 0.1f);
+    _shader->setUniform("roughness", 0.1f);
+    _shader->setUniform("ao", 0.5f);
+    _shader->setUniform("normalMatrix", glm::mat3(glm::transpose(glm::inverse(model))));
+    for (unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i].Draw(*_shader);
+}
 
 void Model::loadModel(string const& path)
     {

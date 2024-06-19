@@ -85,10 +85,12 @@ int window_width;
 int window_height;
 bool bloom = true;
 bool bloomKeyPressed = false;
+bool normalSwitch = false;
 // meshes
 unsigned int planeVAO;
 float exposure = 0.5f;
 bool mode = true;
+bool specMode = true;
 
 
 /* --------------------------------------------- */
@@ -225,8 +227,13 @@ int main(int argc, char** argv)
 		unsigned int specularMap = TextureFromFile("T_Wall_Damaged_2x1_A_R.png", directory);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
-
 		textureShaderNormals->setUniform("mode", 3);
+
+		//unsigned int waterTexture = TextureFromFile("T_Wall_Damaged_2x1_A_BC.png", directory);
+		//std::shared_ptr<Texture> waterTexture;
+		//waterTexture->bind(waterTex);
+
+		
 		
 
 		unsigned int roomDiffuseMap = TextureFromFile("initialShadingGroup_Base_color.png", directory);
@@ -234,22 +241,25 @@ int main(int argc, char** argv)
 		unsigned int roomSpecularMap = TextureFromFile("white.jpg", directory);
 
 
-
+		/*
 		std::string directory3 = "assets/assets/objects/lantern";
 		unsigned int handDiffuseMap = TextureFromFile("lantern_baseColor.png", directory3);
 		unsigned int handNormalMap = TextureFromFile("lantern_normal.png", directory3);
 		unsigned int handSpecularMap = roomSpecularMap;
-
+		*/
+		/*
 		std::string directory4 = "assets/assets/objects/brain";
 		unsigned int brainDiffuseMap = TextureFromFile("lambert2SG_Base_color.png", directory4);
 		unsigned int brainNormalMap = TextureFromFile("lambert2SG_Normal_OpenGL.png", directory4);
 		unsigned int brainSpecularMap = TextureFromFile("lambert2SG_Roughness.png", directory4);
+		*/
 		//Load Textures
 		std::shared_ptr<Texture> wallDiffuse = std::make_shared<Texture>("wall.dds");
 		std::shared_ptr<Texture> wallNormal = std::make_shared<Texture>("Jute_cocomat_pxr128.dds");
 		std::shared_ptr<Texture> wallRoughness = std::make_shared<Texture>("wall.dds");
 		std::shared_ptr<Texture> wallAO = std::make_shared<Texture>("wall.dds");
 		std::shared_ptr<Texture> wallMetallic = std::make_shared<Texture>("wall.dds");
+		std::shared_ptr<Texture> waterDDS = std::make_shared<Texture>("waterTexture.dds");
 		/*
 		*/
 
@@ -268,6 +278,8 @@ int main(int argc, char** argv)
 		std::shared_ptr<Shader> animationShader = std::make_shared<Shader>("animation.vert", "cook_torranceDublicate.frag");
 		animationShader->use();
 		animationShader->setUniform("diffuseTexture", 0);
+		animationShader->setUniform("mode", true);
+		
 
 		//UI Shader
 		std::shared_ptr<Shader> uiShader = std::make_shared<Shader>("hud.vert", "hud.frag");
@@ -279,25 +291,30 @@ int main(int argc, char** argv)
 
 		// PhongShader
 		textureShaderNormals->setUniform("materialCoefficients", glm::vec4(0.2f, 0.6f, 0.1f, 10.0f));
-
+			
 		// UI TEXT
 		Text* fps = new Text("FPS: ", glm::vec2(50.0f, 100.0f), 1.f, glm::vec3(1.0f, 0.2f, 0.2f), _characters, *uiShader.get());
 		Text* endOfGame = new Text("You died! Game Over!", glm::vec2(window_width / 2.0f - 580, window_height - 300.0f), 2.f, glm::vec3(1, 0, 0), _characters, *uiShader.get());
-		Text* UI_test = new Text("Thank you learnopengl.com for making us survive this semester", glm::vec2(600.0f, 100.0f), 1.f, glm::vec3(1.0f, 1.0f, 1.0f), _characters, *uiShader.get());
+		Text* UI_test = new Text("Find the Key to Get Out!", glm::vec2(840.0f, 100.0f), 1.f, glm::vec3(1.0f, 1.0f, 1.0f), _characters, *uiShader.get());
 
 
 		// Loading Models 
-		Model* pond = new Model("assets/objects/pond/pond.gltf", glm::mat4(1.f), *animationShader.get());
+		Model* pond = new Model("assets/objects/pond/pond2.gltf", glm::mat4(1.f), *animationShader.get());
 		pond->setModel(glm::translate(glm::scale(pond->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)), glm::vec3(13.f, 2.0f, 13.f)));
-		Model* pondRand = new Model("assets/objects/pond/pondRand.gltf", glm::mat4(1.f), *textureShaderNormals.get());
-		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(0.5f, 0.5f, 0.5f)), glm::vec3(13.f, 2.0f, 13.f)));
+		Model* pondRand = new Model("assets/objects/pond/pondRand.obj", glm::mat4(1.f), *textureShaderNormals.get());
+		pondRand->setModel(glm::translate(glm::scale(pondRand->getModel(), glm::vec3(1.0f, 1.0f, 1.0f)), glm::vec3(7.0, 1.6f, 7.f)));
 		pWorld->addCubeToPWorld(*pondRand, glm::vec3(1.0f, 1.f, 1.0f));
 
+
+		
+
+		
+		
 
 		Model* wall = new Model("assets/objects/damaged_wall2/Wall2.obj", glm::mat4(1.f), *textureShaderNormals.get());
 
 		// set Key model and the Position in physics world
-		glm::vec3 keyPosition = glm::vec3(3.0f, 3.2f, 3.0f);
+		glm::vec3 keyPosition = glm::vec3(45.0f, 3.2f, -25.0f);
 		pWorld->setKeyPosition(PxVec3(keyPosition.x, keyPosition.y, keyPosition.z));
 		Model* key = new Model("assets/objects/key/key.obj", glm::mat4(1.f), *lightMakerShader.get());
 		key->setModel(glm::translate(key->getModel(), keyPosition));
@@ -309,9 +326,10 @@ int main(int argc, char** argv)
 
 
 		//this is here for no reason - anim shader breaks if this doesnt exist for some fing reason
-		std::shared_ptr<TextureMaterial> waterMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(0.1f, 0.7f, 0.1f), 8.0f, wallDiffuse);
+		std::shared_ptr<TextureMaterial> waterMat = std::make_shared<TextureMaterial>(animationShader, glm::vec3(1.f, 1.f, 0.01f), 8.0f, waterDDS);
 		Geometry* water = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.5f, 0.f)), Geometry::createPlaneGeometry(10.0f), waterMat);
-
+		Geometry* newWater = new Geometry(glm::translate(glm::mat4(1.f), glm::vec3(7.2f, 2.5f,7.2f)), Geometry::createPlaneGeometry(5.f), waterMat);
+		
 
 		// Dummy Texture
 		std::shared_ptr<Texture> floorTXT = std::make_shared<Texture>("wall.dds");
@@ -329,7 +347,7 @@ int main(int argc, char** argv)
 
 		//currently only works on anim shader
 		std::vector<PointLight*> pointLights = createLights(lightColor);
-		PointLight* tmpPoint = new PointLight(lightColor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.003f));
+		PointLight* tmpPoint = new PointLight(lightColor, glm::vec3(0.f, 9.f, 0.f), glm::vec3(0.1f));
 		player.setLight(*tmpPoint);
 
 
@@ -511,18 +529,32 @@ int main(int argc, char** argv)
 
 			// Use the animation shader and set its uniforms
 			animationShader->use();
+			animationShader->setUniform("mode", normalSwitch);
 			animationShader->setUniform("u_time", static_cast<float>(glfwGetTime()));
-			setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 4);
+			setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *tmpPoint2, 0);
+			/*
 			for (int i = 0; i < pointLights.size(); i++) {
 				setPerFrameUniforms(animationShader.get(), *cam, cam->getProjectionMatrix(), *pointLights[i], i);
 			}
-			water->draw(static_cast<float>(glfwGetTime()));
+
+			*/
+			
+			newWater->draw(static_cast<float>(glfwGetTime()));
+
+			
+			//water->draw(static_cast<float>(glfwGetTime()));
 
 
-			pond->Draw(pond->getModel());
+			//pond->Draw(static_cast<float>(glfwGetTime()),pond->getModel());
+			//normalVisShader->use();
+			//normalVisShader->setUniform("u_time", static_cast<float>(glfwGetTime()));
+			
+			//drawNormalMapped(pond, *normalVisShader.get());
+
 
 			textureShaderNormals->use();
 			textureShaderNormals->setUniform("mode", mode);
+			textureShaderNormals->setUniform("mode2", specMode);
 			textureShaderNormals->setUniform("projection", player.getCamera()->getProjectionMatrix());
 			textureShaderNormals->setUniform("view", player.getCamera()->GetViewMatrix());
 			textureShaderNormals->setUniform("viewPos", player.getCamera()->getPosition());
@@ -536,7 +568,7 @@ int main(int argc, char** argv)
 			// 
 			//pondRand->Draw(pondRand->getModel());
 				//models#
-			glActiveTexture(GL_TEXTURE0);
+			/*glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, handDiffuseMap);
 			if (mode == true) {
 				glActiveTexture(GL_TEXTURE1);
@@ -545,8 +577,13 @@ int main(int argc, char** argv)
 
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, handSpecularMap);
+			*/
+			
 			Model* hand = player.getHand();
 			drawNormalMapped(hand, *textureShaderNormals.get());
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, diffuseMap);
 			drawNormalMapped(pondRand, *textureShaderNormals.get());
 
 			//hand->Draw(hand->getModel());
@@ -558,10 +595,11 @@ int main(int argc, char** argv)
 				glActiveTexture(GL_TEXTURE1);
 				glBindTexture(GL_TEXTURE_2D, normalMap);
 			}
-			
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, specularMap);
-			
+			if (specMode == true) {
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, specularMap);
+			}
+
 
 			textureShaderNormals->setUniform("model", wall->getModel());
 
@@ -584,8 +622,8 @@ int main(int argc, char** argv)
 			
 			//HUD
 			float framesPerSec = 1.0f / deltaTime;
-			//fps->setText("FPS: " + std::to_string(framesPerSec));
-			fps->setText(std::to_string(mode));
+			fps->setText("FPS: " + std::to_string(framesPerSec));
+			//fps->setText(std::to_string(mode));
 			fps->drawText();
 			UI_test->drawText();
 
@@ -1254,6 +1292,8 @@ void processKeyInput(GLFWwindow* window)
 		}
 	}
 
+	
+
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && !bloomKeyPressed)
 	{
 		bloom = !bloom;
@@ -1267,10 +1307,31 @@ void processKeyInput(GLFWwindow* window)
 	{
 		mode = true;
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
 	{
 		mode = false;
 
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+	{
+		specMode = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+	{
+		specMode = false;
+
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		normalSwitch = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		normalSwitch = false;
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{

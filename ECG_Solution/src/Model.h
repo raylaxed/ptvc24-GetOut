@@ -42,6 +42,7 @@ public:
     // draws the model, and thus all its meshes
     void Draw(glm::mat4 model);
     void Draw(Shader& shader);
+    void Model::Draw(float time, glm::mat4 model);
     void setModel(glm::mat4 model);
 
 

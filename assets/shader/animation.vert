@@ -10,7 +10,10 @@ out VertexData {
 	vec3 position_world;
 	vec3 normal_world;
 	vec2 uv;
+	
 } vert;
+
+
 	
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -163,7 +166,7 @@ uniform float amp = 0.3;
 
 	void main()
 	{
-		//vec3 dispPosition = vec3(position.x, displaceNoise(position), position.z);
+		//vec3 dispPosition = vec3(position.x, displacement(position), position.z);
 		vec3 dispPosition = position + normal * displaceNoise(position);
 
 		//calculate and displace neighbours 
@@ -171,15 +174,15 @@ uniform float amp = 0.3;
 		vec3 bitangent = normalize(cross(normal, tangent));
 		vec3 neighbour1 = position + tangent * 0.01;
 		vec3 neighbour2 = position + bitangent * 0.01;
-		vec3 dispN1 = vec3(neighbour1.x, displacement(neighbour1), neighbour1.z);
-		vec3 dispN2 = vec3(neighbour2.x, displacement(neighbour2), neighbour2.z);
+		vec3 dispN1 = vec3(neighbour1.x, displaceNoise(neighbour1), neighbour1.z);
+		vec3 dispN2 = vec3(neighbour2.x, displaceNoise(neighbour2), neighbour2.z);
 
 		//recalculate tangent and bitangent after displacement
 		vec3 dispTangent = dispN1 - dispPosition;
 		vec3 dispBitangent = dispN2 - dispPosition;
 		vec3 displacedNormal = normalize(cross(dispTangent, dispBitangent));
-
-		vert.normal_world = normalMatrix * displacedNormal*(-1);
+		
+		vert.normal_world = normalMatrix * displacedNormal ;
 		vert.uv = uv;
 		vec4 position_world_ = modelMatrix * vec4(dispPosition, 1.0);
 		vert.position_world = position_world_.xyz;

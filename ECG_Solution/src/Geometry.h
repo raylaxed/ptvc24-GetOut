@@ -101,7 +101,7 @@ public:
 	void Geometry::draw(float time);
 
 	void Geometry::draw(Shader* shader);
-
+	void Geometry::draw(float time, Shader* shader);
 	/*!
 	 * normal getter
 	 * needed for calculating the objects position
